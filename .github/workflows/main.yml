@@ -23,7 +23,9 @@ jobs:
         with: 
           dotnet-version: 7.x
       - name: build
-        run: dotnet publish LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
+        run: |
+          dotnet workload restore
+          dotnet publish LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
 
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
