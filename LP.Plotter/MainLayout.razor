@@ -1,5 +1,50 @@
 ﻿@inherits LayoutComponentBase
 
-<main>
-    @Body
-</main>
+<MudThemeProvider Theme="MyCustomTheme" IsDarkMode="@_isDarkMode" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar Elevation="0" Dense="true">
+        <MudIconButton Icon="@Icons.Custom.Uncategorized.FolderOpen" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudText Typo="Typo.h5" Class="ml-3">LP Plotter</MudText>
+        <MudSpacer />
+        <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Label="@($"{(_isDarkMode?"Light":"Dark")}")" LabelPosition="LabelPosition.Start" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@isDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="@preserveOpenState" Width="600px">
+        <MudDrawerHeader Dense="true">
+            <MudText Typo="Typo.h5">Data Explorer</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleDrawer" />
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+
+@code {
+    bool _isDarkMode = true;
+    bool isDrawerOpen = false;
+    bool preserveOpenState = false;
+
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Palette = new PaletteLight()
+            {
+                AppbarBackground = Colors.Blue.Default,
+            },
+            PaletteDark = new PaletteDark()
+            {
+                Primary = Colors.Yellow.Default,
+            },
+        };
+
+    private void ToggleDrawer() => isDrawerOpen = !isDrawerOpen;
+
+}
