@@ -51,6 +51,8 @@ jobs:
       # the more general approach is to build it, upload an artifact with actions/upload-pages-artifact@v1 
       # and serve it with actions/deploy-pages@v2
       # in this case you can download the artifact to see whats actually served but the artifact gets deleted after 1h or so
-      - uses: JamesIves/github-pages-deploy-action@v3
+      - name: push to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
-          folder: publish/wwwroot
+          BRANCH: gh-pages
+          FOLDER: publish/wwwroot
