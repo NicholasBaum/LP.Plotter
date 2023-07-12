@@ -40,8 +40,9 @@ jobs:
       - 
         name: show stuff
         run: |
-             echo $(basename /publish)
-             echo $(basename /publish/wwwroot)
+             find publish
+             find publish/wwwroot
+
       # the way I understand this, is this action pushes your build folder to the gh-pages branch
       # and if you configured the repo to serve the static files from the gh-pages branch the site will be reachable
       # the advantage of doing it like this is that you can see the served files in the gh-pages branch
