@@ -32,10 +32,8 @@ jobs:
           dotnet workload install wasm-tools
           dotnet workload restore
           dotnet publish LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
-      - name: Change base-tag in index.html from / to repository name
-        run: |
-         echo ${{ github.event.repository.name }}
-         sed -i 's/<base href="\/" \/>/<base href="\/LP.Plotter\/" \/>/g' release/wwwroot/index.html
+      - name: Change base-tag in index.html from / to ${{ github.event.repository.name }}
+        run:  sed -i 's/<base href="\/" \/>/<base href="\/LP.Plotter\/" \/>/g' publish/wwwroot/index.html
 
       # the way I understand this, is this action pushes your build folder to the gh-pages branch
       # and if you configured the repo to serve the static files from the gh-pages branch the site will be reachable
