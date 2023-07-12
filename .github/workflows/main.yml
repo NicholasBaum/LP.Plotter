@@ -54,3 +54,11 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
          folder: publish/wwwroot
+
+      # # v4 of this action at some point didn't push some files while the following action worked
+      # # but the old one seems to be working now as well      
+      # - name: push to gh-pages branch
+      #   uses: JamesIves/github-pages-deploy-action@3.7.1
+      #   with:
+      #      BRANCH: gh-pages
+      #      FOLDER: publish/wwwroot
