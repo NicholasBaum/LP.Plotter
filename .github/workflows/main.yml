@@ -24,6 +24,7 @@ jobs:
           dotnet-version: 7.x
       - name: build
         run: |
+          dotnet install workload wasm-tools
           dotnet workload restore
           dotnet publish LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
 
