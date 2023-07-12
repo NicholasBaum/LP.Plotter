@@ -32,7 +32,19 @@ jobs:
           dotnet workload install wasm-tools
           dotnet workload restore
           dotnet publish LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
+      - name: Change base-tag in index.html from / to repository name
+        run: |
+         echo ${{ github.event.repository.name }}
+         sed -i 's/<base href="\/" \/>/<base href="\/LP.Plotter\/" \/>/g' release/wwwroot/index.html
 
+      # the way I understand this, is this action pushes your build folder to the gh-pages branch
+      # and if you configured the repo to serve the static files from the gh-pages branch the site will be reachable
+      # the advantage of doing it like this is that you can see the served files in the gh-pages branch
+      # although the github deeploying routine could actually change something
+
+      # the more general approach is to build it, upload an artifact with actions/upload-pages-artifact@v1 
+      # and serve it with actions/deploy-pages@v2
+      # in this case you can download the artifact to see whats actually served but the artifact gets deleted after 1h or so
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: publish/wwwroot
