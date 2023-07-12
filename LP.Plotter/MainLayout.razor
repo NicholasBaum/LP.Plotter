@@ -1,12 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
+@inject IJSRuntime JSRuntime
+
 <MudThemeProvider Theme="MyCustomTheme" IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="0" Dense="true">
         <MudIconButton Icon="@Icons.Custom.Uncategorized.FolderOpen" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        <MudText Typo="Typo.h5" Class="ml-3">LP Plotter</MudText>
+        <MudText Typo="Typo.h5" Class="ml-3 cursor-pointer" @onclick="NavigateToLink">LP Plotter</MudText>
         <MudSpacer />
         <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Label="@($"{(_isDarkMode?"Light":"Dark")}")" LabelPosition="LabelPosition.Start" />
     </MudAppBar>
@@ -47,4 +49,8 @@
 
     private void ToggleDrawer() => isDrawerOpen = !isDrawerOpen;
 
+    private async Task NavigateToLink()
+    {
+        await JSRuntime.InvokeVoidAsync("open", "https://nicholasbaum.github.io/LP.Plotter/", "_blank");
+    }
 }
