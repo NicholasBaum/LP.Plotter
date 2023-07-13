@@ -44,6 +44,9 @@ jobs:
       - name: copy index.html to 404.html so blazors routing and error page is used instead of the github 404 page
         run: cp publish/wwwroot/index.html publish/wwwroot/404.html
 
+      - name: copy csv data
+        run: cp -r csvdata publish/wwwroot/csvdata
+
       - name: Show publish folder and wwwroot
         run: |
              find publish
