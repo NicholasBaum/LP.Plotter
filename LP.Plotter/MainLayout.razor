@@ -1,6 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using LP.Plotter.Data;
+@inherits LayoutComponentBase;
 
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JSRuntime;
+@inject DataService dataService;
 
 <MudThemeProvider Theme="MyCustomTheme" IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
@@ -19,9 +21,10 @@
             <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleDrawer" />
         </MudDrawerHeader>
         <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+            @foreach (var d in data)
+            {
+                <MudNavLink Match="NavLinkMatch.All">@d.Name</MudNavLink>
+            }
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
@@ -34,6 +37,7 @@
     bool _isDarkMode = true;
     bool isDrawerOpen = false;
     bool preserveOpenState = false;
+    List<DataObject> data = new List<DataObject>();
 
     MudTheme MyCustomTheme = new MudTheme()
         {
@@ -46,6 +50,12 @@
                 Primary = Colors.Yellow.Default,
             },
         };
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.data = await this.dataService.GetFileInfos();
+        await base.OnInitializedAsync();
+    }
 
     private void ToggleDrawer() => isDrawerOpen = !isDrawerOpen;
 
