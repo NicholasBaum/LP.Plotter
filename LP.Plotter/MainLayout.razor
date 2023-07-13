@@ -9,21 +9,32 @@
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="0" Dense="true">
-        <MudIconButton Icon="@Icons.Custom.Uncategorized.FolderOpen" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudIconButton Icon="@Icons.Custom.Uncategorized.FolderOpen" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@ToggleDrawer" />
         <MudText Typo="Typo.h5" Class="ml-3 cursor-pointer" @onclick="NavigateToLink">LP Plotter</MudText>
         <MudSpacer />
-        <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Label="@($"{(_isDarkMode?"Light":"Dark")}")" LabelPosition="LabelPosition.Start" />
+        <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Label="@($"{(_isDarkMode?"Light":"Dark")}")"
+            LabelPosition="LabelPosition.Start" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@isDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="@preserveOpenState" Width="600px">
+    <MudDrawer @bind-Open="@isDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive"
+        PreserveOpenState="@preserveOpenState" Width="600px">
         <MudDrawerHeader Dense="true">
             <MudText Typo="Typo.h5">Data Explorer</MudText>
             <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleDrawer" />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.End"
+                OnClick="@ToggleDrawer" />
         </MudDrawerHeader>
         <MudNavMenu>
-            @foreach (var d in data)
+            @if (dataError == null)
             {
-                <MudNavLink Match="NavLinkMatch.All">@d.Name</MudNavLink>
+                @foreach (var d in data)
+                {
+                    <MudNavLink Match="NavLinkMatch.All">@d.Name</MudNavLink>
+                }
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Error">@dataError</MudAlert>
             }
         </MudNavMenu>
     </MudDrawer>
@@ -37,6 +48,7 @@
     bool _isDarkMode = true;
     bool isDrawerOpen = false;
     bool preserveOpenState = false;
+    Exception? dataError = null;
     List<DataObject> data = new List<DataObject>();
 
     MudTheme MyCustomTheme = new MudTheme()
@@ -53,7 +65,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        this.data = await this.dataService.GetFileInfos();
+        try
+        {
+            this.data = await this.dataService.GetFileInfos();
+        }
+        catch (Exception ex)
+        {
+            this.dataError = ex;
+        }
         await base.OnInitializedAsync();
     }
 
