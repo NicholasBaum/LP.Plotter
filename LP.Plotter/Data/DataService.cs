@@ -20,7 +20,7 @@ public class DataService
         return text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
         .Select(x => new DataObject()
         {
-            FileName = Path.GetFileName(x),
+            FileName = Path.GetFileName(x.Replace("\\", "/")),
             Path = x,
             Url = Path.Combine("csvdata", x),
             Channels = null,
