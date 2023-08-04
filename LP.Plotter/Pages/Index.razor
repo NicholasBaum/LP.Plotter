@@ -1,18 +1,4 @@
 ﻿@page "/"
+@using LP.Plotter.Components;
 
-
-@using OxyPlot;
-@using OxyPlot.Series;
-@using OxyPlot.SkiaSharp.Blazor
-
-<PlotView Model=model style="height: 500px; width: 500px; border: solid green 2px" />
-
-@code {
-    private PlotModel model = new PlotModel();
-
-    protected override async Task OnInitializedAsync()
-    {
-        this.model = new PlotModel { Title = "Example 1" };
-        this.model.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
-    }
-}
+<DataPlotter></DataPlotter>

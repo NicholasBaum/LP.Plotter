@@ -1,0 +1,22 @@
+﻿@using LP.Plotter.Services;
+@using MudBlazor;
+@using OxyPlot;
+@using OxyPlot.Series;
+@using OxyPlot.SkiaSharp.Blazor;
+
+@inject AppService appService;
+
+<MudStack Spacing="0" Row="true" Justify="@Justify.FlexEnd">
+    <PlotView Model=model style="height: 500px; width: 500px; border: solid green 2px" />
+    <ChannelList></ChannelList>
+</MudStack>
+
+@code {
+    private PlotModel model = new PlotModel();
+
+    protected override void OnInitialized()
+    {
+        this.model = new PlotModel { Title = "Example 1" };
+        this.model.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+    }
+}

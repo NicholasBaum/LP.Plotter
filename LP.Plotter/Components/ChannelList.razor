@@ -1,0 +1,33 @@
+﻿@using LP.Plotter.Data;
+@using LP.Plotter.Services;
+@using System.Collections.Specialized;
+@implements IDisposable;
+@inject AppService appService;
+
+<div>
+    <ul>
+        @foreach (var c in appService.CurrentPlot.Lines)
+        {
+            <li>@c.Name</li>
+        }
+    </ul>
+</div>
+
+@code {
+    List<CsvData> Channels = new();
+
+    protected override void OnInitialized()
+    {
+        appService.CurrentPlot.Changed += DataChanged;
+    }
+
+    public void Dispose()
+    {
+        appService.CurrentPlot.Changed -= DataChanged;
+    }
+
+    private void DataChanged(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+}

@@ -1,18 +1,25 @@
 @using LP.Plotter.Data;
 @using System.Linq;
+@using LP.Plotter.Services;
 @inject DataService dataService;
+@inject AppService appService;
 
 <MudContainer>
     @if (dataError == null)
     {
         <MudTreeView Dense="true" Items="@items" Hover="true">
             <ItemTemplate Context="item">
-                <MudTreeViewItem Items="@item.Items" Value="@item" OnClick="() => HandleItemClick(item)"
-                    Style="@(item.IsSelected? "background-color: red;" : "background-color: green;")">
+                <MudTreeViewItem Items="@item.Items" Value="@item">
                     <BodyContent>
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
-                            <MudText Style="justify-self: start;" Class="ml-3 cursor-pointer">
-                                @item.DisplayName</MudText>
+                            <MudText Style="justify-self: start;">@item.DisplayName</MudText>
+                            @if (!item.HasChildren)
+                            {
+                                <div style="justify-self: end;">
+                                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" Color="Color.Primary"
+                                                   OnClick="@((e)=>HandleClick(e, item))" />
+                                </div>
+                            }
                         </div>
                     </BodyContent>
                 </MudTreeViewItem>
@@ -29,27 +36,28 @@
 @code {
 
     Exception? dataError = null;
-    HashSet<TreeItem> items = new();
-    HashSet<TreeItem> SelectedValues { get; set; } = new();
+    HashSet<CsvTreeItem> items = new();
+    HashSet<CsvTreeItem> SelectedValues { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             this.items = (await this.dataService.GetFileInfos())
             .GroupBy(x => x.Path.Split("\\")[3])
-            .Select(cars => new TreeItem()
+            .Select(cars => new CsvTreeItem()
                 {
                     DisplayName = cars.Key,
                     Items = cars.GroupBy(x => x.Path.Split("\\")[4])
-                .Select(runs => new TreeItem()
-                {
-                    DisplayName = runs.Key,
-                    Items = runs.Select(lap => new TreeItem()
-                    {
-                        Source = lap,
-                        DisplayName = lap.FileName,
-                    }).ToHashSet()
-                }).ToHashSet()
+                                .Select(runs => new CsvTreeItem()
+                                {
+                                    DisplayName = runs.Key,
+                                    Items = runs.Select(lap => new CsvTreeItem()
+                                    {
+                                        Source = lap,
+                                        DisplayName = lap.FileName,
+                                    }).ToHashSet()
+                                }).ToHashSet()
                 }).ToHashSet();
         }
         catch (Exception ex)
@@ -59,16 +67,16 @@
         await base.OnInitializedAsync();
     }
 
-    void HandleItemClick(TreeItem item)
+    private void HandleClick(MouseEventArgs e, CsvTreeItem item)
     {
-        item.IsSelected = !item.IsSelected;
+        appService.CurrentPlot.Add(item.Source!);
     }
 
-    class TreeItem
+    class CsvTreeItem
     {
-        public bool IsSelected { get; set; } = false;
-        public DataObject? Source { get; init; }
+        public CsvData? Source { get; init; }
         public required string DisplayName { get; init; }
-        public HashSet<TreeItem> Items { get; set; } = new();
+        public HashSet<CsvTreeItem>? Items { get; set; } = null;
+        public bool HasChildren => Items != null;
     }
 }

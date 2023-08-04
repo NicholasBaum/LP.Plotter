@@ -1,6 +1,6 @@
 ﻿namespace LP.Plotter.Data;
 
-public class DataObject
+public class CsvData
 {
     public string Name => FileName;
     public required string FileName { get; init; }

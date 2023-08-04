@@ -12,13 +12,13 @@ public class DataService
         this.httpClient = httpClient;
     }
 
-    public async Task<List<DataObject>> GetFileInfos()
+    public async Task<List<CsvData>> GetFileInfos()
     {
         var response = await httpClient.GetAsync("csvdata/files_index.txt");
         response.EnsureSuccessStatusCode();
         var text = await response.Content.ReadAsStringAsync();
         return text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-        .Select(x => new DataObject()
+        .Select(x => new CsvData()
         {
             FileName = Path.GetFileName(x.Replace("\\", "/")),
             Path = x,
@@ -27,7 +27,7 @@ public class DataService
         }).ToList();
     }
 
-    private async Task<List<DataObject>> GetFileInfosFromGithub()
+    private async Task<List<CsvData>> GetFileInfosFromGithub()
     {
         string url = "https://api.github.com/repos/NicholasBaum/TyrePlot/git/trees/gh-pages?recursive=1";
         HttpResponseMessage response = await httpClient.GetAsync(url);
@@ -39,7 +39,7 @@ public class DataService
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var files = data["tree"].AsArray()
             .Where(d => d["path"].ToString().EndsWith(".csv"))
-            .Select(x => new DataObject()
+            .Select(x => new CsvData()
             {
                 FileName = Path.GetFileName(x["path"].ToString()),
                 Path = x["path"].ToString(),
