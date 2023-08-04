@@ -8,7 +8,7 @@
   "resources": {
     "assembly": {
       "HarfBuzzSharp.dll": "sha256-dX\/++uW6R0xlGvP58Z0Gv3rLrHGBDCKcSB1ODiXCRyE=",
-      "LP.Plotter.dll": "sha256-TjqFWKjaSpfJyDJ7n80K\/5UGtWjK1v1Q4IkcdnH3RQE=",
+      "LP.Plotter.dll": "sha256-m3WBUp14R2qx64EUfv7zYA4AN+ld\/m+Bmv1sjwqCx3A=",
       "Microsoft.AspNetCore.Components.dll": "sha256-2N9weKQ9QG46buFIE85hRH6YUP+M1t6VLjcthao+CaY=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-c1Qy\/qZlUW8LJmf3Vp3Ol1hzixL40BZx\/mkoxc1DUV0=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-VfZ8\/IyMYtnm8ZsrBon95xD0hsubsFdQamIah5FRMYw=",
@@ -35,7 +35,7 @@
       "SkiaSharp.HarfBuzz.dll": "sha256-xYzlyJFayUmVNFMWQSEkGZNCEi2+lZGCPQ8mo7BI8CQ=",
       "SkiaSharp.Views.Blazor.dll": "sha256-m0\/YvrmLnHMtqOKUSqAyvxiKSd63EIAMPk32D8qpLd8=",
       "System.Collections.Concurrent.dll": "sha256-IkwwH3tHE1OWaqeY78q1Q2NFYCvFJ4AfiJHW1DJbdRk=",
-      "System.Collections.dll": "sha256-xt9uOJvfrnhlsa8CGWfkRPSMtcaBRE53O16PXuax9Eg=",
+      "System.Collections.dll": "sha256-vpktkDwK6kZnTJ21wJ5LKrzk+4tQ8SNWOKw8Rynf8dk=",
       "System.ComponentModel.Annotations.dll": "sha256-+2OiUv3mnedv3+VvLAsa6Y3C1dbAfACpJOoisWxSQBg=",
       "System.ComponentModel.dll": "sha256-JQ9eaiVjufiLP3W7JUKbZwepJ9BYL5QK1275lhmazRk=",
       "System.ComponentModel.Primitives.dll": "sha256-Zn4vvyciQkzd4\/OjL0Thrp5ldClnFh5BI9et\/dJPIIE=",
@@ -50,7 +50,7 @@
       "System.Private.CoreLib.dll": "sha256-nVqlYKwhdv4U31FloTGBhmhpl7zJencoZc29tPGGosE=",
       "System.Private.Uri.dll": "sha256-z\/2iKnUiD9cyrVOTtcdZpkXUrKt6K2hBYo\/SiGQhkuU=",
       "System.Private.Xml.dll": "sha256-8p9fsZzJ9XoviLXoPd7IKRSQPoah6QTi1j+wxWT2CFE=",
-      "System.Runtime.dll": "sha256-6esN94VdWiEIbbJrZ2W1aq7\/qX07x2FGPCXEg95xe4Q=",
+      "System.Runtime.dll": "sha256-7L4ffyAYmkXpv3ugYAOzeEttB7TUhWvgQmW1yTGhDKI=",
       "System.Runtime.InteropServices.dll": "sha256-F5FQxX88OKTegOPWcM5vdwayDnDi1bB1I+K4m8V1kD4=",
       "System.Runtime.InteropServices.JavaScript.dll": "sha256-kmPGCaTgpBMp1SRAtg5gmkIqdYaLQsOxktu4eO\/FQrU=",
       "System.Text.Encodings.Web.dll": "sha256-CkXO+YwS63Vtc9T55XjWsB+P1bD3YzChU4bTa\/MMJvs=",
