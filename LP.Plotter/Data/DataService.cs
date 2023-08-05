@@ -12,6 +12,21 @@ public class DataService
         this.httpClient = httpClient;
     }
 
+    public async Task<CsvData> LoadChannels(CsvData csvData)
+    {     
+        var response = await httpClient.GetAsync(csvData.Url);
+        response.EnsureSuccessStatusCode();
+        var csv = await response.Content.ReadAsStringAsync();
+        var channels = CsvData.ParseCSV(csv);
+        return new CsvData()
+        {
+            FileName = csvData.FileName,
+            Path = csvData.Path,
+            Url = csvData.Url,
+            Channels = channels,
+        };
+    }
+
     public async Task<List<CsvData>> GetFileInfos()
     {
         var response = await httpClient.GetAsync("csvdata/files_index.txt");
@@ -22,7 +37,7 @@ public class DataService
         {
             FileName = Path.GetFileName(x.Replace("\\", "/")),
             Path = x,
-            Url = Path.Combine("csvdata", x),
+            Url = "csvdata" + x.Replace("#", "%23"),
             Channels = null,
         }).ToList();
     }

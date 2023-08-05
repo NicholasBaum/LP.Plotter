@@ -67,9 +67,10 @@
         await base.OnInitializedAsync();
     }
 
-    private void HandleClick(MouseEventArgs e, CsvTreeItem item)
+    private async void HandleClick(MouseEventArgs e, CsvTreeItem item)
     {
-        appService.CurrentPlot.Add(item.Source!);
+        var d = await dataService.LoadChannels(item.Source!);
+        appService.CurrentPlot.Add(d);
     }
 
     class CsvTreeItem
