@@ -16,7 +16,13 @@
                             @if (!item.HasChildren)
                             {
                                 <div style="justify-self: end;">
-                                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" Color="Color.Primary"
+                                    <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Medium"
+                                             Color="Color.Error" Style="vertical-align: middle;"
+                                             Class="@(item.HasLoadError?"visible":"invisible")"></MudIcon>
+                                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                                   Size="Size.Medium"
+                                                   Color="Color.Primary"
+                                                   Disabled="item.IsLoading"
                                                    OnClick="@((e)=>HandleClick(e, item))" />
                                 </div>
                             }
@@ -69,12 +75,28 @@
 
     private async void HandleClick(MouseEventArgs e, CsvTreeItem item)
     {
-        var d = await dataService.LoadChannels(item.Source!);
-        appService.CurrentPlot.Add(d);
+        try
+        {
+            item.IsLoading = true;
+            item.HasLoadError = false;
+            var d = await dataService.LoadChannels(item.Source!);            
+            item.IsLoading = false;
+            appService.CurrentPlot.Add(d);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            item.IsLoading = false;
+            item.HasLoadError = true;
+        }
+        this.StateHasChanged();
+
     }
 
     class CsvTreeItem
     {
+        public bool IsLoading { get; set; } = false;
+        public bool HasLoadError { get; set; } = false;
         public CsvData? Source { get; init; }
         public required string DisplayName { get; init; }
         public HashSet<CsvTreeItem>? Items { get; set; } = null;
