@@ -79,7 +79,7 @@
         {
             item.IsLoading = true;
             item.HasLoadError = false;
-            var d = await dataService.LoadChannels(item.Source!);            
+            var d = await dataService.LoadChannels(item.Source!);
             item.IsLoading = false;
             appService.CurrentPlot.Add(d);
         }
@@ -90,14 +90,13 @@
             item.HasLoadError = true;
         }
         this.StateHasChanged();
-
     }
 
     class CsvTreeItem
     {
         public bool IsLoading { get; set; } = false;
         public bool HasLoadError { get; set; } = false;
-        public CsvData? Source { get; init; }
+        public CsvInfo? Source { get; init; }
         public required string DisplayName { get; init; }
         public HashSet<CsvTreeItem>? Items { get; set; } = null;
         public bool HasChildren => Items != null;

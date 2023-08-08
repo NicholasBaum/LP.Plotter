@@ -2,13 +2,12 @@
 
 namespace LP.Plotter.Data;
 
-public class CsvData
+public class VChannelSet
 {
-    public string Name => FileName;
-    public required string FileName { get; init; }
-    public required string Path { get; init; }
-    public required string Url { get; init; }
-    public List<ChannelData>? Channels { get; set; }
+    public string? Name => Info?.Name;
+    public CsvInfo? Info { get; init; }
+    public List<ChannelData> Channels = new();
+    public ChannelData SpeedChannel => Channels.First(x => x.Name.Contains("Speed"));
 
     public static List<ChannelData> ParseCSV(string csvData)
     {
@@ -24,7 +23,7 @@ public class CsvData
         for (var i = 1; i < lines.Count(); i++)
         {
             var values = lines[i].Split(',');
-            var splits = values[0].Split(":").Select(int.Parse).ToArray(); // e.g. 112:52
+            var splits = values[0].Split(":").Select(float.Parse).ToArray(); // e.g. 112:52
             var time = splits[0] + splits[1] / 100;
             data.First().Points.Add(new DataPoint(time, time));
 

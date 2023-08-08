@@ -1,12 +1,15 @@
 ﻿@using LP.Plotter.Data;
 @using LP.Plotter.Services;
 @using System.Collections.Specialized;
+
+@namespace LP.Plotter.Components
+
 @implements IDisposable;
 @inject AppService appService;
 
 <div>
     <ul>
-        @foreach (var c in appService.CurrentPlot.Channels)
+        @foreach (var c in appService.CurrentPlot.Sets)
         {
             <li>@c.Name</li>
         }
@@ -14,7 +17,6 @@
 </div>
 
 @code {
-    List<CsvData> Channels = new();
 
     protected override void OnInitialized()
     {

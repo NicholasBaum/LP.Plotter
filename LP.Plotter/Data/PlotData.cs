@@ -4,11 +4,11 @@ public class PlotData
 {
     public event EventHandler<EventArgs>? Changed;
 
-    public List<ChannelData> Channels { get; } = new();
+    public List<VChannelSet> Sets { get; } = new();
 
-    public void Add(CsvData csvData)
+    public void Add(VChannelSet data)
     {
-        Channels.Add(csvData.Channels.First(x => x.Name.Contains("CarSpeed")));
+        Sets.Add(data);
         Changed?.Invoke(this, new());
     }
 }

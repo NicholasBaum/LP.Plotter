@@ -4,6 +4,8 @@
 @using OxyPlot.Series;
 @using OxyPlot.SkiaSharp.Blazor;
 
+@namespace LP.Plotter.Components
+
 @inject AppService appService;
 
 <MudStack Spacing="0" Row="true" Justify="@Justify.FlexEnd">
@@ -16,7 +18,18 @@
 
     protected override void OnInitialized()
     {
+        appService.CurrentPlot.Changed += Redraw;
         this.model = new PlotModel { Title = "Example 1" };
         this.model.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+    }
+
+    private void Redraw(object? sender, EventArgs e)
+    {
+        Console.WriteLine("Rredraw");
+
+        model.Series.Clear();
+        foreach (var s in this.appService.CurrentPlot.Sets)
+            model.Series.Add(s.SpeedChannel);
+        StateHasChanged();
     }
 }

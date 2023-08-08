@@ -12,28 +12,26 @@ public class DataService
         this.httpClient = httpClient;
     }
 
-    public async Task<CsvData> LoadChannels(CsvData csvData)
-    {     
-        var response = await httpClient.GetAsync(csvData.Url);
+    public async Task<VChannelSet> LoadChannels(CsvInfo info)
+    {
+        var response = await httpClient.GetAsync(info.Url);
         response.EnsureSuccessStatusCode();
         var csv = await response.Content.ReadAsStringAsync();
-        var channels = CsvData.ParseCSV(csv);
-        return new CsvData()
+        var channels = VChannelSet.ParseCSV(csv);
+        return new VChannelSet()
         {
-            FileName = csvData.FileName,
-            Path = csvData.Path,
-            Url = csvData.Url,
+            Info = info,
             Channels = channels,
         };
     }
 
-    public async Task<List<CsvData>> GetFileInfos()
+    public async Task<List<CsvInfo>> GetFileInfos()
     {
         var response = await httpClient.GetAsync("csvdata/files_index.txt");
         response.EnsureSuccessStatusCode();
         var text = await response.Content.ReadAsStringAsync();
         return text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-        .Select(x => new CsvData()
+        .Select(x => new CsvInfo()
         {
             FileName = Path.GetFileName(x.Replace("\\", "/")),
             Path = x,
@@ -42,7 +40,7 @@ public class DataService
         }).ToList();
     }
 
-    private async Task<List<CsvData>> GetFileInfosFromGithub()
+    private async Task<List<CsvInfo>> GetFileInfosFromGithub()
     {
         string url = "https://api.github.com/repos/NicholasBaum/TyrePlot/git/trees/gh-pages?recursive=1";
         HttpResponseMessage response = await httpClient.GetAsync(url);
@@ -54,7 +52,7 @@ public class DataService
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var files = data["tree"].AsArray()
             .Where(d => d["path"].ToString().EndsWith(".csv"))
-            .Select(x => new CsvData()
+            .Select(x => new CsvInfo()
             {
                 FileName = Path.GetFileName(x["path"].ToString()),
                 Path = x["path"].ToString(),
