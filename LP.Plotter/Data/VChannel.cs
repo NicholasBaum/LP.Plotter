@@ -3,16 +3,16 @@ using OxyPlot.Series;
 
 namespace LP.Plotter.Data;
 
-public class ChannelData : LineSeries
+public class VChannel : LineSeries
 {
     public string Name { get; set; }
 
-    public ChannelData(string name)
+    public VChannel(string name)
     {
         Name = name;
     }
 
-    public ChannelData(string name, IEnumerable<DataPoint> points)
+    public VChannel(string name, IEnumerable<DataPoint> points)
     {
         Name = name;
         this.Points.AddRange(points);

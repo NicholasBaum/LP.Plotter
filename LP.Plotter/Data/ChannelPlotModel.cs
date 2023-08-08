@@ -1,6 +1,6 @@
 ﻿namespace LP.Plotter.Data;
 
-public class PlotData
+public class ChannelPlotModel
 {
     public event EventHandler<EventArgs>? Changed;
 

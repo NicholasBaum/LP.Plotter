@@ -4,5 +4,5 @@ namespace LP.Plotter.Services;
 
 public class AppService
 {
-    public PlotData CurrentPlot { get; } = new();
+    public ChannelPlotModel CurrentPlot { get; } = new();
 }

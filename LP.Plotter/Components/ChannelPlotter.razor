@@ -1,0 +1,54 @@
+﻿@using LP.Plotter.Data;
+@using LP.Plotter.Services;
+@using MudBlazor;
+@using OxyPlot;
+@using OxyPlot.Series;
+@using OxyPlot.SkiaSharp.Blazor;
+
+@namespace LP.Plotter.Components
+
+@implements IDisposable;
+
+<PlotView Model=plotModel @ref="plotView" style="height: 500px; width: 500px; border: solid green 2px" />
+
+@code {
+#pragma warning disable CS8618
+    [Parameter, EditorRequired]
+    public ChannelPlotModel PlotData { get; set; }
+    private PlotView plotView;
+#pragma warning restore CS8618
+
+    private PlotModel plotModel = new PlotModel();
+    private ChannelPlotModel? lastDataModel;
+
+    private void Redraw(object? sender, EventArgs e)
+    {
+        plotModel.Series.Clear();
+        foreach (var s in PlotData.Sets)
+            plotModel.Series.Add(s.SpeedChannel);
+        plotView.InvalidatePlot(true);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (lastDataModel != PlotData)
+        {
+            if (lastDataModel is not null)
+            {
+                lastDataModel.Changed -= Redraw;
+                lastDataModel = null;
+            }
+            if (PlotData is not null)
+            {
+                PlotData.Changed += Redraw;
+                lastDataModel = PlotData;
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        if (PlotData is not null)
+            PlotData.Changed -= Redraw;
+    }
+}

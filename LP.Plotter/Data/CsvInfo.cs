@@ -6,5 +6,5 @@ public class CsvInfo
     public required string FileName { get; init; }
     public required string Path { get; init; }
     public required string Url { get; init; }
-    public List<ChannelData>? Channels { get; set; }   
+    public List<VChannel>? Channels { get; set; }   
 }

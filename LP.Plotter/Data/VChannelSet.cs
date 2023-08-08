@@ -6,18 +6,18 @@ public class VChannelSet
 {
     public string? Name => Info?.Name;
     public CsvInfo? Info { get; init; }
-    public List<ChannelData> Channels = new();
-    public ChannelData SpeedChannel => Channels.First(x => x.Name.Contains("Speed"));
+    public List<VChannel> Channels = new();
+    public VChannel SpeedChannel => Channels.First(x => x.Name.Contains("Speed"));
 
-    public static List<ChannelData> ParseCSV(string csvData)
+    public static List<VChannel> ParseCSV(string csvData)
     {
         var lines = csvData.Split('\n').Where(x => !string.IsNullOrEmpty(x)).ToArray();
         var headers = lines[0].Split(',');
-        var data = new List<ChannelData>();
+        var data = new List<VChannel>();
 
         for (var j = 0; j < headers.Count() - 1; j++)
         {
-            data.Add(new ChannelData(headers[j]));
+            data.Add(new VChannel(headers[j]));
         }
 
         for (var i = 1; i < lines.Count(); i++)

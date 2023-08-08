@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
+using LP.Plotter.Data;
 
-namespace LP.Plotter.Data;
+namespace LP.Plotter.Services;
 
 public class DataService
 {

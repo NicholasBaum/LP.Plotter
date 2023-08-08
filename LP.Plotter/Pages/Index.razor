@@ -1,3 +1,8 @@
 ﻿@page "/"
+@using LP.Plotter.Services;
+@inject AppService appService;
 
-<DataPlotter></DataPlotter>
+<MudStack Spacing="0" Row="true" Justify="@Justify.FlexStart">
+    <ChannelPlotter PlotData="@(appService.CurrentPlot)"></ChannelPlotter>
+    <ChannelList></ChannelList>
+</MudStack>
