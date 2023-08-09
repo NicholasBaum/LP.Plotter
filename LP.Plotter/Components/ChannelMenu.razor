@@ -2,14 +2,11 @@
 @using LP.Plotter.Services;
 @using System.Collections.Specialized;
 
-@namespace LP.Plotter.Components
-
 @implements IDisposable;
-@inject AppService appService;
 
 <div style="@Style">
     <ul>
-        @foreach (var c in appService.CurrentPlot.Sets)
+        @foreach (var c in PlotData.Sets)
         {
             <li>@c.Name</li>
         }
@@ -17,23 +14,45 @@
 </div>
 
 @code {
-#pragma warning disable CS8618
+    #pragma warning disable CS8618
     [Parameter]
     public string Style { get; set; }
+    [Parameter, EditorRequired]
+    public ChannelPlotModel PlotData { get; set; }
 #pragma warning restore CS8618
 
-    protected override void OnInitialized()
-    {
-        appService.CurrentPlot.Changed += DataChanged;
-    }
+    private ChannelPlotModel? lastDataModel;
 
-    public void Dispose()
+    private void Redraw(object? sender, EventArgs e)
     {
-        appService.CurrentPlot.Changed -= DataChanged;
-    }
+        StateHasChanged();
+    }  
 
     private void DataChanged(object? sender, EventArgs e)
     {
         StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (lastDataModel != PlotData)
+        {
+            if (lastDataModel is not null)
+            {
+                lastDataModel.Changed -= Redraw;
+                lastDataModel = null;
+            }
+            if (PlotData is not null)
+            {
+                PlotData.Changed += Redraw;
+                lastDataModel = PlotData;
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        if (PlotData is not null)
+            PlotData.Changed -= Redraw;
     }
 }
