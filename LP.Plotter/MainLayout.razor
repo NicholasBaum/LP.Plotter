@@ -5,7 +5,7 @@
 <MudThemeProvider Theme="MyCustomTheme" IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<MudLayout Style="height: 95vh;">
+<MudLayout>
     <MudAppBar Elevation="0" Dense="true">
         <MudIconButton Icon="@Icons.Custom.Uncategorized.FolderOpen" Color="Color.Inherit" Edge="Edge.Start"
                        OnClick="@ToggleDrawer" />
@@ -26,7 +26,7 @@
             <DataBrowser />
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent Style="height: 100%;">
+    <MudMainContent Style="height:100vh">
         @Body
     </MudMainContent>
 </MudLayout>

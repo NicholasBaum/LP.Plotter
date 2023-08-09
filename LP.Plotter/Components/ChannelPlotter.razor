@@ -9,10 +9,12 @@
 
 @implements IDisposable;
 
-<PlotView Model=plotModel @ref="plotView" style="height: 100%;" />
+<PlotView Model=plotModel @ref="plotView" style="@Style" />
 
 @code {
 #pragma warning disable CS8618
+    [Parameter]
+    public string Style { get; set; }
     [Parameter, EditorRequired]
     public ChannelPlotModel PlotData { get; set; }
     private PlotView plotView;
