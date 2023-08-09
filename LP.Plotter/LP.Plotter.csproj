@@ -13,4 +13,14 @@
     <PackageReference Include="OxyPlot.SkiaSharp.Blazor" Version="1.0.0-beta.4" />
   </ItemGroup>
 
+  <!--This one requires an Include/Exclude combo where Include can't be empty, but as wwwroot is already included by default, this gets messy-->
+  <!--<ItemGroup>
+    <Watch Include="" Exclude="wwwroot\**\*.csv" />
+  </ItemGroup>-->
+
+  <!--This one can be used for files which are already included-->
+  <ItemGroup>
+    <Content Update="wwwroot\**\*.csv" Watch="false" />
+  </ItemGroup>
+  
 </Project>
