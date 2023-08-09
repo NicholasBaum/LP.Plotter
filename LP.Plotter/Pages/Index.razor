@@ -2,7 +2,7 @@
 @using LP.Plotter.Services;
 @inject AppService appService;
 
-<MudStack Spacing="0" Row="true" Justify="@Justify.FlexStart">
+<MudStack Spacing="0" Row="true" Justify="@Justify.FlexStart" style="height: 100%;">
     <ChannelPlotter PlotData="@(appService.CurrentPlot)"></ChannelPlotter>
     <ChannelList></ChannelList>
 </MudStack>
