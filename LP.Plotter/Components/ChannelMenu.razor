@@ -5,16 +5,37 @@
 @implements IDisposable;
 
 <div style="@Style">
-    <ul>
-        @foreach (var c in PlotData.Sets)
+    <MudPaper Width="300px" Style="padding: 10px">
+        @foreach (var s in PlotData.Sets)
         {
-            <li>@c.Name</li>
+            <div>
+                <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                    <MudText Typo="Typo.h6">@s.Name</MudText>
+                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   OnClick="@((e)=>AddChannelClick(e, s))" />
+                </div>
+                <ul>
+                    @foreach (var c in s.Channels)
+                    {
+                        <li style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                            <MudText Typo="Typo.body2">@c.Name</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                           Size="Size.Small"
+                                           Color="Color.Primary"
+                                           OnClick="@((e)=>EditChannelClick(e, c))" />
+                        </li>
+                    }
+                </ul>
+            </div>
         }
-    </ul>
+    </MudPaper>
 </div>
 
 @code {
-    #pragma warning disable CS8618
+
+#pragma warning disable CS8618
     [Parameter]
     public string Style { get; set; }
     [Parameter, EditorRequired]
@@ -23,12 +44,10 @@
 
     private ChannelPlotModel? lastDataModel;
 
-    private void Redraw(object? sender, EventArgs e)
-    {
-        StateHasChanged();
-    }  
+    private void AddChannelClick(MouseEventArgs e, VChannelSetVM set) { }
+    private void EditChannelClick(MouseEventArgs e, VChannel channel) { }
 
-    private void DataChanged(object? sender, EventArgs e)
+    private void Redraw(object? sender, EventArgs e)
     {
         StateHasChanged();
     }

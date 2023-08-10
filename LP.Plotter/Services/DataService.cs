@@ -17,13 +17,8 @@ public class DataService
     {
         var response = await httpClient.GetAsync(info.Url);
         response.EnsureSuccessStatusCode();
-        var csv = await response.Content.ReadAsStringAsync();
-        var channels = VChannelSet.ParseCSV(csv);
-        return new VChannelSet()
-        {
-            Info = info,
-            Channels = channels,
-        };
+        var csvDataString = await response.Content.ReadAsStringAsync();
+        return VChannelSet.Create(info, csvDataString);
     }
 
     public async Task<List<CsvInfo>> GetFileInfos()

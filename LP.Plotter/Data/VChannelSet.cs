@@ -1,11 +1,12 @@
 ﻿using OxyPlot;
+using System.Text.RegularExpressions;
 
 namespace LP.Plotter.Data;
 
 public class VChannelSet
 {
-    public string? Name => Info?.Name;
-    public CsvInfo? Info { get; init; }
+    public required string Name { get; init; }
+    public required CsvInfo Info { get; init; }
     public List<VChannel> Channels = new();
     public VChannel SpeedChannel => Channels.First(x => x.Name.Contains("Speed"));
 
@@ -33,5 +34,35 @@ public class VChannelSet
             }
         }
         return data;
+    }
+
+    public static VChannelSet Create(CsvInfo info, string csvDataString)
+    {
+        var channels = ParseCSV(csvDataString);
+        Console.WriteLine(info.Path);
+        return new VChannelSet()
+        {
+            Name = GetSimpleName(info.Path),
+            Info = info,
+            Channels = channels,
+        };
+    }
+
+    private static string GetSimpleName(string input)
+    {
+        //\events\imola_2023\T2303_IMO_#29\D1PMRun1\Tr491_Abs00006148_CAR 29_Lap0_cableData.csv to  "29_D1PMRun1_06148        
+        Match match = Regex.Match(input, @"#(\d+)\\(.*)\\.*Abs\d{3}(\d{5})");
+        if (!match.Success || match.Groups.Count < 4)
+        {
+            return "Invalid input format";
+        }
+
+        string carNumber = match.Groups[1].Value;
+        string runNumber = match.Groups[2].Value;
+        string lapNumber = match.Groups[3].Value;
+
+        string output = $"{carNumber}_{runNumber}_{lapNumber}";
+
+        return output;
     }
 }
