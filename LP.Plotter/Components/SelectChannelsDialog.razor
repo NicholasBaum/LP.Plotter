@@ -1,0 +1,15 @@
+﻿@using LP.Plotter.Data;
+
+<MudPaper Width="400px">
+    <MudContainer Style="padding:20px">
+        @foreach (var c in DataContext.SourceChannels)
+        {
+            <MudCheckBox Dense=true @bind-Checked="@c.Selected" Label="@c.Name"></MudCheckBox>
+        }
+    </MudContainer>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public VChannelSetVM DataContext { get; set; }
+}

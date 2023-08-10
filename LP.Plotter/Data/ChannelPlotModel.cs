@@ -11,4 +11,6 @@ public class ChannelPlotModel
         Sets.Add(new(data));
         Changed?.Invoke(this, new());
     }
+
+    public void Refresh() => Changed?.Invoke(this, new());
 }

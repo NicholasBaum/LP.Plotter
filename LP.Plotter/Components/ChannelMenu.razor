@@ -1,8 +1,11 @@
 ﻿@using LP.Plotter.Data;
 @using LP.Plotter.Services;
 @using System.Collections.Specialized;
+@using LP.Plotter.Components;
 
 @implements IDisposable;
+
+@inject IDialogService dialogService;
 
 <div style="@Style">
     <MudPaper Width="300px" Style="padding: 10px">
@@ -14,7 +17,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
                                    Size="Size.Small"
                                    Color="Color.Primary"
-                                   OnClick="@((e)=>AddChannelClick(e, s))" />
+                                   OnClick="@(_=>SelectChannelsClick(s))" />
                 </div>
                 <ul>
                     @foreach (var c in s.Channels)
@@ -44,8 +47,15 @@
 
     private ChannelPlotModel? lastDataModel;
 
-    private void AddChannelClick(MouseEventArgs e, VChannelSetVM set) { }
-    private void EditChannelClick(MouseEventArgs e, VChannel channel) { }
+    private async Task SelectChannelsClick(VChannelSetVM set)
+    {
+        var parameters = new DialogParameters<SelectChannelsDialog> { { x => x.DataContext, set } };
+        var dialog = await dialogService.ShowAsync<SelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
+        var result = await dialog.Result;
+        PlotData.Refresh();
+    }
+
+    private void EditChannelClick(MouseEventArgs e, VChannelVM channel) { }
 
     private void Redraw(object? sender, EventArgs e)
     {
