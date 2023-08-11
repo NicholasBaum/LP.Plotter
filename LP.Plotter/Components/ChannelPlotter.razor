@@ -23,6 +23,22 @@
 
     private void Redraw(object? sender, EventArgs e)
     {
+        plotModel.PlotAreaBorderColor = OxyColors.White;
+        plotModel.Background = OxyColors.Black;
+        //plotModel.PlotAreaBackground = OxyColors.Black;
+        //plotModel.Axes.Clear();
+        foreach (var ax in PlotData.Axes)
+        {
+            if (!plotModel.Axes.Contains(ax))
+            {
+                plotModel.Axes.Add(ax);
+            }
+            else
+            {
+                ax.Minimum = ax.ActualMinimum;
+                ax.Maximum = ax.ActualMaximum;
+            }
+        }
         plotModel.Series.Clear();
         foreach (var c in PlotData.Sets.SelectMany(x => x.Channels))
             plotModel.Series.Add(c);

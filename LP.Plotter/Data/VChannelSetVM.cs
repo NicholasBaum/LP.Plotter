@@ -10,7 +10,13 @@ public class VChannelSetVM
     public VChannelSetVM(VChannelSet source)
     {
         this.source = source;
+
         source.SpeedChannel.Selected = true;
-        source.Channels.Where(x => x.Name.Contains("TTyre")).Select(x => x.Selected = true).ToList();
+        source.SpeedChannel.YAxisKey = "speed";
+        foreach (var x in source.Channels.Where(x => x.Name.Contains("TTyre")))
+        {
+            x.Selected = true;
+            x.YAxisKey = "temp";
+        }
     }
 }

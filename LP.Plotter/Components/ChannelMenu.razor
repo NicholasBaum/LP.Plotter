@@ -27,7 +27,7 @@
                             <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                            Size="Size.Small"
                                            Color="Color.Primary"
-                                           OnClick="@((e)=>EditChannelClick(e, c))" />
+                                           OnClick="@(_=>EditChannelClick(c))" />
                         </li>
                     }
                 </ul>
@@ -55,7 +55,20 @@
         PlotData.Refresh();
     }
 
-    private void EditChannelClick(MouseEventArgs e, VChannelVM channel) { }
+    private async Task EditChannelClick(VChannelVM channel)
+    {
+
+        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, channel } };
+
+        var dialog = await dialogService.ShowAsync<EditChannelDialog>($"Edit {channel.Name}", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            //In a real world scenario we would reload the data from the source here since we "removed" it in the dialog already.
+            Guid.TryParse(result.Data.ToString(), out Guid deletedServer);
+        }
+    }
 
     private void Redraw(object? sender, EventArgs e)
     {
