@@ -1,32 +1,55 @@
 ﻿@using LP.Plotter.Data;
-<MudDialog>
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
-            Delete server?
-        </MudText>
-    </TitleContent>
+@using OxyPlot.Axes;
+<MudDialog Style="width: 400px">
     <DialogContent>
-        <MudTextField Value="@Channel.Name" Label="Server ID" ReadOnly="true" />
+        <MudText>@Channel.Name</MudText>
+        <MudTextField Value="@config.Key" Label="Axis Key" ReadOnly="true" />
+        <MudNumericField HideSpinButtons="true" @bind-Value="config.Minimum" Label="Min"></MudNumericField>
+        <MudNumericField HideSpinButtons="true" @bind-Value="config.Maximum" Label="Max"></MudNumericField>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" OnClick="DeleteServer">Delete Server</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirm">Confirm</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public VChannelVM Channel { get; set; }
+    [Parameter, EditorRequired]
+    public VChannelVM Channel { get; set; }
+
+    private AxisConfig config;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        config = new AxisConfig()
+            {
+                Key = Channel.YAxis.Key,
+                Minimum = Channel.YAxis.Minimum,
+                Maximum = Channel.YAxis.Maximum,
+            };
+    }
 
     private void Cancel()
     {
         MudDialog.Cancel();
     }
 
-    private void DeleteServer()
+    private void Confirm()
     {
+        Channel.YAxis.Key = config.Key;
+        Channel.YAxis.Minimum = config.Minimum;
+        Channel.YAxis.Maximum = config.Maximum;
         MudDialog.Close(DialogResult.Ok(Channel));
+    }
+
+    class AxisConfig
+    {
+        public string Key { get; set; }
+        public double Minimum { get; set; }
+        public double Maximum { get; set; }
     }
 }

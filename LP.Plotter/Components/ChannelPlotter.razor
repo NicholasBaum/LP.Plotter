@@ -7,64 +7,46 @@
 
 @implements IDisposable;
 
-<PlotView Model=plotModel @ref="plotView" style="@Style" />
+<PlotView Model=oxyModel @ref="plotView" style="@Style" />
 
 @code {
-#pragma warning disable CS8618
+    #pragma warning disable CS8618
     [Parameter]
     public string Style { get; set; }
     [Parameter, EditorRequired]
-    public ChannelPlotModel PlotData { get; set; }
+    public ChannelPlotModel Model { get; set; }
     private PlotView plotView;
 #pragma warning restore CS8618
 
-    private PlotModel plotModel = new PlotModel();
+    private PlotModel oxyModel = new PlotModel();
     private ChannelPlotModel? lastDataModel;
 
     private void Redraw(object? sender, EventArgs e)
     {
-        plotModel.PlotAreaBorderColor = OxyColors.White;
-        plotModel.Background = OxyColors.Black;
-        //plotModel.PlotAreaBackground = OxyColors.Black;
-        //plotModel.Axes.Clear();
-        foreach (var ax in PlotData.Axes)
-        {
-            if (!plotModel.Axes.Contains(ax))
-            {
-                plotModel.Axes.Add(ax);
-            }
-            else
-            {
-                ax.Minimum = ax.ActualMinimum;
-                ax.Maximum = ax.ActualMaximum;
-            }
-        }
-        plotModel.Series.Clear();
-        foreach (var c in PlotData.Sets.SelectMany(x => x.Channels))
-            plotModel.Series.Add(c);
+        Model.Draw(oxyModel);
         plotView.InvalidatePlot(true);
     }
 
     protected override void OnParametersSet()
     {
-        if (lastDataModel != PlotData)
+        if (lastDataModel != Model)
         {
             if (lastDataModel is not null)
             {
                 lastDataModel.Changed -= Redraw;
                 lastDataModel = null;
             }
-            if (PlotData is not null)
+            if (Model is not null)
             {
-                PlotData.Changed += Redraw;
-                lastDataModel = PlotData;
+                Model.Changed += Redraw;
+                lastDataModel = Model;
             }
         }
     }
 
     public void Dispose()
     {
-        if (PlotData is not null)
-            PlotData.Changed -= Redraw;
+        if (Model is not null)
+            Model.Changed -= Redraw;
     }
 }

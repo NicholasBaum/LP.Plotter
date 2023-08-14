@@ -5,6 +5,8 @@ namespace LP.Plotter.Data;
 
 public class VChannelVM : LineSeries
 {
+    private static int lastId = 0;
+    public int Id { get; } = lastId++;
     public string Name { get; set; }
     public bool Selected { get; set; }
 

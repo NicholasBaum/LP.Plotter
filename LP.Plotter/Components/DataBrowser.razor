@@ -56,15 +56,15 @@
                 {
                     DisplayName = cars.Key,
                     Items = cars.GroupBy(x => x.Path.Split("\\")[4])
-                                .Select(runs => new CsvTreeItem()
-                                {
-                                    DisplayName = runs.Key,
-                                    Items = runs.Select(lap => new CsvTreeItem()
+                                    .Select(runs => new CsvTreeItem()
                                     {
-                                        Source = lap,
-                                        DisplayName = lap.FileName,
+                                        DisplayName = runs.Key,
+                                        Items = runs.Select(lap => new CsvTreeItem()
+                                        {
+                                            Source = lap,
+                                            DisplayName = lap.FileName,
+                                        }).ToHashSet()
                                     }).ToHashSet()
-                                }).ToHashSet()
                 }).ToHashSet();
         }
         catch (Exception ex)
@@ -86,7 +86,6 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
             item.IsLoading = false;
             item.HasLoadError = true;
         }

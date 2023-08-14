@@ -39,7 +39,6 @@ public class VChannelSet
     public static VChannelSet Create(CsvInfo info, string csvDataString)
     {
         var channels = ParseCSV(csvDataString);
-        Console.WriteLine(info.Path);
         return new VChannelSet()
         {
             Name = GetSimpleName(info.Path),

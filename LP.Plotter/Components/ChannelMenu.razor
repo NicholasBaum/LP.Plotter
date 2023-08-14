@@ -9,7 +9,7 @@
 
 <div style="@Style">
     <MudPaper Width="300px" Style="padding: 10px">
-        @foreach (var s in PlotData.Sets)
+        @foreach (var s in Model.Sets)
         {
             <div>
                 <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
@@ -42,32 +42,27 @@
     [Parameter]
     public string Style { get; set; }
     [Parameter, EditorRequired]
-    public ChannelPlotModel PlotData { get; set; }
+    public ChannelPlotModel Model { get; set; }
 #pragma warning restore CS8618
 
-    private ChannelPlotModel? lastDataModel;
+    private ChannelPlotModel? lastModel;
 
     private async Task SelectChannelsClick(VChannelSetVM set)
     {
         var parameters = new DialogParameters<SelectChannelsDialog> { { x => x.DataContext, set } };
         var dialog = await dialogService.ShowAsync<SelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
         var result = await dialog.Result;
-        PlotData.Refresh();
+        Model.Refresh();
     }
 
     private async Task EditChannelClick(VChannelVM channel)
     {
-
-        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, channel } };
-
+        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, channel } }; // dictionary intiliazer, it calls a fitting Add method overload
         var dialog = await dialogService.ShowAsync<EditChannelDialog>($"Edit {channel.Name}", parameters);
         var result = await dialog.Result;
 
         if (!result.Canceled)
-        {
-            //In a real world scenario we would reload the data from the source here since we "removed" it in the dialog already.
-            Guid.TryParse(result.Data.ToString(), out Guid deletedServer);
-        }
+            Model.Refresh();
     }
 
     private void Redraw(object? sender, EventArgs e)
@@ -77,24 +72,24 @@
 
     protected override void OnParametersSet()
     {
-        if (lastDataModel != PlotData)
+        if (lastModel != Model)
         {
-            if (lastDataModel is not null)
+            if (lastModel is not null)
             {
-                lastDataModel.Changed -= Redraw;
-                lastDataModel = null;
+                lastModel.Changed -= Redraw;
+                lastModel = null;
             }
-            if (PlotData is not null)
+            if (Model is not null)
             {
-                PlotData.Changed += Redraw;
-                lastDataModel = PlotData;
+                Model.Changed += Redraw;
+                lastModel = Model;
             }
         }
     }
 
     public void Dispose()
     {
-        if (PlotData is not null)
-            PlotData.Changed -= Redraw;
+        if (Model is not null)
+            Model.Changed -= Redraw;
     }
 }

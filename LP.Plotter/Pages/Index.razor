@@ -3,6 +3,6 @@
 @inject AppService appService;
 
 <div style="display:flex;flex-direction:row;height:100%;">
-    <ChannelPlotter PlotData="@(appService.CurrentPlot)" Style="display:flex; flex:1"></ChannelPlotter>
-    <ChannelMenu PlotData="@(appService.CurrentPlot)" Style="display:flex"></ChannelMenu>
+    <ChannelPlotter Model="@(appService.CurrentPlot)" Style="display:flex; flex:1"></ChannelPlotter>
+    <ChannelMenu Model="@(appService.CurrentPlot)" Style="display:flex"></ChannelMenu>
 </div>
