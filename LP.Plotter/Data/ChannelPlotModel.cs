@@ -21,14 +21,7 @@ public class ChannelPlotModel
             x.Maximum = double.NaN;
             x.Reset();
         });
-        Refresh();
-        //foreach (var c in this.Sets.SelectMany(x => x.Channels))
-        //{
-        //    var ax = Axes.FirstOrDefault(x => x.Key == c.YAxisKey);
-        //    if (ax == null) continue;
-        //    ax.Minimum = Math.Min(ax.Minimum, c.MinY);
-        //    ax.Maximum = Math.Max(ax.Maximum, c.MaxY);
-        //}
+        Refresh();      
     }
 
     public void Draw(PlotModel oxyModel)
