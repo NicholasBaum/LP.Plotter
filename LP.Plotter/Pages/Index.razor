@@ -10,7 +10,7 @@
                 <MudIconButton Icon="@Icons.Material.Outlined.ZoomIn" />
                 <MudIconButton Icon="@Icons.Material.Outlined.ZoomOut" Color="Color.Inherit" />
                 <MudSpacer />
-                <MudIconButton Icon="@Icons.Material.Filled.ZoomOutMap" Color="Color.Inherit" />
+                <MudIconButton Icon="@Icons.Material.Filled.ZoomOutMap" OnClick="@appService.CurrentPlot.ZoomOutMap" />
             </MudToolBar>
         </MudPaper>
         <ChannelMenu Model="@(appService.CurrentPlot)"
