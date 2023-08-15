@@ -7,34 +7,34 @@
 
 @inject IDialogService dialogService;
 
-<div style="@Style">
-    <MudPaper Width="300px" Style="padding: 10px">
-        @foreach (var s in Model.Sets)
-        {
-            <div>
-                <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
-                    <MudText Typo="Typo.h6">@s.Name</MudText>
-                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
-                                   Size="Size.Small"
-                                   Color="Color.Primary"
-                                   OnClick="@(_=>SelectChannelsClick(s))" />
-                </div>
-                <ul>
-                    @foreach (var c in s.Channels)
-                    {
-                        <li style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
-                            <MudText Typo="Typo.body2">@c.Name</MudText>
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                           Size="Size.Small"
-                                           Color="Color.Primary"
-                                           OnClick="@(_=>EditChannelClick(c))" />
-                        </li>
-                    }
-                </ul>
+
+<MudPaper Style="@Style">
+    @foreach (var s in Model.Sets)
+    {
+        <div>
+            <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                <MudText Typo="Typo.h6">@s.Name</MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                               Size="Size.Small"
+                               Color="Color.Primary"
+                               OnClick="@(_=>SelectChannelsClick(s))" />
             </div>
-        }
-    </MudPaper>
-</div>
+            <ul>
+                @foreach (var c in s.Channels)
+                {
+                    <li style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                        <MudText Typo="Typo.body2">@c.Name</MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                       Size="Size.Small"
+                                       Color="Color.Primary"
+                                       OnClick="@(_=>EditChannelClick(c))" />
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</MudPaper>
+
 
 @code {
 
