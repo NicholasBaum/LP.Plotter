@@ -2,6 +2,7 @@
 @using LP.Plotter.Services;
 @using System.Collections.Specialized;
 @using LP.Plotter.Components;
+@using System.Globalization;
 
 @implements IDisposable;
 
@@ -23,6 +24,8 @@
                 @foreach (var c in s.Channels)
                 {
                     <li style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                        <a style="width: 12px; height: 12px; border:solid 3px @GetColor(c); background-color: @(c.IsVisible?GetColor(c):"#00000000")"
+                        @onclick="@(() => VisibilityChannelClick(c))"></a>
                         <MudText Typo="Typo.body2">@c.Name</MudText>
                         <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                        Size="Size.Small"
@@ -37,7 +40,7 @@
 
 
 @code {
-
+    public bool AlarmOn { get; set; }
 #pragma warning disable CS8618
     [Parameter]
     public string Style { get; set; }
@@ -52,6 +55,18 @@
         var parameters = new DialogParameters<SelectChannelsDialog> { { x => x.DataContext, set } };
         var dialog = await dialogService.ShowAsync<SelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
         var result = await dialog.Result;
+        Model.Refresh();
+    }
+
+    private string GetColor(VChannelVM channel)
+    {
+        var c = channel.ActualColor;
+        return string.Format(CultureInfo.InvariantCulture, "#{0:x2}{1:x2}{2:x2}", c.R, c.G, c.B);
+    }
+
+    private void VisibilityChannelClick(VChannelVM channel)
+    {
+        channel.IsVisible = !channel.IsVisible;
         Model.Refresh();
     }
 

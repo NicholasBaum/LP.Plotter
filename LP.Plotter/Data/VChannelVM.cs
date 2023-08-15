@@ -9,7 +9,7 @@ public class VChannelVM : LineSeries
     public int Id { get; } = lastId++;
     public string Name { get; set; }
     public bool Selected { get; set; }
-
+    
     public VChannelVM(string name)
     {
         Name = name;
