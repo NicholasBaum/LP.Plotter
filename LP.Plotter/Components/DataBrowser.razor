@@ -56,15 +56,15 @@
                 {
                     DisplayName = cars.Key,
                     Items = cars.GroupBy(x => x.Path.Split("\\")[4])
-                                    .Select(runs => new CsvTreeItem()
+                                .Select(runs => new CsvTreeItem()
+                                {
+                                    DisplayName = runs.Key,
+                                    Items = runs.Select(lap => new CsvTreeItem()
                                     {
-                                        DisplayName = runs.Key,
-                                        Items = runs.Select(lap => new CsvTreeItem()
-                                        {
-                                            Source = lap,
-                                            DisplayName = lap.FileName,
-                                        }).ToHashSet()
+                                        Source = lap,
+                                        DisplayName = lap.FileName,
                                     }).ToHashSet()
+                                }).ToHashSet()
                 }).ToHashSet();
         }
         catch (Exception ex)
@@ -72,6 +72,11 @@
             this.dataError = ex;
         }
         await base.OnInitializedAsync();
+
+        var testItem = items.First()?.Items?.First()?.Items?.First();
+        if (testItem is not null)
+            HandleClick(new MouseEventArgs(), testItem);
+
     }
 
     private async void HandleClick(MouseEventArgs e, CsvTreeItem item)
@@ -86,6 +91,7 @@
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex);
             item.IsLoading = false;
             item.HasLoadError = true;
         }

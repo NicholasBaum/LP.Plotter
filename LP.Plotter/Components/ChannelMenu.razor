@@ -8,39 +8,30 @@
 
 @inject IDialogService dialogService;
 
-
-<MudPaper Style="@Style">
-    @foreach (var s in Model.Sets)
-    {
-        <div>
-            <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
-                <MudText Typo="Typo.h6">@s.Name</MudText>
-                <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
-                               Size="Size.Small"
-                               Color="Color.Primary"
-                               OnClick="@(_=>SelectChannelsClick(s))" />
+<CascadingValue Value="@Model">
+    <MudPaper Style="@Style">
+        @foreach (var s in Model.Sets)
+        {
+            <div>
+                <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                    <MudText Typo="Typo.h6">@s.Name</MudText>
+                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   OnClick="@(_=>SelectChannelsClick(s))" />
+                </div>
+                <ul>
+                    @foreach (var c in s.Channels)
+                    {
+                        <ChannelMenuItem Channel="c"></ChannelMenuItem>
+                    }
+                </ul>
             </div>
-            <ul>
-                @foreach (var c in s.Channels)
-                {
-                    <li style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
-                        <a style="width: 12px; height: 12px; border:solid 3px @GetColor(c); background-color: @(c.IsVisible?GetColor(c):"#00000000")"
-                        @onclick="@(() => VisibilityChannelClick(c))"></a>
-                        <MudText Typo="Typo.body2">@c.Name</MudText>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                       Size="Size.Small"
-                                       Color="Color.Primary"
-                                       OnClick="@(_=>EditChannelClick(c))" />
-                    </li>
-                }
-            </ul>
-        </div>
-    }
-</MudPaper>
-
+        }
+    </MudPaper>
+</CascadingValue>
 
 @code {
-    public bool AlarmOn { get; set; }
 #pragma warning disable CS8618
     [Parameter]
     public string Style { get; set; }
@@ -56,28 +47,6 @@
         var dialog = await dialogService.ShowAsync<SelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
         var result = await dialog.Result;
         Model.Refresh();
-    }
-
-    private string GetColor(VChannelVM channel)
-    {
-        var c = channel.ActualColor;
-        return string.Format(CultureInfo.InvariantCulture, "#{0:x2}{1:x2}{2:x2}", c.R, c.G, c.B);
-    }
-
-    private void VisibilityChannelClick(VChannelVM channel)
-    {
-        channel.IsVisible = !channel.IsVisible;
-        Model.Refresh();
-    }
-
-    private async Task EditChannelClick(VChannelVM channel)
-    {
-        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, channel } }; // dictionary intiliazer, it calls a fitting Add method overload
-        var dialog = await dialogService.ShowAsync<EditChannelDialog>($"Edit {channel.Name}", parameters);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-            Model.Refresh();
     }
 
     private void Redraw(object? sender, EventArgs e)
