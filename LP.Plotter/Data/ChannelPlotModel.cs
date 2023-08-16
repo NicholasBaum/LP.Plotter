@@ -12,6 +12,8 @@ public class ChannelPlotModel
     private List<VChannelSetVM> sets { get; } = new();
     private IReadOnlyList<VChannelSetVM> _setsView;
     private List<Axis> Axes { get; } = new();
+    private Axis? XAxis => Axes.FirstOrDefault(x => x.Position == AxisPosition.Bottom);
+
 
     public ChannelPlotModel()
     {
@@ -28,6 +30,15 @@ public class ChannelPlotModel
             x.Reset();
         });
         Refresh();
+    }
+
+    public void ZoomOut()
+    {
+        if (XAxis is Axis ax)
+        {
+            ax.Zoom(ax.Scale / 2.0);
+            Refresh();
+        }
     }
 
     public void Draw(PlotModel oxyModel)
