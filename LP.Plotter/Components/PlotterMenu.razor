@@ -1,0 +1,19 @@
+﻿@using LP.Plotter.Data;
+<MudToolBar Dense=true>
+    <MudIconButton Icon="@Icons.Material.Outlined.ZoomOut" OnClick="@Model.ZoomOut" />
+    <MudIconButton Icon="@Icons.Material.Filled.ZoomOutMap" OnClick="@Model.ZoomOutMap" />
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.LineAxis" OnClick="@OpenAxisDialog" />
+</MudToolBar>
+
+@code {
+#pragma warning disable CS8618
+    [Parameter, EditorRequired]
+    public ChannelPlotModel Model { get; set; }
+#pragma warning restore CS8618
+
+    private async Task OpenAxisDialog()
+    {
+
+    }
+}
