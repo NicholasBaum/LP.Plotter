@@ -16,12 +16,6 @@
     public VChannelVM Channel { get; set; }
 #pragma warning restore CS8618
 
-    private string GetColor()
-    {
-        var c = Channel.ActualColor;
-        return string.Format(CultureInfo.InvariantCulture, "#{0:x2}{1:x2}{2:x2}", c.R, c.G, c.B);
-    }
-
     private void VisibilityToggled(bool toggled)
     {
         Channel.IsVisible = !Channel.IsVisible;
@@ -30,7 +24,7 @@
 
     private async Task EditChannelClick(VChannelVM channel)
     {
-        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, Channel } }; // dictionary intiliazer, it calls a fitting Add method overload
+        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, Channel } }; // dictionary intiliazer, that calls a fitting Add method overload
         var dialog = await dialogService.ShowAsync<EditChannelDialog>($"Edit {Channel.Name}", parameters);
         var result = await dialog.Result;
 
@@ -38,16 +32,17 @@
             Model.Refresh();
     }
 
-
-    private void ToggleColorPicker()
-    {
-        ShowColorPicker = !ShowColorPicker;
-    }
-    public bool ShowColorPicker = false;
     public MudColor CurrentColor
     {
-        get => Channel.Color == OxyColors.Automatic ? Channel.ActualColor.ToMudColor() : Channel.Color.ToMudColor();
-        set { Channel.Color = value.ToOxyColor(); Model.Refresh(); }
+        get
+        {
+            return Channel.Color.ToMudColor();
+        }
+        set
+        {
+            Channel.Color = value.ToOxyColor();
+            Model.Refresh();
+        }
     }
 }
 

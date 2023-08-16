@@ -1,17 +1,23 @@
 ﻿using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Series;
 
 namespace LP.Plotter.Data;
 
 public class ChannelPlotModel
 {
     public event EventHandler<EventArgs>? Changed;
+    public IReadOnlyList<VChannelSetVM> Sets => _setsView;
 
-    public List<VChannelSetVM> Sets { get; } = new();
-    public List<Axis> Axes { get; } = new();
 
-    public ChannelPlotModel() => CreateDefaultAxes();
+    private List<VChannelSetVM> sets { get; } = new();
+    private IReadOnlyList<VChannelSetVM> _setsView;
+    private List<Axis> Axes { get; } = new();
+
+    public ChannelPlotModel()
+    {
+        _setsView = sets.AsReadOnlyList();
+        CreateDefaultAxes();
+    }
 
     public void ZoomOutMap()
     {
@@ -21,13 +27,18 @@ public class ChannelPlotModel
             x.Maximum = double.NaN;
             x.Reset();
         });
-        Refresh();      
+        Refresh();
     }
 
     public void Draw(PlotModel oxyModel)
     {
         oxyModel.PlotAreaBorderColor = OxyColors.White;
         oxyModel.Background = OxyColors.Black;
+        foreach (var c in this.sets.SelectMany(x => x.Channels))
+        {
+            if (c.YAxisKey == null)
+                c.YAxisKey = GetOrCreateDefaultAxis(c).Key;
+        }
         foreach (var ax in this.Axes)
         {
             if (oxyModel.Axes.Contains(ax))
@@ -43,21 +54,13 @@ public class ChannelPlotModel
                 oxyModel.Axes.Add(ax);
             }
         }
-        // remember autoassigned colors
-        foreach (var c in oxyModel.Series)
-            if (c is LineSeries ls && ls.Color == OxyColors.Automatic)
-                ls.Color = ls.ActualColor;
 
         oxyModel.Series.Clear();
-        foreach (var c in this.Sets.SelectMany(x => x.Channels))
-        {
-            if (c.YAxisKey == null)
-                c.YAxisKey = GetDefaultAxis(c).Key;
+        foreach (var c in this.sets.SelectMany(x => x.Channels))
             oxyModel.Series.Add(c);
-        }
     }
 
-    private Axis GetDefaultAxis(VChannelVM channel)
+    private Axis GetOrCreateDefaultAxis(VChannelVM channel)
     {
         return channel.Name switch
         {
@@ -87,7 +90,7 @@ public class ChannelPlotModel
         }
     }
 
-    public void CreateDefaultAxes()
+    private void CreateDefaultAxes()
     {
         Axes.Add(new LinearAxis
         {
@@ -126,7 +129,7 @@ public class ChannelPlotModel
 
     public void Add(VChannelSet data)
     {
-        Sets.Add(new(data));
+        sets.Add(new(data));
         Changed?.Invoke(this, new());
     }
 

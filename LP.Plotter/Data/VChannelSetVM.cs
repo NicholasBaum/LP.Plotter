@@ -1,4 +1,6 @@
-﻿namespace LP.Plotter.Data;
+﻿using static LP.Plotter.Utilities.ColorExtensions;
+
+namespace LP.Plotter.Data;
 
 public class VChannelSetVM
 {
@@ -18,5 +20,8 @@ public class VChannelSetVM
             x.Selected = true;
             x.YAxisKey = "temp";
         }
+
+        foreach (var x in source.Channels)
+            x.Color = GetNextColor();
     }
 }
