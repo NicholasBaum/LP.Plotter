@@ -1,5 +1,8 @@
 ﻿@using LP.Plotter.Data;
 @using System.Globalization;
+@using LP.Plotter.Utilities;
+@using MudBlazor.Utilities;
+@using OxyPlot;
 
 @inject IDialogService dialogService;
 
@@ -25,8 +28,6 @@
         Model.Refresh();
     }
 
-    private void PickColor() { }
-
     private async Task EditChannelClick(VChannelVM channel)
     {
         var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, Channel } }; // dictionary intiliazer, it calls a fitting Add method overload
@@ -36,10 +37,35 @@
         if (!result.Canceled)
             Model.Refresh();
     }
+
+
+    private void ToggleColorPicker()
+    {
+        ShowColorPicker = !ShowColorPicker;
+    }
+    public bool ShowColorPicker = false;
+    public MudColor CurrentColor
+    {
+        get => Channel.Color == OxyColors.Automatic ? Channel.ActualColor.ToMudColor() : Channel.Color.ToMudColor();
+        set { Channel.Color = value.ToOxyColor(); Model.Refresh(); }
+    }
 }
 
-<li style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
-    <a style="width: 10px; height: 10px; background-color: @GetColor()" @onclick="@PickColor"></a>
+<div style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
+    <MudMenu>
+        <ActivatorContent>
+            <a style="width: 10px; height: 10px; background-color:@CurrentColor; cursor: pointer;"></a>
+        </ActivatorContent>
+        <ChildContent>
+            <div class="d-flex flex-column">
+                <MudColorPicker PickerVariant="PickerVariant.Static"
+                                DisableAlpha="true"
+                                DisableModeSwitch="true"
+                                @bind-Value="@CurrentColor"></MudColorPicker>
+            </div>
+        </ChildContent>
+    </MudMenu>
+
     <MudToggleIconButton Toggled="@Channel.IsVisible"
                          ToggledChanged="VisibilityToggled"
                          Size="Size.Small"
@@ -51,4 +77,4 @@
                    Size="Size.Small"
                    Color="Color.Primary"
                    OnClick="@(_=>EditChannelClick(Channel))" />
-</li>
+</div>
