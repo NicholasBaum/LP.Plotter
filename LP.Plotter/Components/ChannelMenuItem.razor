@@ -51,28 +51,31 @@
     }
 }
 
-<div style="margin-left: 20px; display:flex; justify-content: space-between; align-items: center; user-select: none;">
-    <MudMenu>
-        <ActivatorContent>
-            <a style="width: 10px; height: 10px; background-color:@CurrentColor; cursor: pointer;"></a>
-        </ActivatorContent>
-        <ChildContent>
-            <div class="d-flex flex-column">
-                <MudColorPicker PickerVariant="PickerVariant.Static"
-                                DisableAlpha="true"
-                                DisableModeSwitch="true"
-                                @bind-Value="@CurrentColor"></MudColorPicker>
-            </div>
-        </ChildContent>
-    </MudMenu>
+<div style="display:flex; flex-direction: row; justify-content: space-between; align-items: center; user-select: none;">
+    <div style="display:flex; flex-direction: row; justify-content: start; align-items: center">
+        <MudMenu Style="margin-right:10px">
+            <ActivatorContent>
+                <a style="width: 15px; height: 15px; background-color:@CurrentColor; cursor: pointer;"></a>
+            </ActivatorContent>
+            <ChildContent>
+                <div class="d-flex flex-column">
+                    <MudColorPicker PickerVariant="PickerVariant.Static"
+                                    DisableAlpha="true"
+                                    DisableModeSwitch="true"
+                                    @bind-Value="@CurrentColor"></MudColorPicker>
+                </div>
+            </ChildContent>
+        </MudMenu>
 
-    <MudToggleIconButton Toggled="@Channel.IsVisible"
-                         ToggledChanged="VisibilityToggled"
-                         Size="Size.Small"
-                         ToggledSize="Size.Small"
-                         Icon="@Icons.Material.Outlined.RemoveRedEye" Color="@Color.Surface"
-                         ToggledIcon="@Icons.Material.Filled.RemoveRedEye" ToggledColor="@Color.Primary" />
-    <MudText Typo="Typo.body2">@Channel.Name</MudText>
+        <MudToggleIconButton Toggled="@Channel.IsVisible"
+                             ToggledChanged="VisibilityToggled"
+                             Size="Size.Small"
+                             ToggledSize="Size.Small"
+                             Icon="@Icons.Material.Outlined.RemoveRedEye" Color="@Color.Surface"
+                             ToggledIcon="@Icons.Material.Filled.RemoveRedEye" ToggledColor="@Color.Primary"
+                             Style="margin-right:10px" />
+        <MudText Typo="Typo.body2">@Channel.Name</MudText>
+    </div>
     <MudIconButton Icon="@Icons.Material.Filled.Edit"
                    Size="Size.Small"
                    Color="Color.Primary"
