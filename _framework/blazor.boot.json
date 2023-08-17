@@ -8,7 +8,7 @@
   "resources": {
     "assembly": {
       "HarfBuzzSharp.dll": "sha256-dX\/++uW6R0xlGvP58Z0Gv3rLrHGBDCKcSB1ODiXCRyE=",
-      "LP.Plotter.dll": "sha256-8RDPd2WCZkadGwll6S0FMe9eDzI9gA8ePFbFKO6xI1s=",
+      "LP.Plotter.dll": "sha256-WJ8bqkuhPEik\/9QAQsEvno2Vv77LB3J\/RZka+MsAceg=",
       "Microsoft.AspNetCore.Components.dll": "sha256-a48DJ0DpC4rlKrmI8RU64+0S3fuomja4sSjnVGwegpo=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-c1Qy\/qZlUW8LJmf3Vp3Ol1hzixL40BZx\/mkoxc1DUV0=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-VfZ8\/IyMYtnm8ZsrBon95xD0hsubsFdQamIah5FRMYw=",
@@ -26,7 +26,7 @@
       "Microsoft.Extensions.Primitives.dll": "sha256-eXvGx2jcjpTPEJoAHBsW\/VuMPbNyyU+AsuhPmkzSSRY=",
       "Microsoft.JSInterop.dll": "sha256-6j49X0eVyZvOZOxROM+CZGeiZOmRyv+xmLgt5thSo4Y=",
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-Fibw4jtnMD0se9VIfLv5hPcrbAm7ipCW+RN8CfPIDkY=",
-      "MudBlazor.dll": "sha256-iDOiOQtx\/t5xIiO25XXB8EWogG\/ZAwfbH4MPDZBikjA=",
+      "MudBlazor.dll": "sha256-ni\/mxw1zPf+\/S\/HHwjS8SdqStRZ3a7lPRT\/gfvuMkH0=",
       "netstandard.dll": "sha256-1UOdZv8skaFr5Ef7KlDPoIqGkmLpv+IqpdAtJYOaTL0=",
       "OxyPlot.dll": "sha256-Ok+3ZwFiQU1BntpPJBqPX6WEFgWUQsl6pUkcjfaPBmE=",
       "OxyPlot.SkiaSharp.Blazor.dll": "sha256-wsW38q1zDD3DUmQzQ8+GrVF3h9JEwhuRoFkxuR06TCM=",
@@ -52,7 +52,7 @@
       "System.Private.CoreLib.dll": "sha256-y7I1YKYSYM+veIlGZtcb2esbJ9qGTLqMqJaFrEjSxdA=",
       "System.Private.Uri.dll": "sha256-CbUuk2VxeaJPhlpZWleLCSA4kL5y3n74hFb7+8BPTR4=",
       "System.Private.Xml.dll": "sha256-D1sUF\/25nYw5wXaYTUqQAX1pkxQkz\/McGR8VrK7Ts9E=",
-      "System.Runtime.dll": "sha256-jXFLpk55N0h0K2OkR9WpxTH8JfDuG2uVA6NWCwNniW8=",
+      "System.Runtime.dll": "sha256-69jNZgFML8vx\/P2dRVAYf5EMgEbu5CwnzbLHCNLRLL8=",
       "System.Runtime.InteropServices.dll": "sha256-O16lFLT3lljrw26KVuirH0my7yuzrd9Wl79GrW8jgEE=",
       "System.Runtime.InteropServices.JavaScript.dll": "sha256-u10hAlb7oIMi8jTcvm3+FDAtGc9QcEDfozYFXN5Tco0=",
       "System.Text.Encodings.Web.dll": "sha256-KwxETxZvEIN+F2cFoOmczAYLy\/vNVDN4Xr11FOMxkVM=",
