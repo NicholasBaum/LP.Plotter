@@ -14,27 +14,27 @@
     </MudTooltip>
     <MudPopover Open="@ShowAxesMenu">
         <div class="pa-4 d-flex flex-column" style="width:600px">
-            <MudText>Axis Visibility</MudText>
+            <MudText GutterBottom=true Typo="Typo.h4">Assign Axes</MudText>
             <div class="d-flex">
-                <MudSelect Value="@leftSelection" ValueChanged="@OnLeftValueChanged" T="Axis" Label="Left Axis" Variant="Variant.Text">
+                <MudSelect Style="width:150px;margin-right:20px" Value="@leftSelection" ValueChanged="@OnLeftValueChanged" T="Axis" Label="Left Axis" Variant="Variant.Text">
                     @foreach (var ax in Axes)
                     {
                         <MudSelectItem Value="@ax">@ax.Key</MudSelectItem>
                     }
                 </MudSelect>
-                <MudSelect Value="@rightSelection" ValueChanged="@OnRightValueChanged" T="Axis" Label="Right Axis" Variant="Variant.Text">
+                <MudSelect Style="width:150px" Value="@rightSelection" ValueChanged="@OnRightValueChanged" T="Axis" Label="Right Axis" Variant="Variant.Text">
                     @foreach (var ax in Axes)
                     {
                         <MudSelectItem Value="@ax">@ax.Key</MudSelectItem>
                     }
                 </MudSelect>
             </div>
-            <div class="d-flex">
-                <MudButton OnClick="@Cancel">Cancel</MudButton>
-                <MudButton OnClick="@Ok">Confirm</MudButton>
+            <div class="d-flex justify-end mt-6">
+                <MudButton Disabled="@(!IsDirty)" Color="Color.Primary" OnClick="@RevertAction">Revert</MudButton>
             </div>
         </div>
     </MudPopover>
+    <MudOverlay @bind-Visible="ShowAxesMenu" DarkBackground="false" LightBackground="false" AutoClose="true" />
 </MudToolBar>
 
 @code {
@@ -44,32 +44,23 @@
 #pragma warning restore CS8618
 
     private bool ShowAxesMenu { get; set; }
+    private bool IsDirty { get; set; }
     private IReadOnlyList<Axis> Axes => Model.Axes.Where(x => !x.Key.ToLowerInvariant().Contains("time")).ToList();
     private Axis? leftSelection;
     private Axis? rightSelection;
-
-    private void Cancel()
-    {
-        ShowAxesMenu = !ShowAxesMenu;
-        RestoreValues();
-    }
-
-    private void Ok()
-    {
-        ShowAxesMenu = !ShowAxesMenu;
-    }
 
     private void OpenAxesMenu()
     {
         if (!ShowAxesMenu)
         {
-            StoreValues();
+            Init();
             ShowAxesMenu = true;
         }
     }
 
     private void OnLeftValueChanged(Axis ax)
     {
+        IsDirty = true;
         var tmp = leftSelection;
         leftSelection = ax;
         UpdateAxes(tmp, leftSelection, AxisPosition.Left);
@@ -77,6 +68,7 @@
 
     private void OnRightValueChanged(Axis ax)
     {
+        IsDirty = true;
         var tmp = rightSelection;
         rightSelection = ax;
         UpdateAxes(tmp, rightSelection, AxisPosition.Right);
@@ -106,8 +98,9 @@
     }
 
     private Dictionary<Axis, (AxisPosition Position, bool IsVisible)> lastValues = new();
-    private void StoreValues()
+    private void Init()
     {
+        IsDirty = false;
         lastValues.Clear();
         foreach (var ax in Model.Axes)
             lastValues.Add(ax, (ax.Position, ax.IsAxisVisible));
@@ -115,7 +108,7 @@
         rightSelection = Axes.FirstOrDefault(x => x.IsAxisVisible && x.Position == AxisPosition.Right);
     }
 
-    private void RestoreValues()
+    private void RevertAction()
     {
         foreach (var ax in Model.Axes)
         {
@@ -123,6 +116,9 @@
             ax.Position = p;
             ax.IsAxisVisible = v;
         }
+        leftSelection = Axes.FirstOrDefault(x => x.IsAxisVisible && x.Position == AxisPosition.Left);
+        rightSelection = Axes.FirstOrDefault(x => x.IsAxisVisible && x.Position == AxisPosition.Right);
+        IsDirty = false;
         Model.Refresh();
     }
 }
