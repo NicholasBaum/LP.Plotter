@@ -7,13 +7,12 @@ public class ChannelPlotModel
 {
     public event EventHandler<EventArgs>? Changed;
     public IReadOnlyList<VChannelSetVM> Sets => _setsView;
-
+    private IReadOnlyList<VChannelSetVM> _setsView;
 
     private List<VChannelSetVM> sets { get; } = new();
-    private IReadOnlyList<VChannelSetVM> _setsView;
     private List<Axis> Axes { get; } = new();
     private Axis? XAxis => Axes.FirstOrDefault(x => x.Position == AxisPosition.Bottom);
-
+    private IEnumerable<VChannelVM> channels => sets.SelectMany(x => x.Channels);
 
     public ChannelPlotModel()
     {
@@ -36,7 +35,11 @@ public class ChannelPlotModel
     {
         if (XAxis is Axis ax)
         {
-            ax.Zoom(ax.Scale / 2.0);
+            var min = channels.Min(x => x.Points.First().X);
+            var max = channels.Max(x => x.Points.Last().X);
+            ax.Zoom(ax.Scale * 0.66);
+            if (ax.ActualMinimum < min || ax.ActualMaximum > max)
+                ax.Zoom(Math.Max(ax.ActualMinimum, min), Math.Min(ax.ActualMaximum, max));
             Refresh();
         }
     }
