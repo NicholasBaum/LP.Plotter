@@ -16,6 +16,8 @@
     public VChannelVM Channel { get; set; }
 #pragma warning restore CS8618
 
+    private bool ShowColorPicker = false;
+
     private void VisibilityToggled(bool toggled)
     {
         Channel.IsVisible = !Channel.IsVisible;
@@ -48,20 +50,17 @@
 
 <div style="display:flex; flex-direction: row; justify-content: space-between; align-items: center; user-select: none;">
     <div style="display:flex; flex-direction: row; justify-content: start; align-items: center">
-        <MudMenu Style="margin-right:10px">
-            <ActivatorContent>
-                <a style="width: 15px; height: 15px; background-color:@CurrentColor; cursor: pointer;"></a>
-            </ActivatorContent>
-            <ChildContent>
-                <div class="d-flex flex-column">
-                    <MudColorPicker PickerVariant="PickerVariant.Static"
-                                    DisableAlpha="true"
-                                    DisableModeSwitch="true"
-                                    @bind-Value="@CurrentColor"></MudColorPicker>
-                </div>
-            </ChildContent>
-        </MudMenu>
-
+        <a style="margin-right:10px; width: 15px; height: 15px; background-color:@(CurrentColor.Value); cursor: pointer;" @onclick="(() => { ShowColorPicker = true; })"></a>
+        <MudPopover Open=@ShowColorPicker>
+            <div class="d-flex flex-column">
+                <MudColorPicker PickerVariant="PickerVariant.Static"
+                                DisableAlpha="true"
+                                DisableModeSwitch="false"
+                                DisableToolbar="false"
+                                @bind-Value="@CurrentColor"></MudColorPicker>
+            </div>
+        </MudPopover>
+        <MudOverlay @bind-Visible="@ShowColorPicker" AutoClose="true"></MudOverlay>
         <MudToggleIconButton Toggled="@Channel.IsVisible"
                              ToggledChanged="VisibilityToggled"
                              Size="Size.Small"
