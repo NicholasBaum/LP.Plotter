@@ -1,9 +1,16 @@
 ﻿@using LP.Plotter.Data;
+@using LP.Plotter.Utilities;
 <MudToolBar Dense=true>
-    <MudIconButton Icon="@Icons.Material.Outlined.ZoomOut" OnClick="@Model.ZoomOut" />
-    <MudIconButton Icon="@Icons.Material.Filled.ZoomOutMap" OnClick="@Model.ZoomOutMap" />
+    <MudTooltip Text="Time Zoom Out">
+        <MudIconButton Icon="@CustomIcons.ZoomOutHorizontal" OnClick="@Model.ZoomOut" />
+    </MudTooltip>
+    <MudTooltip Text="Max Zoom Out">
+        <MudIconButton Icon="@Icons.Material.Filled.ZoomOutMap" OnClick="@Model.ZoomOutMap" />
+    </MudTooltip>
     <MudSpacer />
-    <MudIconButton Icon="@Icons.Material.Filled.LineAxis" OnClick="@OpenAxisDialog" />
+    <MudTooltip Text="Configure Axes">
+        <MudIconButton Icon="@Icons.Material.Filled.LineAxis" OnClick="@OpenAxisDialog" />
+    </MudTooltip>
 </MudToolBar>
 
 @code {
