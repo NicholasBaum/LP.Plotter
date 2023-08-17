@@ -15,6 +15,11 @@
             <div>
                 <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
                     <MudText Typo="Typo.h6">@s.Name</MudText>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Size="Size.Small"
+                                   Color="Color.Secondary"
+                                   OnClick="@(_=>RemoveSet(s))" />
+
                     <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
                                    Size="Size.Small"
                                    Color="Color.Primary"
@@ -49,6 +54,17 @@
         var dialog = await dialogService.ShowAsync<SelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
         var result = await dialog.Result;
         Model.Refresh();
+    }
+
+    private async Task RemoveSet(VChannelSetVM set)
+    {
+        bool? result = await dialogService.ShowMessageBox(
+         "Warning",
+         "Remove Set?",
+         yesText: "Remove", cancelText: "Cancel");
+
+        if (result == true)
+            Model.Remove(set);
     }
 
     private void Redraw(object? sender, EventArgs e)

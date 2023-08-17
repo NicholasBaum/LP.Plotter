@@ -147,5 +147,11 @@ public class ChannelPlotModel
         Changed?.Invoke(this, new());
     }
 
+    public void Remove(VChannelSetVM data)
+    {
+        sets.Remove(data);
+        Changed?.Invoke(this, new());
+    }
+
     public void Refresh() => Changed?.Invoke(this, new());
 }
