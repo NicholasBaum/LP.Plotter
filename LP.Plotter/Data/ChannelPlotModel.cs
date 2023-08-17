@@ -7,22 +7,32 @@ public class ChannelPlotModel
 {
     public event EventHandler<EventArgs>? Changed;
     public IReadOnlyList<VChannelSetVM> Sets => _setsView;
-    private IReadOnlyList<VChannelSetVM> _setsView;
+    private readonly IReadOnlyList<VChannelSetVM> _setsView;
+    public IReadOnlyList<Axis> Axes => _axesView;
+    private readonly IReadOnlyList<Axis> _axesView;
 
     private List<VChannelSetVM> sets { get; } = new();
-    private List<Axis> Axes { get; } = new();
-    private Axis? XAxis => Axes.FirstOrDefault(x => x.Position == AxisPosition.Bottom);
+    private List<Axis> axes { get; } = new();
+    private Axis? XAxis => axes.FirstOrDefault(x => x.Position == AxisPosition.Bottom);
     private IEnumerable<VChannelVM> channels => sets.SelectMany(x => x.Channels);
 
     public ChannelPlotModel()
     {
         _setsView = sets.AsReadOnlyList();
+        _axesView = axes.AsReadOnlyList();
         CreateDefaultAxes();
+    }
+
+    private void CreateDefaultAxes()
+    {
+        axes.Add(CreateDefaultLinearAxis("time", "time", AxisPosition.Bottom));
+        axes.Add(CreateDefaultLinearAxis("temp", "temp", AxisPosition.Left));
+        axes.Add(CreateDefaultLinearAxis("speed", "speed", AxisPosition.Right));
     }
 
     public void ZoomOutMap()
     {
-        this.Axes.ForEach(x =>
+        this.axes.ForEach(x =>
         {
             x.Minimum = double.NaN;
             x.Maximum = double.NaN;
@@ -53,7 +63,7 @@ public class ChannelPlotModel
             if (c.YAxisKey == null)
                 c.YAxisKey = GetOrCreateDefaultAxis(c).Key;
         }
-        foreach (var ax in this.Axes)
+        foreach (var ax in this.axes)
         {
             if (oxyModel.Axes.Contains(ax))
             {
@@ -80,9 +90,10 @@ public class ChannelPlotModel
         {
             var n when n.Contains("TTyre") => GetOrCreateAxis("temp"),
             var n when n.Contains("Speed") => GetOrCreateAxis("speed"),
-            var n when n.Contains("pTyre") => GetOrCreateAxis("tyre"),
+            var n when n.Contains("pTyre") => GetOrCreateAxis("pressure"),
             var n when n.Contains("pBrake") => GetOrCreateAxis("brake"),
             var n when n.Contains("rPedal") => GetOrCreateAxis("pedal"),
+            var n when n.Contains("Steering") => GetOrCreateAxis("steer"),
             var n when n.Contains("Gx_") => GetOrCreateAxis("Gx"),
             var n when n.Contains("Gy_") => GetOrCreateAxis("Gy"),
             _ => GetOrCreateAxis(Guid.NewGuid().ToString()),
@@ -92,53 +103,32 @@ public class ChannelPlotModel
     //       could also create a axis per channel name...
     private Axis GetOrCreateAxis(string key)
     {
-        if (this.Axes.FirstOrDefault(x => x.Key == key) is var axis && axis is not null)
+        if (this.axes.FirstOrDefault(x => x.Key == key) is Axis axis)
         {
             return axis;
         }
         else
         {
-            var newAxis = new LinearAxis() { Key = key, IsAxisVisible = false };
-            this.Axes.Add(newAxis);
+            var newAxis = CreateDefaultLinearAxis(key, key, AxisPosition.Left, false);
+            this.axes.Add(newAxis);
             return newAxis;
         }
     }
 
-    private void CreateDefaultAxes()
+    private LinearAxis CreateDefaultLinearAxis(string key, string title, AxisPosition position = AxisPosition.Left, bool visible = true)
     {
-        Axes.Add(new LinearAxis
+        return new LinearAxis()
         {
-            Position = AxisPosition.Bottom,
+            IsAxisVisible = visible,
+            Position = position,
             FontSize = 16,
             TextColor = OxyColors.White,
             AxislineColor = OxyColors.White,
             TicklineColor = OxyColors.White,
             TitleColor = OxyColors.White,
-            Title = "time",
-            Key = "time",
-        });
-        Axes.Add(new LinearAxis
-        {
-            Position = AxisPosition.Left,
-            FontSize = 16,
-            TextColor = OxyColors.White,
-            AxislineColor = OxyColors.White,
-            TicklineColor = OxyColors.White,
-            TitleColor = OxyColors.White,
-            Title = "temp",
-            Key = "temp",
-        }); ;
-        Axes.Add(new LinearAxis
-        {
-            Position = AxisPosition.Right,
-            FontSize = 16,
-            TextColor = OxyColors.White,
-            AxislineColor = OxyColors.White,
-            TicklineColor = OxyColors.White,
-            TitleColor = OxyColors.White,
-            Title = "speed",
-            Key = "speed",
-        });
+            Title = title,
+            Key = key,
+        };
     }
 
     public void Add(VChannelSet data)
