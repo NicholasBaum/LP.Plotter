@@ -137,6 +137,12 @@ public class ChannelPlotModel
         Changed?.Invoke(this, new());
     }
 
+    public void AddRange(IEnumerable<VChannelSet> data)
+    {
+        sets.AddRange(data.Select(x => new VChannelSetVM(x)));
+        Changed?.Invoke(this, new());
+    }
+
     public void Remove(VChannelSetVM data)
     {
         sets.Remove(data);
