@@ -54,11 +54,10 @@ public class VChannelSet
         {
             if (!channels.Any())
             {
-                foreach (var c in s.Channels)
-                {
-                    channels.Add(new VChannelVM(c.Name, c.Points));
-                }
+                channels.AddRange(s.Channels.Select(c => new VChannelVM(c.Name, c.Points)));
+                continue;
             }
+
             foreach (var c in s.Channels)
             {
                 var pc = channels.First(x => x.Name == c.Name);
