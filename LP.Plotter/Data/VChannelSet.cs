@@ -41,27 +41,49 @@ public class VChannelSet
         var channels = ParseCSV(csvDataString);
         return new VChannelSet()
         {
-            Name = GetSimpleName(info.Path),
+            Name = GetSimpleLapName(info.Path),
             Info = info,
             Channels = channels,
         };
     }
 
-    private static string GetSimpleName(string input)
+    public static VChannelSet Merge(IEnumerable<VChannelSet> set)
+    {
+        throw new NotImplementedException();
+        //var channels = ParseCSV(csvDataString);
+        //return new VChannelSet()
+        //{
+        //    Name = GetSimpleName(info.Path),
+        //    Info = info,
+        //    Channels = channels,
+        //};
+    }
+
+    private static string GetSimpleRunName(string path)
+    {
+        var (carNumber, runNumber, lapNumber) = ParsePath(path);
+        return $"{carNumber}_{runNumber}";
+    }
+
+    private static string GetSimpleLapName(string path)
+    {
+        var (carNumber, runNumber, lapNumber) = ParsePath(path);
+        return $"{carNumber}_{runNumber}_{lapNumber}";
+    }
+
+    private static (string car, string run, string lap) ParsePath(string path)
     {
         //\events\imola_2023\T2303_IMO_#29\D1PMRun1\Tr491_Abs00006148_CAR 29_Lap0_cableData.csv to  "29_D1PMRun1_06148        
-        Match match = Regex.Match(input, @"#(\d+)\\(.*)\\.*Abs\d{3}(\d{5})");
+        Match match = Regex.Match(path, @"#(\d+)\\(.*)\\.*Abs\d{3}(\d{5})");
         if (!match.Success || match.Groups.Count < 4)
         {
-            return "Invalid input format";
+            return ("car00", "run00", "lap00");
         }
 
         string carNumber = match.Groups[1].Value;
         string runNumber = match.Groups[2].Value;
         string lapNumber = match.Groups[3].Value;
 
-        string output = $"{carNumber}_{runNumber}_{lapNumber}";
-
-        return output;
+        return (carNumber, runNumber, lapNumber);
     }
 }

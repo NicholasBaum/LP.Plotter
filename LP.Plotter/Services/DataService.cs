@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using LP.Plotter.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LP.Plotter.Services;
 
@@ -19,6 +20,12 @@ public class DataService
         response.EnsureSuccessStatusCode();
         var csvDataString = await response.Content.ReadAsStringAsync();
         return VChannelSet.Create(info, csvDataString);
+    }
+
+    public async Task<IEnumerable<VChannelSet>> LoadRun(IEnumerable<CsvInfo> infos)
+    {
+        var tasks = infos.Select(LoadChannels).ToList();
+        return await Task.WhenAll(tasks);
     }
 
     public async Task<List<CsvInfo>> GetFileInfos()
