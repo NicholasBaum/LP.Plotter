@@ -14,7 +14,20 @@
                     <BodyContent>
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
                             <MudText Style="justify-self: start;">@item.DisplayName</MudText>
-                            @if (!item.HasChildren)
+                            @if (item.IsRun)
+                            {
+                                <div style="justify-self: end;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Medium"
+                                             Color="Color.Error" Style="vertical-align: middle;"
+                                             Class="@(item.HasLoadError?"visible":"invisible")"></MudIcon>
+                                    <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                                   Size="Size.Medium"
+                                                   Color="Color.Tertiary"
+                                                   Disabled="item.IsLoading"
+                                                   OnClick="@((e)=>HandleRunClick(e, item))" />
+                                </div>
+                            }
+                            else if (item.IsLap)
                             {
                                 <div style="justify-self: end;">
                                     <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Medium"
@@ -24,7 +37,7 @@
                                                    Size="Size.Medium"
                                                    Color="Color.Primary"
                                                    Disabled="item.IsLoading"
-                                                   OnClick="@((e)=>HandleClick(e, item))" />
+                                                   OnClick="@((e)=>HandleLapClick(e, item))" />
                                 </div>
                             }
                         </div>
@@ -56,15 +69,15 @@
                 {
                     DisplayName = cars.Key,
                     Items = cars.GroupBy(x => x.Path.Split("\\")[4])
-                                .Select(runs => new CsvTreeItem()
-                                {
-                                    DisplayName = runs.Key,
-                                    Items = runs.Select(lap => new CsvTreeItem()
-                                    {
-                                        Source = lap,
-                                        DisplayName = lap.FileName,
-                                    }).ToHashSet()
-                                }).ToHashSet()
+                                            .Select(runs => new CsvTreeItem()
+                                            {
+                                                DisplayName = runs.Key,
+                                                Items = runs.Select(lap => new CsvTreeItem()
+                                                {
+                                                    Source = lap,
+                                                    DisplayName = lap.FileName,
+                                                }).ToHashSet()
+                                            }).ToHashSet()
                 }).ToHashSet();
         }
         catch (Exception ex)
@@ -75,11 +88,11 @@
 
         var testItem = items.First()?.Items?.First()?.Items?.First();
         if (testItem is not null)
-            HandleClick(new MouseEventArgs(), testItem);
+            HandleLapClick(new MouseEventArgs(), testItem);
 
     }
 
-    private async void HandleClick(MouseEventArgs e, CsvTreeItem item)
+    private async void HandleLapClick(MouseEventArgs e, CsvTreeItem item)
     {
         try
         {
@@ -98,6 +111,26 @@
         this.StateHasChanged();
     }
 
+    private async void HandleRunClick(MouseEventArgs e, CsvTreeItem item)
+    {
+        try
+        {
+            item.IsLoading = true;
+            item.HasLoadError = false;
+            var result = await dataService.LoadRun(item.Items!.Select(x => x.Source!));
+            item.IsLoading = false;
+            appService.CurrentPlot.AddRange(result);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            item.IsLoading = false;
+            item.HasLoadError = true;
+        }
+        this.StateHasChanged();
+    }
+
     class CsvTreeItem
     {
         public bool IsLoading { get; set; } = false;
@@ -106,5 +139,7 @@
         public required string DisplayName { get; init; }
         public HashSet<CsvTreeItem>? Items { get; set; } = null;
         public bool HasChildren => Items != null;
+        public bool IsLap => !HasChildren;
+        public bool IsRun => Items?.FirstOrDefault()?.IsLap == true;
     }
 }
