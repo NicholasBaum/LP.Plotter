@@ -47,16 +47,40 @@ public class VChannelSet
         };
     }
 
-    public static VChannelSet Merge(IEnumerable<VChannelSet> set)
+    public static VChannelSet CreateMerged(IEnumerable<VChannelSet> set)
     {
-        throw new NotImplementedException();
-        //var channels = ParseCSV(csvDataString);
-        //return new VChannelSet()
-        //{
-        //    Name = GetSimpleName(info.Path),
-        //    Info = info,
-        //    Channels = channels,
-        //};
+        var channels = new List<VChannelVM>();
+        foreach (var s in set)
+        {
+            if (!channels.Any())
+            {
+                foreach (var c in s.Channels)
+                {
+                    channels.Add(new VChannelVM(c.Name, c.Points));
+                }
+            }
+            foreach (var c in s.Channels)
+            {
+                var pc = channels.First(x => x.Name == c.Name);
+                var time = pc.Points.Last().X;
+                List<DataPoint> shiftedPoints;
+                if (pc.Name.ToLowerInvariant().Contains("time"))
+                    shiftedPoints = c.Points.Select(x => new DataPoint(time + x.X, time + x.Y)).ToList();
+                else
+                    shiftedPoints = c.Points.Select(x => new DataPoint(time + x.X, x.Y)).ToList();
+                pc.Points.AddRange(shiftedPoints);
+            }
+
+        }
+
+        var info = set.First().Info;
+
+        return new VChannelSet()
+        {
+            Name = GetSimpleRunName(info.Path),
+            Info = info,
+            Channels = channels,
+        };
     }
 
     private static string GetSimpleRunName(string path)

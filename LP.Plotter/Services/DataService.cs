@@ -22,10 +22,11 @@ public class DataService
         return VChannelSet.Create(info, csvDataString);
     }
 
-    public async Task<IEnumerable<VChannelSet>> LoadRun(IEnumerable<CsvInfo> infos)
+    public async Task<VChannelSet> LoadAsRun(IEnumerable<CsvInfo> infos)
     {
         var tasks = infos.Select(LoadChannels).ToList();
-        return await Task.WhenAll(tasks);
+        var sets = await Task.WhenAll(tasks);
+        return VChannelSet.CreateMerged(sets);
     }
 
     public async Task<List<CsvInfo>> GetFileInfos()

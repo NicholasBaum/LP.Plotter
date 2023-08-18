@@ -69,15 +69,15 @@
                 {
                     DisplayName = cars.Key,
                     Items = cars.GroupBy(x => x.Path.Split("\\")[4])
-                                            .Select(runs => new CsvTreeItem()
-                                            {
-                                                DisplayName = runs.Key,
-                                                Items = runs.Select(lap => new CsvTreeItem()
+                                                .Select(runs => new CsvTreeItem()
                                                 {
-                                                    Source = lap,
-                                                    DisplayName = lap.FileName,
+                                                    DisplayName = runs.Key,
+                                                    Items = runs.Select(lap => new CsvTreeItem()
+                                                    {
+                                                        Source = lap,
+                                                        DisplayName = lap.FileName,
+                                                    }).ToHashSet()
                                                 }).ToHashSet()
-                                            }).ToHashSet()
                 }).ToHashSet();
         }
         catch (Exception ex)
@@ -117,9 +117,9 @@
         {
             item.IsLoading = true;
             item.HasLoadError = false;
-            var result = await dataService.LoadRun(item.Items!.Select(x => x.Source!));
+            var result = await dataService.LoadAsRun(item.Items!.Select(x => x.Source!));
             item.IsLoading = false;
-            appService.CurrentPlot.AddRange(result);
+            appService.CurrentPlot.Add(result);
 
         }
         catch (Exception ex)
