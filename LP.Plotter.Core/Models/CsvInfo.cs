@@ -1,4 +1,4 @@
-﻿namespace LP.Plotter.Data;
+﻿namespace LP.Plotter.Core.Models;
 
 public class CsvInfo
 {
@@ -6,5 +6,5 @@ public class CsvInfo
     public required string FileName { get; init; }
     public required string Path { get; init; }
     public required string Url { get; init; }
-    public List<VChannelVM>? Channels { get; set; }   
+    public List<VChannelVM>? Channels { get; set; }
 }

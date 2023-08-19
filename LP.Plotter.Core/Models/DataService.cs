@@ -1,9 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
-using LP.Plotter.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace LP.Plotter.Services;
+namespace LP.Plotter.Core.Models;
 
 public class DataService
 {

@@ -1,6 +1,6 @@
-﻿using static LP.Plotter.Utilities.ColorExtensions;
+﻿using static LP.Plotter.Core.Utilities.LPColors;
 
-namespace LP.Plotter.Data;
+namespace LP.Plotter.Core.Models;
 
 public class VChannelSetVM
 {

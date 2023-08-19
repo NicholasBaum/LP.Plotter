@@ -1,4 +1,5 @@
 using LP.Plotter;
+using LP.Plotter.Core.Models;
 using LP.Plotter.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

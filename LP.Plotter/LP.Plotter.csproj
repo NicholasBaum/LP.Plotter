@@ -13,6 +13,10 @@
     <PackageReference Include="OxyPlot.SkiaSharp.Blazor" Version="1.0.0-beta.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LP.Plotter.Core\LP.Plotter.Core.csproj" />
+  </ItemGroup>
+
   <!--This one requires an Include/Exclude combo where Include can't be empty, but as wwwroot is already included by default, this gets messy-->
   <!--<ItemGroup>
     <Watch Include="" Exclude="wwwroot\**\*.csv" />

@@ -1,7 +1,7 @@
 ﻿using OxyPlot;
 using System.Text.RegularExpressions;
 
-namespace LP.Plotter.Data;
+namespace LP.Plotter.Core.Models;
 
 public class VChannelSet
 {
