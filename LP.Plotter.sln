@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plotter", "LP.Plotter\LP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LP.Plotter.Core", "LP.Plotter.Core\LP.Plotter.Core.csproj", "{2EF2F3AE-9833-4537-B96F-4A52A75C6738}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LP.Plotter.WpfSkia.Test", "LP.Plotter.WpfSkia.Test\LP.Plotter.WpfSkia.Test.csproj", "{8D1B3ECE-C63A-4289-9947-AB8759F73953}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D1B3ECE-C63A-4289-9947-AB8759F73953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D1B3ECE-C63A-4289-9947-AB8759F73953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D1B3ECE-C63A-4289-9947-AB8759F73953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D1B3ECE-C63A-4289-9947-AB8759F73953}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
