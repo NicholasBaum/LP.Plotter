@@ -42,7 +42,42 @@ public class SignalPlotter
         }
     }
     private SKPath path = new SKPath();
+
     private void FillPath(float[] channel, Axis yAxis, SKPaint paint, SKImageInfo imageInfo)
+    {
+        path.Reset();
+        var m = imageInfo.Height / (yAxis.Min - yAxis.Max);
+        var dp = imageInfo.Width / (float)(channel.Length - 1);
+        var pointsPerPixel = (int)(1 / dp);
+
+        var lastx = 0.0f;
+        var lasty = (channel[0] - yAxis.Max) * m;
+        path.MoveTo(lastx, lasty);
+
+        for (int i = 0; i < imageInfo.Width - 2; i++)
+        {
+            var start = (channel[i * pointsPerPixel] - yAxis.Max) * m; ;
+            var min = float.MaxValue;
+            var max = float.MinValue;
+            var end = (channel[(i + 1) * pointsPerPixel] - yAxis.Max) * m; ;
+
+            for (var j = 1; j < pointsPerPixel - 1; j++)
+            {
+                var newy = (channel[i * pointsPerPixel + j] - yAxis.Max) * m;
+                if (min > newy)
+                    min = newy;
+                if (max < newy)
+                    max = newy;
+            }
+
+            path.LineTo(i, start);
+            path.LineTo(i + 0.25f, min);
+            path.LineTo(i + 0.75f, max);
+            path.LineTo(i + 1f, end);
+        }
+    }
+
+    private void FillPath2(float[] channel, Axis yAxis, SKPaint paint, SKImageInfo imageInfo)
     {
         path.Reset();
         var m = imageInfo.Height / (yAxis.Min - yAxis.Max);
