@@ -1,4 +1,5 @@
 ﻿using OxyPlot;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace LP.Plotter.Core.Models;
@@ -30,7 +31,7 @@ public class VChannelSet
 
             for (var j = 1; j < values.Count() - 1; j++)
             {
-                data[j].Points.Add(new DataPoint(time, float.Parse(values[j])));
+                data[j].Points.Add(new DataPoint(time, float.Parse(values[j], NumberStyles.Float, CultureInfo.InvariantCulture)));
             }
         }
         return data;
