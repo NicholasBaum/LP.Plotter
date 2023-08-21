@@ -1,6 +1,7 @@
 ﻿using LP.Plotter.Core.Models;
 using OxyPlot;
 using SkiaSharp;
+using System.Diagnostics;
 
 namespace LP.Plotter.Core.Drawing;
 
@@ -8,8 +9,9 @@ public class SignalPlotter
 {
     private readonly VChannelSet data;
     private List<(float[] yvalues, Axis YAxis, SKPaint Paint)> channels;
-    private Axis XAxis;
-    private Axis TempAxis = new();
+    public Axis XAxis = new();
+    public Axis TempAxis = new();
+    public Axis XDataRange = new();
     public SignalPlotter(VChannelSet data)
     {
         this.data = data;
@@ -36,6 +38,7 @@ public class SignalPlotter
         var min = data.SpeedChannel.Points.First().X;
         var max = data.SpeedChannel.Points.Last().X;
         this.XAxis = new Axis() { Min = (float)min, Max = (float)max };
+        this.XDataRange = new Axis() { Min = (float)min, Max = (float)max };
     }
 
     public void Draw(SKCanvas canvas, SKImageInfo imageInfo)
@@ -46,13 +49,13 @@ public class SignalPlotter
         {
             //FillPath2(channel.yvalues, channel.YAxis, channel.Paint, imageInfo);
             //canvas.DrawPath(path, channel.Paint);
-            RenderHighDensity(channel.yvalues, new Axis() { Min = 0, Max = 120 }, channel.YAxis, canvas, channel.Paint, imageInfo);
+            RenderHighDensity(channel.yvalues, this.XDataRange, channel.YAxis, canvas, channel.Paint, imageInfo);
         }
     }
 
-    private void RenderHighDensity(float[] yValues, Axis xAxis, Axis yAxis, SKCanvas canvas, SKPaint paint, SKImageInfo imageInfo)
+    private void RenderHighDensity(float[] yValues, Axis xDataRange, Axis yAxis, SKCanvas canvas, SKPaint paint, SKImageInfo imageInfo)
     {
-        PixelRange[] verticalBars = GetVerticalBars(yValues, xAxis, yAxis, imageInfo.Width, imageInfo.Height);
+        PixelRange[] verticalBars = GetVerticalBars(yValues, xDataRange, yAxis, imageInfo.Width, imageInfo.Height);
         for (int i = 0; i < verticalBars.Length; i++)
         {
             float x = i + 0.5f;
@@ -60,20 +63,23 @@ public class SignalPlotter
         }
     }
 
-    private PixelRange[] GetVerticalBars(float[] yValues, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
+    private PixelRange[] GetVerticalBars(float[] yValues, Axis xDataRange, Axis yAxis, int imageWidth, int imageHeight)
     {
         var m = imageHeight / (yAxis.Min - yAxis.Max);
         var bars = new PixelRange[imageWidth];
-        var unitsPerPixel = xAxis.Length / imageWidth;
-        var unitsPerIndex = xAxis.Length / (yValues.Length - 1);
-        for (var i = 0; i < imageWidth - 1; i++)
+        var unitsPerPixel = this.XAxis.Length / imageWidth;
+        var unitsPerIndex = xDataRange.Length / (yValues.Length - 1);
+        var indexOffset = (int)((xDataRange.Min - XAxis.Min) / unitsPerPixel);
+        for (var i = 0; i < (imageWidth - 1 - indexOffset); i++)
         {
-            var xLeft = xAxis.Min + i * unitsPerPixel;
+            var xLeft = i * unitsPerPixel;
             var xRight = xLeft + unitsPerPixel;
             var leftIndex = (int)(xLeft / unitsPerIndex);
             var rightIndex = (int)(xRight / unitsPerIndex) + 1;
             var min = float.MaxValue;
             var max = float.MinValue;
+            if (rightIndex >= yValues.Length)
+                break;
             for (int j = leftIndex; j < rightIndex; j++)
             {
                 var y = (yValues[j] - yAxis.Max) * m;
@@ -82,7 +88,9 @@ public class SignalPlotter
                 if (max < y)
                     max = y;
             }
-            bars[i] = new PixelRange(min, max);
+            if (i + indexOffset >= imageWidth)
+                break;
+            bars[i + indexOffset] = new PixelRange(min, max);
         }
 
         return bars;
@@ -177,7 +185,7 @@ public class SignalPlotter
         }
     }
 
-    private class Axis
+    public class Axis
     {
         public float Min { get; set; } = float.MaxValue;
         public float Max { get; set; } = float.MinValue;

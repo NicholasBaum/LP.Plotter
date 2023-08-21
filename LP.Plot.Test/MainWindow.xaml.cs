@@ -102,9 +102,10 @@ namespace LP.Plot.Test
 
                 // Update the content's position (e.g., Canvas' Left and Top properties)
                 // based on deltaX and deltaY
-
-                lastMousePos = newMousePos;
+                drawer.XAxis.Min += (float)deltaX;
+                drawer.XAxis.Max += (float)deltaX;
                 skiaEl.InvalidateVisual();
+                lastMousePos = newMousePos;
 
             }
         }
@@ -114,6 +115,8 @@ namespace LP.Plot.Test
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
             var diff = lastMousePos - e.GetPosition(this);
+          
+
         }
     }
 }
