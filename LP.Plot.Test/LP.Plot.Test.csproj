@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.4-preview.96" />
+    <PackageReference Include="SkiaSharp.Views" Version="2.88.4-preview.96" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LP.Plotter.Core\LP.Plotter.Core.csproj" />
+  </ItemGroup>
+
+</Project>
