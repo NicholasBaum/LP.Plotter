@@ -21,7 +21,7 @@ namespace LP.Plot.Test
             MouseDown += OnMouseDown;
             MouseMove += OnMouseMove;
             MouseUp += OnMouseUp;
-            var data = new LocalDataService().LoadTest();
+            var data = new LocalDataService().LoadTest2();
             drawer = new SignalPlotter(data);
         }
 
@@ -35,8 +35,10 @@ namespace LP.Plot.Test
         {
             if (!sw.IsRunning)
                 sw.Start();
-            this.drawer.Draw(e.Surface.Canvas, e.Info);
+            sw2.Restart();
+            this.drawer.Draw(e.Surface.Canvas, e.Info);           
             this.DrawInfo(e.Surface.Canvas, e.Info);
+            System.Diagnostics.Debug.WriteLine($"Rendertime {sw2.Elapsed.TotalSeconds}:0.00");
         }
 
         private void DrawInfo(SKCanvas canvas, SKImageInfo imageInfo)
@@ -76,6 +78,7 @@ namespace LP.Plot.Test
 
         private int frameCount = 0;
         private Stopwatch sw = new Stopwatch();
+        private Stopwatch sw2 = new Stopwatch();
 
 
         private Point lastMousePos;

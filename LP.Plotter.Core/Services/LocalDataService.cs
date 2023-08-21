@@ -21,4 +21,21 @@ public class LocalDataService
         }).ToList();
         return VChannelSet.CreateMerged(set);
     }
+
+    public VChannelSet LoadTest2()
+    {
+        var folder = @"D:\work\LP.Plotter\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\";
+        var files = Directory.GetFiles(folder, "*.csv", searchOption: SearchOption.AllDirectories);
+        var set = files.Select(x =>
+        {
+            var text = File.ReadAllText(x);
+            return VChannelSet.Create(new CsvInfo()
+            {
+                FileName = Path.GetFileName(x),
+                Path = x,
+                Url = x
+            }, text);
+        }).ToList();
+        return VChannelSet.CreateMerged(set);
+    }
 }

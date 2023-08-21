@@ -28,7 +28,7 @@ namespace LP.Plotter.WpfSkia.Test
         private LocalDataService dataService = new LocalDataService();
         private void Init()
         {
-            var data = dataService.LoadTest();
+            var data = dataService.LoadTest2();
             Model.Add(data);
             Model.Draw(OxyModel);
             OxyModel.InvalidatePlot(true);

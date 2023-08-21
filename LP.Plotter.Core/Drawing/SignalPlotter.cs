@@ -37,7 +37,24 @@ public class SignalPlotter
 
         foreach (var channel in this.channels)
         {
-            DrawSignal(channel.yvalues, channel.YAxis, channel.Paint, canvas, imageInfo);
+            FillPath(channel.yvalues, channel.YAxis, channel.Paint, imageInfo);
+            canvas.DrawPath(path, channel.Paint);
+        }
+    }
+    private SKPath path = new SKPath();
+    private void FillPath(float[] channel, Axis yAxis, SKPaint paint, SKImageInfo imageInfo)
+    {
+        path.Reset();
+        var m = imageInfo.Height / (yAxis.Min - yAxis.Max);
+        var dp = imageInfo.Width / (float)(channel.Length - 1);
+        var lastx = 0.0f;
+
+        var lasty = (channel[0] - yAxis.Max) * m;
+        path.MoveTo(lastx, lasty);
+        for (int i = 0; i < channel.Length - 1; i++)
+        {
+            var newy = (channel[i] - yAxis.Max) * m;
+            path.LineTo(i * dp, newy);
         }
     }
 
