@@ -1,4 +1,5 @@
 ﻿using LP.Plotter.Core.Models;
+using OxyPlot;
 using SkiaSharp;
 
 namespace LP.Plotter.Core.Drawing;
@@ -8,7 +9,7 @@ public class SignalPlotter
     private readonly VChannelSet data;
     private List<(float[] yvalues, Axis YAxis, SKPaint Paint)> channels;
     private Axis XAxis;
-
+    private Axis TempAxis = new();
     public SignalPlotter(VChannelSet data)
     {
         this.data = data;
@@ -24,6 +25,12 @@ public class SignalPlotter
         {
             var yValues = c.Points.Select(x => (float)x.Y).ToArray();
             var yaxis = new Axis() { Min = (float)yValues.Min(), Max = (float)yValues.Max() }.Scale(1.1f);
+            if (c.Name.Contains("TT"))
+            {
+                TempAxis.Min = Math.Min(TempAxis.Min, yaxis.Min);
+                TempAxis.Max = Math.Max(TempAxis.Max, yaxis.Max);
+                yaxis = TempAxis;
+            }
             this.channels.Add((yValues, yaxis, NextPaint()));
         }
         var min = data.SpeedChannel.Points.First().X;
@@ -37,10 +44,69 @@ public class SignalPlotter
 
         foreach (var channel in this.channels)
         {
-            FillPath(channel.yvalues, channel.YAxis, channel.Paint, imageInfo);
-            canvas.DrawPath(path, channel.Paint);
+            //FillPath2(channel.yvalues, channel.YAxis, channel.Paint, imageInfo);
+            //canvas.DrawPath(path, channel.Paint);
+            RenderHighDensity(channel.yvalues, new Axis() { Min = 0, Max = 120 }, channel.YAxis, canvas, channel.Paint, imageInfo);
         }
     }
+
+    private void RenderHighDensity(float[] yValues, Axis xAxis, Axis yAxis, SKCanvas canvas, SKPaint paint, SKImageInfo imageInfo)
+    {
+        PixelRange[] verticalBars = GetVerticalBars(yValues, xAxis, yAxis, imageInfo.Width, imageInfo.Height);
+        for (int i = 0; i < verticalBars.Length; i++)
+        {
+            float x = i + 0.5f;
+            canvas.DrawLine(x, verticalBars[i].Bottom, x, verticalBars[i].Top, paint);
+        }
+    }
+
+    private PixelRange[] GetVerticalBars(float[] yValues, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
+    {
+        var m = imageHeight / (yAxis.Min - yAxis.Max);
+        var bars = new PixelRange[imageWidth];
+        var unitsPerPixel = xAxis.Length / imageWidth;
+        var unitsPerIndex = xAxis.Length / (yValues.Length - 1);
+        for (var i = 0; i < imageWidth - 1; i++)
+        {
+            var xLeft = xAxis.Min + i * unitsPerPixel;
+            var xRight = xLeft + unitsPerPixel;
+            var leftIndex = (int)(xLeft / unitsPerIndex);
+            var rightIndex = (int)(xRight / unitsPerIndex) + 1;
+            var min = float.MaxValue;
+            var max = float.MinValue;
+            for (int j = leftIndex; j < rightIndex; j++)
+            {
+                var y = (yValues[j] - yAxis.Max) * m;
+                if (min > y)
+                    min = y;
+                if (max < y)
+                    max = y;
+            }
+            bars[i] = new PixelRange(min, max);
+        }
+
+        return bars;
+    }
+
+    private struct PixelRange
+    {
+        public float Top { get; private set; }
+        public float Bottom { get; private set; }
+        public float Span => Bottom - Top;
+
+        public PixelRange(float y1, float y2)
+        {
+            Top = y1;
+            Bottom = y2;
+            var tol = 1.01f;
+            if (Span < tol)
+            {
+                Top -= tol / 2;
+                Bottom += tol / 2;
+            }
+        }
+    }
+
     private SKPath path = new SKPath();
 
     private void FillPath(float[] channel, Axis yAxis, SKPaint paint, SKImageInfo imageInfo)
@@ -113,8 +179,8 @@ public class SignalPlotter
 
     private class Axis
     {
-        public float Min { get; set; }
-        public float Max { get; set; }
+        public float Min { get; set; } = float.MaxValue;
+        public float Max { get; set; } = float.MinValue;
         public float Length => Max - Min;
         public Axis Scale(float s) => new Axis() { Min = Min - (s - 1) * Length, Max = Max + (s - 1) * Length };
     }

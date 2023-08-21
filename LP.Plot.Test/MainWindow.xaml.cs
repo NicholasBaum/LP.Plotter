@@ -21,7 +21,8 @@ namespace LP.Plot.Test
             MouseDown += OnMouseDown;
             MouseMove += OnMouseMove;
             MouseUp += OnMouseUp;
-            var data = new LocalDataService().LoadTest2();
+            var data = new LocalDataService().LoadTest();
+            Debug.WriteLine($"SampleCount {data.SpeedChannel.Points.Count}");
             drawer = new SignalPlotter(data);
         }
 
@@ -36,7 +37,7 @@ namespace LP.Plot.Test
             if (!sw.IsRunning)
                 sw.Start();
             sw2.Restart();
-            this.drawer.Draw(e.Surface.Canvas, e.Info);           
+            this.drawer.Draw(e.Surface.Canvas, e.Info);
             this.DrawInfo(e.Surface.Canvas, e.Info);
             System.Diagnostics.Debug.WriteLine($"Rendertime {sw2.Elapsed.TotalSeconds}:0.00");
         }
