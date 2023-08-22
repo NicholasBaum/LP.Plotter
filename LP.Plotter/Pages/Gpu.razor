@@ -28,7 +28,8 @@
             <SKGLView OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="true"
             @onmousedown="OnMouseDown"
             @onmousemove="OnMouseMove"
-            @onmouseup="OnMouseUp" />
+            @onmouseup="OnMouseUp"
+            @onmousewheel="OnMouseWheel" />
 
         </div>
     </div>
@@ -107,10 +108,25 @@
             drawer.XAxis.Min = OriginalAxis.Min;
             drawer.XAxis.Max = OriginalAxis.Max;
         }
-
     }
     private void OnMouseUp(MouseEventArgs e)
     {
         isPanning = false;
+    }
+
+    private void OnMouseWheel(WheelEventArgs e)
+    {
+        // Console.WriteLine(e.OffsetX);
+        // Console.WriteLine(e.DeltaX);
+        // Console.WriteLine(e.OffsetY);
+        // Console.WriteLine(e.DeltaY);
+        float offx = 1f * (float)(e.DeltaY);
+        drawer.XAxis.Min -= offx;
+        drawer.XAxis.Max += offx;
+        if (drawer.XAxis.Min >= -0.1)
+        {
+            drawer.XAxis.Min = OriginalAxis.Min;
+            drawer.XAxis.Max = OriginalAxis.Max;
+        }
     }
 }

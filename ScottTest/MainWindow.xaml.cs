@@ -45,7 +45,7 @@ namespace ScottTest
             var max = data.SpeedChannel.Points.Last().X;
             this.XAxis = new Axis() { Min = (float)min, Max = (float)max };
 
-            foreach (var c in channels.Skip(1))
+            foreach (var c in channels.Skip(0))
             {
                 var plot = WpfPlot1.Plot.Add.Signal(c.yvalues, 50);
             }
