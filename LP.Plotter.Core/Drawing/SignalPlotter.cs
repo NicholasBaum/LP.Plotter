@@ -200,7 +200,7 @@ public class SignalPlotter
     private SKPaint paint1 = new SKPaint()
     {
         Color = SKColors.Orange,
-        StrokeWidth = 3,
+        StrokeWidth = 1,
         IsAntialias = true,
         Style = SKPaintStyle.Stroke
     };
@@ -208,7 +208,7 @@ public class SignalPlotter
     private SKPaint paint2 = new SKPaint()
     {
         Color = SKColors.Blue,
-        StrokeWidth = 3,
+        StrokeWidth = 1,
         IsAntialias = true,
         Style = SKPaintStyle.Stroke
     };
@@ -216,7 +216,7 @@ public class SignalPlotter
     private SKPaint paint3 = new SKPaint()
     {
         Color = SKColors.Red,
-        StrokeWidth = 3,
+        StrokeWidth = 1,
         IsAntialias = true,
         Style = SKPaintStyle.Stroke
     };
@@ -224,7 +224,7 @@ public class SignalPlotter
     private SKPaint paint4 = new SKPaint()
     {
         Color = SKColors.Green,
-        StrokeWidth = 3,
+        StrokeWidth = 1,
         IsAntialias = true,
         Style = SKPaintStyle.Stroke
     };
@@ -232,7 +232,7 @@ public class SignalPlotter
     private SKPaint paint5 = new SKPaint()
     {
         Color = SKColors.Orange,
-        StrokeWidth = 3,
+        StrokeWidth = 1,
         IsAntialias = true,
         Style = SKPaintStyle.Stroke
     };
