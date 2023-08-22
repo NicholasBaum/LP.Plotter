@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plotter.WpfSkia.Test", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plot.Test", "LP.Plot.Test\LP.Plot.Test.csproj", "{1D5D6D61-68B4-46F1-A37A-13A1A9A97B5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScottTest", "ScottTest\ScottTest.csproj", "{2171686E-BB76-4299-A5E9-CC9A755F88AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottTest", "ScottTest\ScottTest.csproj", "{2171686E-BB76-4299-A5E9-CC9A755F88AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

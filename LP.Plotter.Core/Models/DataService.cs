@@ -12,6 +12,21 @@ public class DataService
         this.httpClient = httpClient;
     }
 
+    public async Task<VChannelSet> LoadTestLap()
+    {
+        var infos = await this.GetFileInfos();
+        var runInfos = infos.Where(x => x.Path.Contains("T2303_IMO_#29\\D1PMRun1"));
+        return await LoadChannels(runInfos.First());
+    }
+
+    public async Task<VChannelSet> LoadTestRun()
+    {
+        var infos = await this.GetFileInfos();
+        var runInfos = infos.Where(x => x.Path.Contains("T2303_IMO_#29\\D1PMRun1"));
+        var run = await LoadAsRun(runInfos);
+        return run;
+    }
+
     public async Task<VChannelSet> LoadChannels(CsvInfo info)
     {
         var response = await httpClient.GetAsync(info.Url);
