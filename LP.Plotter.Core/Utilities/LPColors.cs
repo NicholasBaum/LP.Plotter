@@ -1,6 +1,17 @@
 ﻿using OxyPlot;
+using SkiaSharp;
 
 namespace LP.Plotter.Core.Utilities;
+
+public static class SKPaints
+{
+    public static SKPaint Black { get; } = new SKPaint()
+    {
+        Color = SKColors.Black,
+        StrokeWidth = 1,
+        IsAntialias = true,
+    };
+}
 
 public static class LPColors
 {
