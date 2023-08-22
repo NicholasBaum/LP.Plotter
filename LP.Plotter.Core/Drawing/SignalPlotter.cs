@@ -47,7 +47,7 @@ public class SignalPlotter
 
         foreach (var channel in this.channels)
         {
-            FillPath(channel.yvalues, this.XDataRange, channel.YAxis, imageInfo);
+            FillPath2(channel.yvalues, this.XDataRange, channel.YAxis, imageInfo);
             canvas.DrawPath(path, channel.Paint);
             //RenderHighDensity(channel.yvalues, this.XDataRange, channel.YAxis, canvas, channel.Paint, imageInfo);
         }
@@ -158,19 +158,21 @@ public class SignalPlotter
         }
     }
 
-    private void FillPath2(float[] channel, Axis yAxis, SKPaint paint, SKImageInfo imageInfo)
+    private void FillPath2(float[] yValues, Axis xDataRange, Axis yAxis, SKImageInfo imageInfo)
     {
         path.Reset();
         var m = imageInfo.Height / (yAxis.Min - yAxis.Max);
-        var dp = imageInfo.Width / (float)(channel.Length - 1);
+        var imageWidth = imageInfo.Width;
+        var unitsPerPixel = this.XAxis.Length / imageWidth;
+        var dp = imageInfo.Width / (float)(yValues.Length - 1);
         var lastx = 0.0f;
-
-        var lasty = (channel[0] - yAxis.Max) * m;
+        var offset = (xDataRange.Min - XAxis.Min) / unitsPerPixel;
+        var lasty = (yValues[0] - yAxis.Max) * m;
         path.MoveTo(lastx, lasty);
-        for (int i = 0; i < channel.Length - 1; i++)
+        for (int i = 0; i < yValues.Length - 1; i++)
         {
-            var newy = (channel[i] - yAxis.Max) * m;
-            path.LineTo(i * dp, newy);
+            var newy = (yValues[i] - yAxis.Max) * m;
+            path.LineTo(i * dp + offset, newy);
         }
     }
 
