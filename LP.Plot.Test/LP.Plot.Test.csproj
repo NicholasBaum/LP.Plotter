@@ -9,11 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="2.88.4-preview.96" />
-    <PackageReference Include="SkiaSharp.Views" Version="2.88.4-preview.96" />
+    <PackageReference Include="SkiaSharp" Version="2.88.5" />
+    <PackageReference Include="SkiaSharp.Views" Version="2.88.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LP.Plot.Core\LP.Plot.Core.csproj" />
     <ProjectReference Include="..\LP.Plotter.Core\LP.Plotter.Core.csproj" />
   </ItemGroup>
 

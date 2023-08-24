@@ -3,8 +3,9 @@ using SkiaSharp;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
-using LP.Plotter.Core.Drawing;
+using LP.Plot.Core.Signal;
 using LP.Plotter.Core.Services;
+using LP.Plotter.Core;
 
 namespace LP.Plot.Test
 {
@@ -13,33 +14,28 @@ namespace LP.Plot.Test
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SignalRenderer signal;
+
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += MainWindow_Loaded;
 
             MouseDown += OnMouseDown;
             MouseMove += OnMouseMove;
             MouseUp += OnMouseUp;
-            var data = new LocalDataService().LoadTest();
-            Debug.WriteLine($"SampleCount {data.SpeedChannel.Points.Count}");
-            drawer = new SignalPlotter(data);
-        }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
+            var data = new LocalDataService().LoadSignal_M();
+            this.signal = new SignalRenderer(data);
         }
-
-        private SignalPlotter drawer;
 
         private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             if (!sw.IsRunning)
                 sw.Start();
             sw2.Restart();
-            this.drawer.Draw(e.Surface.Canvas, e.Info);
-            this.DrawInfo(e.Surface.Canvas, e.Info);
-            System.Diagnostics.Debug.WriteLine($"Rendertime {sw2.Elapsed.TotalSeconds}:0.00");
+            this.signal.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
+            //this.DrawInfo(e.Surface.Canvas, e.Info);
+            Debug.WriteLine($"Rendertime {sw2.Elapsed.TotalSeconds}:0.00");
         }
 
         private void DrawInfo(SKCanvas canvas, SKImageInfo imageInfo)
@@ -100,10 +96,10 @@ namespace LP.Plot.Test
                 double deltaX = newMousePos.X - lastMousePos.X;
                 double deltaY = newMousePos.Y - lastMousePos.Y;
 
-                // Update the content's position (e.g., Canvas' Left and Top properties)
-                // based on deltaX and deltaY
-                drawer.XAxis.Min += (float)deltaX;
-                drawer.XAxis.Max += (float)deltaX;
+                signal.XAxis.Min += (float)deltaX;
+                signal.XAxis.Max += (float)deltaX;
+                signal.YAxis.Min += (float)deltaY;
+                signal.YAxis.Max += (float)deltaY;
                 skiaEl.InvalidateVisual();
                 lastMousePos = newMousePos;
 
@@ -115,8 +111,6 @@ namespace LP.Plot.Test
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
             var diff = lastMousePos - e.GetPosition(this);
-          
-
         }
     }
 }

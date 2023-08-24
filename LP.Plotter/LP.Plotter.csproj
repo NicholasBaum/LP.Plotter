@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.9" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.8.0" />
     <PackageReference Include="OxyPlot.SkiaSharp.Blazor" Version="1.0.0-beta.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.4-preview.96" />
+    <PackageReference Include="SkiaSharp" Version="2.88.5" />
   </ItemGroup>
 
   <ItemGroup>
