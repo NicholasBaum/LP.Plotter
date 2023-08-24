@@ -8,7 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="OxyPlot.Core" Version="2.1.2" />
-    <PackageReference Include="SkiaSharp" Version="2.88.4-preview.96" />
+    <PackageReference Include="SkiaSharp" Version="2.88.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LP.Plot.Core\LP.Plot.Core.csproj" />
   </ItemGroup>
 
 </Project>
