@@ -34,7 +34,7 @@ namespace LP.Plot.Test
                 sw.Start();
             sw2.Restart();
             this.signal.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
-            //this.DrawInfo(e.Surface.Canvas, e.Info);
+            this.DrawInfo(e.Surface.Canvas, e.Info);
             Debug.WriteLine($"Rendertime {sw2.Elapsed.TotalSeconds}:0.00");
         }
 

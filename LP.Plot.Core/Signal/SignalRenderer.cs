@@ -34,7 +34,7 @@ public class SignalRenderer : IRenderable
 
     private void RenderHighDensity(double[] yValues, Span xDataRange, Axis yAxis, SKCanvas canvas, SKPaint paint, int imageWidth, int imageHeight)
     {
-        PixelRange[] verticalBars = GetVerticalBars(yValues, xDataRange, yAxis, imageWidth, imageHeight);
+        var verticalBars = GetVerticalBars(yValues, xDataRange, XAxis, yAxis, imageWidth, imageHeight);
         for (int i = 0; i < verticalBars.Length; i++)
         {
             float x = i + 0.5f;
@@ -42,36 +42,36 @@ public class SignalRenderer : IRenderable
         }
     }
 
-    private PixelRange[] GetVerticalBars(double[] yValues, Span xDataRange, Axis yAxis, int imageWidth, int imageHeight)
+    private static Span[] GetVerticalBars(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
     {
-        var m = imageHeight / (yAxis.Min - yAxis.Max);
-        var bars = new PixelRange[imageWidth];
-        var unitsPerPixel = XAxis.Length / imageWidth;
-        var unitsPerIndex = xDataRange.Length / (yValues.Length - 1);
-        var indexOffset = (int)((xDataRange.Min - XAxis.Min) / unitsPerPixel);
-        for (var i = 0; i < imageWidth - 1 - indexOffset; i++)
+        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
+        var bars = new Span[imageWidth];
+        var unitsPerPixel = xAxis.Length / imageWidth;
+        var dx = xDataRange.Length / (yValues.Length - 1);
+        var canvasLeft = t.ToDataSpaceX(0);
+        for (var i = 0; i < imageWidth - 1; i++)
         {
-            var xLeft = i * unitsPerPixel;
+            var xLeft = canvasLeft + i * unitsPerPixel;
             var xRight = xLeft + unitsPerPixel;
-            var leftIndex = (int)(xLeft / unitsPerIndex);
-            var rightIndex = (int)(xRight / unitsPerIndex) + 1;
-            var min = double.MaxValue;
-            var max = double.MinValue;
-            if (rightIndex >= yValues.Length)
+            if (xRight > xDataRange.Max)
                 break;
-            for (int j = leftIndex; j < rightIndex; j++)
+            if (xDataRange.Min <= xLeft && xRight <= xDataRange.Max)
             {
-                var y = (yValues[j] - yAxis.Max) * m;
-                if (min > y)
-                    min = y;
-                if (max < y)
-                    max = y;
+                var leftIndex = (int)(xLeft / dx);
+                var rightIndex = (int)(xRight / dx) + 1;
+                var min = double.MaxValue;
+                var max = double.MinValue;
+                for (int j = leftIndex; j < rightIndex; j++)
+                {
+                    var y = yValues[j];
+                    if (min > y)
+                        min = y;
+                    if (max < y)
+                        max = y;
+                }
+                bars[i] = new Span(t.ToPixelSpaceY(min), t.ToPixelSpaceY(max));
             }
-            if (i + indexOffset >= imageWidth)
-                break;
-            bars[i + indexOffset] = new PixelRange(min, max);
         }
-
         return bars;
     }
 
@@ -208,6 +208,7 @@ public class LinearTransform
     public LinearTransform(Span dataRange, int pixelLength) : this(dataRange.Min, dataRange.Max, pixelLength) { }
 
     public float ToPixelSpace(double x) => (float)((x - dataMin) * m);
+    public double ToDataSpace(double x) => x / m + dataMin;
 }
 
 public class SKSpaceTransform
@@ -223,5 +224,7 @@ public class SKSpaceTransform
 
     public float ToPixelSpaceX(double x) => xTransform.ToPixelSpace(x);
     public float ToPixelSpaceY(double y) => yTransform.ToPixelSpace(y);
+    public double ToDataSpaceX(double x) => xTransform.ToDataSpace(x);
+    public double ToDataSpaceY(double y) => yTransform.ToDataSpace(y);
 }
 
