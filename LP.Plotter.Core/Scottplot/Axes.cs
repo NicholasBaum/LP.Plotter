@@ -117,8 +117,8 @@ public interface IPanel
 public interface IAxis : IPanel
 {
     public double Length { get; set; }
-    public double Width => Length;
-    public double Height => Length;
+    double Width => Length;
+    double Height => Length;
 
     /// <summary>
     /// Min/Max range currently displayed by this axis
@@ -175,6 +175,10 @@ public interface IAxis : IPanel
 
 public interface IAxes
 {
+    /// <summary>
+    /// Describes the region in the center of the figure where plottable data will be displayed.
+    /// This region is set by the renderer immediately before a Plottable's Render() method is called.
+    /// </summary>
     PixelRect DataRect { get; set; }
 
     // Note: Axes (not just the translation logic) are here so ticks are accessible to plottables.
@@ -195,8 +199,8 @@ public interface IAxes
 
 public class Axes : IAxes
 {
-    public IAxis XAxis { get; set; } = null!;
-    public IAxis YAxis { get; set; } = null!;
+    public IAxis XAxis { get; set; } = new Axis();
+    public IAxis YAxis { get; set; } = new Axis();
     public PixelRect DataRect { get; set; }
 
     public Coordinates GetCoordinates(Pixel pixel)

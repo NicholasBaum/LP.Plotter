@@ -3,7 +3,7 @@ using SkiaSharp;
 
 namespace LP.Plotter.Core.Scottplot;
 
-public class Signal
+public class SignalRenderer
 {
     public bool IsVisible { get; set; } = true;
     public Axes Axes { get; set; } = new Axes();
@@ -13,7 +13,7 @@ public class Signal
     public MarkerStyle Marker { get; set; } = new(MarkerShape.FilledCircle, 5);
     public string? Label { get; set; }
     public SKPaint Paint { get; set; } = SKPaints.Black;
-    public Signal(ISignalSource data)
+    public SignalRenderer(ISignalSource data)
     {
         Data = data;
     }
