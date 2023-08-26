@@ -23,6 +23,7 @@ namespace LP.Plot.Test
             MouseDown += OnMouseDown;
             MouseMove += OnMouseMove;
             MouseUp += OnMouseUp;
+            MouseWheel += OnMouseWheel;
 
             var data = new LocalDataService().LoadSignal_M();
             this.signal = new SignalRenderer(data);
@@ -95,14 +96,13 @@ namespace LP.Plot.Test
                 Point newMousePos = e.GetPosition(this);
                 double deltaX = newMousePos.X - lastMousePos.X;
                 double deltaY = newMousePos.Y - lastMousePos.Y;
-
-                signal.XAxis.Min += (float)deltaX;
-                signal.XAxis.Max += (float)deltaX;
-                signal.YAxis.Min += (float)deltaY;
-                signal.YAxis.Max += (float)deltaY;
+                var panx = -deltaX / skiaEl.ActualWidth;
+                var pany = deltaY / skiaEl.ActualHeight;
+                Debug.WriteLine(panx);
+                signal.XAxis.Pan(panx);
+                signal.YAxis.Pan(pany);
                 skiaEl.InvalidateVisual();
                 lastMousePos = newMousePos;
-
             }
         }
 
@@ -111,6 +111,19 @@ namespace LP.Plot.Test
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
             var diff = lastMousePos - e.GetPosition(this);
+        }
+
+        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var factor = Math.Sign(e.Delta) > 0 ? 0.9 : 1.1;
+            var pos = e.GetPosition(skiaEl);
+            var xPos = pos.X / skiaEl.ActualWidth;
+            var yPos = 1 - pos.Y / skiaEl.ActualHeight;
+            signal.XAxis.ZoomAt(factor, xPos);
+            signal.YAxis.ZoomAt(factor, yPos);
+            //signal.XAxis.Scale(factor);
+            //signal.YAxis.Scale(factor);
+            skiaEl.InvalidateVisual();
         }
     }
 }

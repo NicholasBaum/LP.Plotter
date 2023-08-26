@@ -1,5 +1,4 @@
 ﻿using LP.Plot.Core.Primitives;
-using System.ComponentModel.DataAnnotations;
 
 namespace LP.Plot.Core;
 
@@ -11,5 +10,32 @@ public class Axis
     public double Min { get; set; } = float.MaxValue;
     public double Max { get; set; } = float.MinValue;
     public double Length => Max - Min;
-    public Axis Scale(double s) => new Axis() { Min = Min - (s - 1) / 2 * Length, Max = Max + (s - 1) / 2 * Length };
+
+    public void Pan(double panx)
+    {
+        var offset = Length * panx;
+        Min += offset;
+        Max += offset;
+
+    }
+
+    public Axis ZoomAt(double factor, double relativeZoomCenter)
+    {        
+        var zoomCenter = Min + Length * relativeZoomCenter;
+        var newLeftSide = (zoomCenter - Min)*factor;
+        var newRightSide = (Max-zoomCenter ) * factor;
+        Min = zoomCenter - newLeftSide;
+        Max = zoomCenter + newRightSide;
+        return this;
+    }
+
+
+    public Axis Scale(double factor)
+    {
+        var newRadius = (Length * factor) / 2;
+        var mid = (Min + Max) / 2;
+        Min = mid - newRadius;
+        Max = mid + newRadius;
+        return this;
+    }
 }
