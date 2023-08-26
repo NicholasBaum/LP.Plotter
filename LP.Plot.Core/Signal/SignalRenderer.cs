@@ -1,6 +1,5 @@
 ﻿using LP.Plot.Core.Primitives;
 using LP.Plot.Skia;
-using LP.Plotter.Core;
 using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;

@@ -1,11 +1,9 @@
 ﻿using SkiaSharp.Views.Desktop;
-using SkiaSharp;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
-using LP.Plot.Core.Signal;
 using LP.Plotter.Core.Services;
-using LP.Plotter.Core;
+using LP.Plot.Core;
 
 namespace LP.Plot.Test
 {
@@ -14,7 +12,7 @@ namespace LP.Plot.Test
     /// </summary>
     public partial class MainWindow : Window
     {
-        private SignalRenderer signal;
+        private Core.Plot signal;
         private RenderInfo renderInfo = new();
         private Stopwatch frameTimer = new Stopwatch();
 
@@ -29,7 +27,7 @@ namespace LP.Plot.Test
             MouseWheel += OnMouseWheel;
 
             var data = new LocalDataService().LoadSignal_M();
-            this.signal = new SignalRenderer(data);
+            this.signal = Core.Plot.CreateSignal(data);
         }
 
         private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
@@ -58,8 +56,7 @@ namespace LP.Plot.Test
                 double deltaY = newMousePos.Y - lastMousePos.Y;
                 var panx = -deltaX / skiaEl.ActualWidth;
                 var pany = deltaY / skiaEl.ActualHeight;
-                signal.XAxis.Pan(panx);
-                signal.YAxis.Pan(pany);
+                signal.Pan(panx, pany);
                 skiaEl.InvalidateVisual();
                 lastMousePos = newMousePos;
             }
@@ -78,8 +75,7 @@ namespace LP.Plot.Test
             var pos = e.GetPosition(skiaEl);
             var xPos = pos.X / skiaEl.ActualWidth;
             var yPos = 1 - pos.Y / skiaEl.ActualHeight;
-            signal.XAxis.ZoomAt(factor, xPos);
-            signal.YAxis.ZoomAt(factor, yPos);
+            signal.ZoomAt(factor, xPos, yPos);
             skiaEl.InvalidateVisual();
         }
     }
