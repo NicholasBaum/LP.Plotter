@@ -18,7 +18,8 @@ public class SignalRenderer : IRenderable
     {
         this.data = data;
         this.XAxis = new Axis(data.XRange);
-        this.YAxis = new Axis(data.YRange).Scale(1.1);
+        this.YAxis = new Axis(data.YRange);
+        this.YAxis.ZoomAtCenter(1.1);
     }
 
     public void Render(IRenderContext ctx)

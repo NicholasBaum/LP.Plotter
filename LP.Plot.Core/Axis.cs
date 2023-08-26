@@ -19,23 +19,18 @@ public class Axis
 
     }
 
-    public Axis ZoomAt(double factor, double relativeZoomCenter)
-    {        
+    public void ZoomAt(double factor, double relativeZoomCenter)
+    {
         var zoomCenter = Min + Length * relativeZoomCenter;
-        var newLeftSide = (zoomCenter - Min)*factor;
-        var newRightSide = (Max-zoomCenter ) * factor;
+        var newLeftSide = (zoomCenter - Min) * factor;
+        var newRightSide = (Max - zoomCenter) * factor;
         Min = zoomCenter - newLeftSide;
         Max = zoomCenter + newRightSide;
-        return this;
     }
 
 
-    public Axis Scale(double factor)
+    public void ZoomAtCenter(double factor)
     {
-        var newRadius = (Length * factor) / 2;
-        var mid = (Min + Max) / 2;
-        Min = mid - newRadius;
-        Max = mid + newRadius;
-        return this;
+        ZoomAt(factor, 0.5);
     }
 }
