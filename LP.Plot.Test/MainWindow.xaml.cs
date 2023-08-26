@@ -15,6 +15,9 @@ namespace LP.Plot.Test
     public partial class MainWindow : Window
     {
         private SignalRenderer signal;
+        private RenderInfo renderInfo = new();
+        private Stopwatch frameTimer = new Stopwatch();
+
 
         public MainWindow()
         {
@@ -31,60 +34,17 @@ namespace LP.Plot.Test
 
         private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
-            if (!sw.IsRunning)
-                sw.Start();
-            sw2.Restart();
+            frameTimer.Restart();
             this.signal.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
-            this.DrawInfo(e.Surface.Canvas, e.Info);
-            Debug.WriteLine($"Rendertime {sw2.Elapsed.TotalSeconds}:0.00");
+            renderInfo.PaintRenderInfo(e.Surface.Canvas, e.Info);
+            Debug.WriteLine($"Rendertime {frameTimer.Elapsed.TotalSeconds}:0.00");
         }
-
-        private void DrawInfo(SKCanvas canvas, SKImageInfo imageInfo)
-        {
-            using var black = new SKPaint
-            {
-                Color = SKColors.Black,
-                IsAntialias = true,
-                Style = SKPaintStyle.Fill,
-                TextAlign = SKTextAlign.Left,
-            };
-            using var white = new SKPaint
-            {
-                Color = SKColors.White,
-                IsAntialias = true,
-                Style = SKPaintStyle.Fill,
-                TextAlign = SKTextAlign.Left,
-                TextSize = 20,
-            };
-            using var font = new SKFont
-            {
-                Size = 24
-            };
-
-            var coord = new SKPoint(imageInfo.Width + 200, imageInfo.Height + 200);
-            canvas.DrawRect(0, 0, 100, 100, black);
-
-            var text = $"Frames {frameCount++}";
-            SKRect bounds = new SKRect();
-            white.MeasureText(text, ref bounds);
-            canvas.DrawText(text, 0, 1.5f * bounds.Height, font, white);
-            text = $"Fps {(frameCount / (double)sw.Elapsed.TotalSeconds):0.00}";
-
-            white.MeasureText(text, ref bounds);
-            canvas.DrawText(text, 0, bounds.Height * 2.5f, font, white);
-        }
-
-        private int frameCount = 0;
-        private Stopwatch sw = new Stopwatch();
-        private Stopwatch sw2 = new Stopwatch();
-
 
         private Point lastMousePos;
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            frameCount = 0;
-            sw.Restart();
+            renderInfo.Restart();
             lastMousePos = e.GetPosition(this);
             CaptureMouse(); // Capture mouse events to track movement outside the control
         }
@@ -98,7 +58,6 @@ namespace LP.Plot.Test
                 double deltaY = newMousePos.Y - lastMousePos.Y;
                 var panx = -deltaX / skiaEl.ActualWidth;
                 var pany = deltaY / skiaEl.ActualHeight;
-                Debug.WriteLine(panx);
                 signal.XAxis.Pan(panx);
                 signal.YAxis.Pan(pany);
                 skiaEl.InvalidateVisual();
@@ -121,8 +80,6 @@ namespace LP.Plot.Test
             var yPos = 1 - pos.Y / skiaEl.ActualHeight;
             signal.XAxis.ZoomAt(factor, xPos);
             signal.YAxis.ZoomAt(factor, yPos);
-            //signal.XAxis.Scale(factor);
-            //signal.YAxis.Scale(factor);
             skiaEl.InvalidateVisual();
         }
     }
