@@ -8,9 +8,9 @@
   "resources": {
     "assembly": {
       "HarfBuzzSharp.dll": "sha256-dX\/++uW6R0xlGvP58Z0Gv3rLrHGBDCKcSB1ODiXCRyE=",
-      "LP.Plot.Core.dll": "sha256-ZI10yvdDyKI77FJXf8y19RK2HMFOx4HqgaVMQwXnTvo=",
-      "LP.Plotter.Core.dll": "sha256-4DSn5CZA7kLswkT4xEB+WbtubFDhSmR6cHpNiJ0\/Qrs=",
-      "LP.Plotter.dll": "sha256-nVliCJgFzMfXO2DRDGDYLFBzt8GkRTq2SPg55aD6fqE=",
+      "LP.Plot.Core.dll": "sha256-McExYJwdOocwW9L4US05gEsX7\/qw75ktd2URH1zxVg0=",
+      "LP.Plotter.Core.dll": "sha256-mSm6GgRCxzREh36Xk0i+WCROxqpUb5HSVlEWYgCdYCY=",
+      "LP.Plotter.dll": "sha256-NHpXEw+BAKivoiIzip\/+jnzJ4P+cttcy5OdWfPYljFI=",
       "Microsoft.AspNetCore.Components.dll": "sha256-FLl+K5EH\/O9gUZFaOM8869VB+0ZsUVTXPJjsirV8lak=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-c1Qy\/qZlUW8LJmf3Vp3Ol1hzixL40BZx\/mkoxc1DUV0=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-VfZ8\/IyMYtnm8ZsrBon95xD0hsubsFdQamIah5FRMYw=",
@@ -57,7 +57,7 @@
       "System.Private.Uri.dll": "sha256-CbUuk2VxeaJPhlpZWleLCSA4kL5y3n74hFb7+8BPTR4=",
       "System.Private.Xml.dll": "sha256-D1sUF\/25nYw5wXaYTUqQAX1pkxQkz\/McGR8VrK7Ts9E=",
       "System.Reflection.Emit.ILGeneration.dll": "sha256-DMjyhe8rfiOZ47RlVBwIKPkWx3rny2xjY\/jD+zBt\/Ms=",
-      "System.Runtime.dll": "sha256-Txnh1UAOVMRDQG32O8QIuIgw+i8XsaXCdDQFGanxz7Y=",
+      "System.Runtime.dll": "sha256-SujLl864aKHam2nMnpHMaXIq609EQ8\/wzEm7CNluuUM=",
       "System.Runtime.InteropServices.dll": "sha256-O16lFLT3lljrw26KVuirH0my7yuzrd9Wl79GrW8jgEE=",
       "System.Runtime.InteropServices.JavaScript.dll": "sha256-u10hAlb7oIMi8jTcvm3+FDAtGc9QcEDfozYFXN5Tco0=",
       "System.Text.Encodings.Web.dll": "sha256-KwxETxZvEIN+F2cFoOmczAYLy\/vNVDN4Xr11FOMxkVM=",
