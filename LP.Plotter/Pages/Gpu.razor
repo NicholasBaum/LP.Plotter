@@ -1,8 +1,7 @@
 ﻿@page "/gpu"
-@using LP.Plotter.Core.Drawing;
 @using SkiaSharp
 @using SkiaSharp.Views.Blazor
-@using static LP.Plotter.Core.Drawing.SignalPlotter;
+@using LP.Plot.Core;
 
 @inject DataService dataService;
 
@@ -21,11 +20,11 @@
 
 <p>The canvas below is using WebGL. See the great FPS!</p>
 
-<div class="container" style="border: red 2px solid">
+<div @ref="containerDiv" class="container" style="border: red 2px solid">
     <div class="row">
         <div class="col border rounded p-2 canvas-container">
 
-            <SKGLView OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="true"
+            <SKGLView @ref="skiaEl" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="true"
             @onmousedown="OnMouseDown"
             @onmousemove="OnMouseMove"
             @onmouseup="OnMouseUp"
@@ -36,19 +35,19 @@
 </div>
 
 @code {
-
+    SKGLView skiaEl;
+    ElementReference containerDiv;
     int tickIndex = 0;
     long tickSum = 0;
     long[] tickList = new long[100];
     long lastTick = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-    SignalPlotter drawer;
+    LP.Plot.Core.Plot plot;
 
     protected override async void OnInitialized()
     {
         base.OnInitialized();
-        var data = await dataService.LoadTestRun();
-        drawer = new SignalPlotter(data);
-        OriginalAxis = new Axis() { Min = drawer.XAxis.Min, Max = drawer.XAxis.Max };
+        var data = await dataService.LoadSignal_M();
+        plot = Plot.CreateSignal(data);
     }
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
@@ -67,9 +66,9 @@
                 Size = 24
             };
         var canvas = e.Surface.Canvas;
-        this.drawer.Draw(canvas, e.Info);
-        var fps = GetCurrentFPS();
-        canvas.DrawText($"{fps:0.00}fps", surfaceSize.Width / 2, surfaceSize.Height - 10f, font, paint);
+        this.plot.Render(new SkiaRenderContext(canvas, e.Info.Width, e.Info.Height));
+        // var fps = GetCurrentFPS();
+        // canvas.DrawText($"{fps:0.00}fps", surfaceSize.Width / 2, surfaceSize.Height - 10f, font, paint);
     }
 
     double GetCurrentFPS()
@@ -89,44 +88,36 @@
     }
 
     private bool isPanning = false;
-    private double lastX = 0;
-    private Axis OriginalAxis;
+    private (double X, double Y) lastMousePos = new();
     private void OnMouseDown(MouseEventArgs e)
     {
         isPanning = true;
-        lastX = (float)e.OffsetX;
+        lastMousePos = (X: e.ClientX, Y: e.ClientY);
     }
 
-    private void OnMouseMove(MouseEventArgs e)
+    private async Task OnMouseMove(MouseEventArgs e)
     {
         if (!isPanning) return;
-        float offx = 1f * (float)(e.OffsetX - lastX);
-        drawer.XAxis.Min += offx;
-        drawer.XAxis.Max += offx;
-        if (drawer.XAxis.Min >= -0.1)
-        {
-            drawer.XAxis.Min = OriginalAxis.Min;
-            drawer.XAxis.Max = OriginalAxis.Max;
-        }
+        var newMousePos = (X: e.ClientX, Y: e.ClientY);
+        double deltaX = newMousePos.X - lastMousePos.X;
+        double deltaY = newMousePos.Y - lastMousePos.Y;
+        var clientRect = await containerDiv.MudGetBoundingClientRectAsync();
+        var panx = -deltaX / clientRect.AbsoluteRight;
+        var pany = deltaY / clientRect.AbsoluteBottom;
+        plot.Pan(panx, pany);
+        lastMousePos = newMousePos;
     }
     private void OnMouseUp(MouseEventArgs e)
     {
         isPanning = false;
     }
 
-    private void OnMouseWheel(WheelEventArgs e)
+    private async Task OnMouseWheel(WheelEventArgs e)
     {
-        // Console.WriteLine(e.OffsetX);
-        // Console.WriteLine(e.DeltaX);
-        // Console.WriteLine(e.OffsetY);
-        // Console.WriteLine(e.DeltaY);
-        float offx = 1f * (float)(e.DeltaY);
-        drawer.XAxis.Min -= offx;
-        drawer.XAxis.Max += offx;
-        if (drawer.XAxis.Min >= -0.1)
-        {
-            drawer.XAxis.Min = OriginalAxis.Min;
-            drawer.XAxis.Max = OriginalAxis.Max;
-        }
+        var factor = Math.Sign(e.DeltaY) < 0 ? 0.9 : 1.1;
+        var clientRect = await containerDiv.MudGetBoundingClientRectAsync();
+        var xPos = e.ClientX / clientRect.AbsoluteRight;
+        var yPos = 1 - e.ClientY / clientRect.AbsoluteBottom;
+        plot.ZoomAt(factor, xPos, yPos);
     }
 }

@@ -1,8 +1,5 @@
-﻿using SkiaSharp.Views.Desktop;
-using System.Windows;
-using System.Diagnostics;
+﻿using System.Windows;
 using LP.Plotter.Core.Services;
-using LP.Plot.Core;
 
 namespace LP.Plot.Test
 {

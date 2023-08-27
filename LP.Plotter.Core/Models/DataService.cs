@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using LP.Plot.Core.Primitives;
+using LP.Plot.Core.Signal;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace LP.Plotter.Core.Models;
@@ -10,6 +12,13 @@ public class DataService
     public DataService(HttpClient httpClient)
     {
         this.httpClient = httpClient;
+    }
+
+    public async Task<ISignalSource> LoadSignal_M()
+    {
+        var data = await LoadTestRun();
+        var signal = new StaticSignal(data.SpeedChannel.Points.Select(x => x.Y).ToArray(), new Span(data.SpeedChannel.Points.First().X, data.SpeedChannel.Points.Last().X));
+        return signal;
     }
 
     public async Task<VChannelSet> LoadTestLap()
