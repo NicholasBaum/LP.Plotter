@@ -23,7 +23,7 @@ public struct LPRect : IEquatable<LPRect>
 
     public readonly int Height => bottom - top;
 
-    public readonly bool IsEmpty => this == Empty;
+    public readonly bool IsEmpty => Width == 0 || Height == 0;
 
     public LPSize Size
     {

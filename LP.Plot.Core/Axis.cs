@@ -11,26 +11,39 @@ public class Axis
     public double Max { get; set; } = float.MinValue;
     public double Length => Max - Min;
 
-    public void Pan(double panx)
+    public void Pan(double offset)
     {
-        var offset = Length * panx;
         Min += offset;
         Max += offset;
-
     }
 
-    public void ZoomAt(double factor, double relativeZoomCenter)
+    public void ZoomAt(double factor, double position)
     {
-        var zoomCenter = Min + Length * relativeZoomCenter;
+        // keep relative position of position
+        var newLeftSide = (position - Min) * factor;
+        var newRightSide = (Max - position) * factor;
+        Min = position - newLeftSide;
+        Max = position + newRightSide;
+    }
+
+    public void PanRelative(double relativOffset)
+    {
+        var offset = Length * relativOffset;
+        Min += offset;
+        Max += offset;
+    }
+
+    public void ZoomAtRelative(double factor, double relativePosition)
+    {
+        var zoomCenter = Min + Length * relativePosition;
         var newLeftSide = (zoomCenter - Min) * factor;
         var newRightSide = (Max - zoomCenter) * factor;
         Min = zoomCenter - newLeftSide;
         Max = zoomCenter + newRightSide;
     }
 
-
     public void ZoomAtCenter(double factor)
     {
-        ZoomAt(factor, 0.5);
+        ZoomAtRelative(factor, 0.5);
     }
 }
