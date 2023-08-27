@@ -9,34 +9,32 @@ using System.Windows.Input;
 
 namespace LP.Plot.Test;
 
-public class WpfPlot : Core.Plot
+public class WpfPlot
 {
     private RenderInfo renderInfo = new();
     private Stopwatch frameTimer = new Stopwatch();
     private Point lastMousePos;
     private Control control;
     private SKElement skiaEl;
+    private Core.Plot plot;
 
-    public static Core.Plot CreateSignal(ISignalSource data, Control control, SKElement skiaEl)
+    public WpfPlot(ISignalSource data, Control control, SKElement skiaEl)
     {
-        var plot = new WpfPlot();
-        plot.AddSignal(data);
+        plot = Core.Plot.CreateSignal(data);
 
-        skiaEl.PaintSurface += plot.OnPaintSurface;
-
-        control.MouseDown += plot.OnMouseDown;
-        control.MouseMove += plot.OnMouseMove;
-        control.MouseUp += plot.OnMouseUp;
-        control.MouseWheel += plot.OnMouseWheel;
-        plot.control = control;
-        plot.skiaEl = skiaEl;
-        return plot;
+        skiaEl.PaintSurface += OnPaintSurface;
+        control.MouseDown += OnMouseDown;
+        control.MouseMove += OnMouseMove;
+        control.MouseUp += OnMouseUp;
+        control.MouseWheel += OnMouseWheel;
+        this.control = control;
+        this.skiaEl = skiaEl;
     }
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
     {
         frameTimer.Restart();
-        Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
+        plot.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
         renderInfo.PaintRenderInfo(e.Surface.Canvas, e.Info);
         Debug.WriteLine($"Rendertime {frameTimer.Elapsed.TotalSeconds}:0.00");
     }
@@ -57,7 +55,7 @@ public class WpfPlot : Core.Plot
             double deltaY = newMousePos.Y - lastMousePos.Y;
             var panx = -deltaX / skiaEl.ActualWidth;
             var pany = deltaY / skiaEl.ActualHeight;
-            Pan(panx, pany);
+            plot.Pan(panx, pany);
             skiaEl.InvalidateVisual();
             lastMousePos = newMousePos;
         }
@@ -76,7 +74,7 @@ public class WpfPlot : Core.Plot
         var pos = e.GetPosition(skiaEl);
         var xPos = pos.X / skiaEl.ActualWidth;
         var yPos = 1 - pos.Y / skiaEl.ActualHeight;
-        this.ZoomAt(factor, xPos, yPos);
+        plot.ZoomAt(factor, xPos, yPos);
         skiaEl.InvalidateVisual();
     }
 }

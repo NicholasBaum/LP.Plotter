@@ -8,14 +8,14 @@ namespace LP.Plot.Test
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Core.Plot signal;
+        private WpfPlot signal;
 
         public MainWindow()
         {
             InitializeComponent();
 
             var data = new LocalDataService().LoadSignal_M();
-            this.signal = WpfPlot.CreateSignal(data, this, skiaEl);
+            this.signal = new WpfPlot(data, this, skiaEl);
         }
     }
 }
