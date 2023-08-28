@@ -14,7 +14,7 @@ namespace LP.Plot.Test
         {
             InitializeComponent();
 
-            var data = new LocalDataService().LoadSignal_M();
+            var data = new LocalDataService().LoadSignals_M();
             this.signal = new WpfPlot(data, this, skiaEl);
         }
     }

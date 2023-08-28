@@ -15,7 +15,7 @@ public class LocalDataService
         var data = LoadTest();
         List<ISignal> signals = new List<ISignal>();
         Axis TempAxis = new();
-        foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TttT")))
+        foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TT")))
         {
             var first = c.Points.First();
             var last = c.Points.Last();
@@ -30,6 +30,10 @@ public class LocalDataService
                 TempAxis.Min = Math.Min(TempAxis.Min, signal.YAxis.Min);
                 TempAxis.Max = Math.Max(TempAxis.Max, signal.YAxis.Max);
                 signal.YAxis = TempAxis;
+            }
+            else
+            {
+                signal.YAxis.ZoomAtCenter(1.1f);
             }
         }
         TempAxis.ZoomAtCenter(1.1f);

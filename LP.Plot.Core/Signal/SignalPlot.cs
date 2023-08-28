@@ -28,7 +28,7 @@ public class SignalPlot : IRenderable
         DefaultYAxis = new Axis(signals.First().YRange);
         foreach (var s in signals)
         {
-            s.Paint = s.Paint ?? SKPaints.NextPaint();
+            s.Paint ??= SKPaints.NextPaint();
         }
     }
 

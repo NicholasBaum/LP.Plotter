@@ -24,6 +24,10 @@ public class Plot : IRenderable
     }
 
     public SignalPlot AddSignal(ISignal data)
+        => AddSignal(new List<ISignal>() { data });
+
+    public SignalPlot AddSignal(IEnumerable<ISignal> data)
+
     {
         this.signalRenderer = new SignalPlot(data);
         plotables.Add(this.signalRenderer);
@@ -31,6 +35,9 @@ public class Plot : IRenderable
     }
 
     public static Plot CreateSignal(ISignal data)
+        => CreateSignal(new List<ISignal>() { data });
+
+    public static Plot CreateSignal(IEnumerable<ISignal> data)
     {
         var plot = new Plot();
         plot.AddSignal(data);

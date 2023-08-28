@@ -19,6 +19,9 @@ public class WpfPlot
     private Core.Plot plot;
 
     public WpfPlot(ISignal data, Control control, SKElement skiaEl)
+        : this(new List<ISignal> { data }, control, skiaEl) { }
+
+    public WpfPlot(IEnumerable<ISignal> data, Control control, SKElement skiaEl)
     {
         plot = Core.Plot.CreateSignal(data);
 

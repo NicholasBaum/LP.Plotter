@@ -7,13 +7,11 @@ public static class SKPaints
     private static float StrokeWidth = 2;
     static SKPaints()
     {
-        paints.Add(Black);
         paints.Add(Orange);
         paints.Add(Green);
         paints.Add(Blue);
         paints.Add(Red);
         paints.Add(Yellow);
-        paints.Add(White);
     }
 
     private static int currentPaintIndex = 0;
