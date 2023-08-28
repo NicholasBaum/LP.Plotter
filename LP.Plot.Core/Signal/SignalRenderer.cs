@@ -15,9 +15,9 @@ public static class SignalRenderer
     /// <param name="yAxis"></param>
     /// <param name="size"></param>
     /// <param name="path"></param>
-    public static void FillDecimatedPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
+    public static void FillDecimatedPath(double[] yValues, Span xDataRange, Span xAxis, Span yAxis, LPSize size, SKPath path)
     {
-        SKSpaceTransform t = new(size, xAxis.Range, yAxis.Range);
+        SKSpaceTransform t = new(size, xAxis, yAxis);
         path.Reset();
 
         // units per sample
@@ -45,7 +45,7 @@ public static class SignalRenderer
         var start = new Point(x, yValues[startIndex]);
         var min = start;
         var max = start;
-     
+
         var reset = false;
         for (var i = startIndex + 1; i < endIndex; i++)
         {
@@ -103,11 +103,11 @@ public static class SignalRenderer
     /// <param name="yAxis"></param>
     /// <param name="size"></param>
     /// <param name="path"></param>
-    public static void FillFullPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
+    public static void FillFullPath(double[] yValues, Span xDataRange, Span xAxis, Span yAxis, LPSize size, SKPath path)
     {
         var imageWidth = size.Width;
         var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
+        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
         path.Reset();
         var dx = xDataRange.Length / (yValues.Length - 1);
         path.MoveTo(t.ToPixelSpaceX(xDataRange.Min), t.ToPixelSpaceY(yValues[0]));
@@ -126,7 +126,7 @@ public static class SignalRenderer
     /// <param name="canvas"></param>
     /// <param name="paint"></param>
     /// <param name="size"></param>
-    public static void DrawVerticalLines(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, SKCanvas canvas, SKPaint paint, LPSize size)
+    public static void DrawVerticalLines(double[] yValues, Span xDataRange, Span xAxis, Span yAxis, SKCanvas canvas, SKPaint paint, LPSize size)
     {
         var verticalBars = GetVerticalBars(yValues, xDataRange, xAxis, yAxis, size);
         for (int i = 0; i < verticalBars.Length; i++)
@@ -136,11 +136,11 @@ public static class SignalRenderer
         }
     }
 
-    private static Span[] GetVerticalBars(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size)
+    private static Span[] GetVerticalBars(double[] yValues, Span xDataRange, Span xAxis, Span yAxis, LPSize size)
     {
         var imageWidth = size.Width;
         var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
+        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
         var bars = new Span[imageWidth];
         var unitsPerPixel = xAxis.Length / imageWidth;
         var dx = xDataRange.Length / (yValues.Length - 1);
@@ -174,11 +174,11 @@ public static class SignalRenderer
     // calculates what samples lie in a pixel only works if this can be calculated easily
     // code is only prototype 
     // i think it creates step lines
-    private static void CreateDecimatedPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
+    private static void CreateDecimatedPath(double[] yValues, Span xDataRange, Span xAxis, Span yAxis, LPSize size, SKPath path)
     {
         var imageWidth = size.Width;
         var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
+        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
         path.Reset();
         var unitsPerPixel = xAxis.Length / imageWidth;
         var dx = xDataRange.Length / (yValues.Length - 1);

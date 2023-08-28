@@ -38,16 +38,44 @@ public class SignalPlot : IRenderable
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
         ctx.Canvas.Clear(SKColors.Black);
+        if (AlreadyBuffered())
+        {
+            RenderFromBuffer(ctx);
+        }
+        else
+        {
+            RenderToBuffer(ctx);
+        }
+        ctx.Canvas.Restore();
+    }
+
+    private bool AlreadyBuffered()
+    {
+        return false;
+    }
+
+    private void RenderFromBuffer(IRenderContext ctx)
+    {
+
+    }
+
+    private void RenderToBuffer(IRenderContext ctx)
+    {
         foreach (ISignal signal in data)
             RenderSignal(signal, signal.YAxis ?? DefaultYAxis, signal.Paint ?? DefaultPaint, ctx.Canvas, ctx.ClientRect.Size);
-        ctx.Canvas.Restore();
+    }
+
+    private void RenderAllSignal(IRenderContext ctx)
+    {
+        foreach (ISignal signal in data)
+            RenderSignal(signal, signal.YAxis ?? DefaultYAxis, signal.Paint ?? DefaultPaint, ctx.Canvas, ctx.ClientRect.Size);
     }
 
     private void RenderSignal(ISignal data, Axis yAxis, SKPaint paint, SKCanvas canvas, LPSize imageSize)
     {
-        SignalRenderer.FillDecimatedPath(data.YValues, data.XRange, XAxis, yAxis, imageSize, path);
-        //SignalRenderer.FillFullPath(data.YValues, data.XRange, XAxis, yAxis, imageSize, path);
+        SignalRenderer.FillDecimatedPath(data.YValues, data.XRange, XAxis.Range, yAxis.Range, imageSize, path);
+        //SignalRenderer.FillFullPath(data.YValues, data.XRange, XAxis.Range, yAxis.Range, imageSize, path);
         canvas.DrawPath(path, paint);
-        //SignalRenderer.DrawVerticalLines(data.YValues, data.XRange, XAxis, yAxis, canvas, paint, imageSize);
+        //SignalRenderer.DrawVerticalLines(data.YValues, data.XRange, XAxis.Range, yAxis.Range, canvas, paint, imageSize);
     }
 }
