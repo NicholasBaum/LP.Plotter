@@ -1,4 +1,5 @@
 ﻿@page "/gpu"
+@using LP.Plot.Core.Skia;
 @using SkiaSharp
 @using SkiaSharp.Views.Blazor
 @using LP.Plot.Core;
@@ -35,11 +36,10 @@
 </div>
 
 @code {
-    SKGLView skiaEl;
+    SKGLView skiaEl = null!;
     ElementReference containerDiv;
-    int frameCount = 0;
-    long time = 0;
-    LP.Plot.Core.Plot plot;
+    Plot plot = null!;
+    RenderInfo renderInfo = new();
 
     protected override async void OnInitialized()
     {
@@ -50,39 +50,10 @@
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
-        var surfaceSize = e.Info.Size;
-        using var paint = new SKPaint
-            {
-                Color = SKColors.White,
-                IsAntialias = true,
-                StrokeWidth = 5f,
-                StrokeCap = SKStrokeCap.Round,
-                TextAlign = SKTextAlign.Center,
-            };
-        using var font = new SKFont
-            {
-                Size = 24
-            };
+        var size = e.Info.Size;
         var canvas = e.Surface.Canvas;
-        this.plot.Render(new SkiaRenderContext(canvas, e.Info.Width, e.Info.Height));
-        var fps = GetCurrentFPS();
-        canvas.DrawText($"{fps:0.00}fps", surfaceSize.Width / 2, surfaceSize.Height - 10f, font, paint);
-    }
-
-    double GetCurrentFPS()
-    {
-        var newTick = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        var delta = newTick - lastTick;
-        lastTick = newTick;
-
-        tickSum -= tickList[tickIndex];
-        tickSum += delta;
-        tickList[tickIndex] = delta;
-
-        if (++tickIndex == tickList.Length)
-            tickIndex = 0;
-
-        return 1000.0 / ((double)tickSum / tickList.Length);
+        this.plot.Render(new SkiaRenderContext(canvas, size.Width, size.Height));
+        renderInfo.PaintRenderInfo(canvas);
     }
 
     private bool isPanning = false;
@@ -90,6 +61,7 @@
     private void OnMouseDown(MouseEventArgs e)
     {
         isPanning = true;
+        renderInfo.RestartMeasuring();
         lastMousePos = (X: e.ClientX, Y: e.ClientY);
     }
 
@@ -104,7 +76,7 @@
         var pany = deltaY / clientRect.AbsoluteBottom;
         plot.Pan(panx, pany);
         lastMousePos = newMousePos;
-        //skiaEl.Invalidate();
+        skiaEl.Invalidate();
     }
     private void OnMouseUp(MouseEventArgs e)
     {
@@ -118,6 +90,6 @@
         var xPos = e.ClientX / clientRect.AbsoluteRight;
         var yPos = 1 - e.ClientY / clientRect.AbsoluteBottom;
         plot.ZoomAt(factor, xPos, yPos);
-        //skiaEl.Invalidate();
+        skiaEl.Invalidate();
     }
 }

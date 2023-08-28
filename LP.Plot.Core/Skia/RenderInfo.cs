@@ -31,7 +31,7 @@ public class RenderInfo
         frameCount = 0;
     }
 
-    public void PaintRenderInfo(SKCanvas canvas, SKImageInfo imageInfo)
+    public void PaintRenderInfo(SKCanvas canvas)
     {
         canvas.DrawRect(0, 0, 140, 70, black);
 

@@ -39,7 +39,7 @@ public class WpfPlot
     {
         frameTimer.Restart();
         plot.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
-        renderInfo.PaintRenderInfo(e.Surface.Canvas, e.Info);
+        renderInfo.PaintRenderInfo(e.Surface.Canvas);
         Debug.WriteLine($"Rendertime {frameTimer.Elapsed.TotalSeconds}");
     }
 
