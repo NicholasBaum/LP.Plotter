@@ -9,7 +9,7 @@ namespace LP.Plot.Core;
 public class Plot : IRenderable
 {
     private List<IRenderable> plotables { get; } = new();
-    private SignalRenderer? signalRenderer = null;
+    private Signal.Signal? signalRenderer = null;
     private Docker layout = null!;
 
     protected Plot() { }
@@ -23,9 +23,9 @@ public class Plot : IRenderable
         layout.Render(ctx);
     }
 
-    public SignalRenderer AddSignal(ISignalSource data)
+    public Signal.Signal AddSignal(ISignalSource data)
     {
-        this.signalRenderer = new SignalRenderer(data);
+        this.signalRenderer = new Signal.Signal(data);
         plotables.Add(this.signalRenderer);
         return this.signalRenderer;
     }
