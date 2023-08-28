@@ -25,15 +25,19 @@ public static class SignalRenderer
         // units per pixel
         var dpx = xAxis.Length / size.Width;
 
+        var x = xDataRange.Min;
+        var startIndex = 0;
         // restricting to visible range
-        var x = Math.Max(xDataRange.Min, xAxis.Min);
-        int startIndex = (int)t.ToPixelSpaceX(x);
-        // snap x to samples
-        x = xDataRange.Min + startIndex * dx;
-
-        var xMax = Math.Min(xDataRange.Max, xAxis.Max);
-        var endIndex = (xMax - x) / dx;
-
+        if (x < xAxis.Min)
+        {
+            startIndex = Math.Max(0, (int)Math.Max(0, (xAxis.Min - x) / dx - 8)); // -8 to be save            
+            x = xDataRange.Min + startIndex * dx;
+        }
+        var endIndex = yValues.Length;
+        if (xDataRange.Max > xAxis.Max)
+        {
+            endIndex = Math.Min(yValues.Length, startIndex + (int)(xAxis.Length / dx) + 8);
+        }
         var nextPixelLeftBoundary = x + dpx;
         path.MoveTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[startIndex]));
 
@@ -41,9 +45,9 @@ public static class SignalRenderer
         var start = new Point(x, yValues[startIndex]);
         var min = start;
         var max = start;
-
+     
         var reset = false;
-        for (var i = startIndex + 1; i < Math.Min(yValues.Length, endIndex); i++)
+        for (var i = startIndex + 1; i < endIndex; i++)
         {
             x += dx;
             if (reset)
