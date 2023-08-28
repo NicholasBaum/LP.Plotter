@@ -1,85 +1,15 @@
-﻿using LP.Plot.Core;
-using LP.Plot.Core.Primitives;
-using LP.Plot.Core.Signal;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace LP.Plotter.Core.Models;
 
-public class DataService
+public class OxyDataService
 {
     private readonly HttpClient httpClient = new();
 
-    public DataService(HttpClient httpClient)
+    public OxyDataService(HttpClient httpClient)
     {
         this.httpClient = httpClient;
-    }
-
-    public async Task<ISignal> LoadSignal_M()
-    {
-        var data = await LoadTestRun();
-        var signal = new StaticSignal(data.SpeedChannel.Points.Select(x => x.Y).ToArray(), new Span(data.SpeedChannel.Points.First().X, data.SpeedChannel.Points.Last().X));
-        return signal;
-    }
-
-    public async Task<List<ISignal>> LoadSignals_M()
-    {
-        var data = await LoadTestRun();
-        List<ISignal> signals = new List<ISignal>();
-        Axis TempAxis = new();
-        foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TT")))
-        {
-            var first = c.Points.First();
-            var last = c.Points.Last();
-            var yValues = c.Points.Select(x => x.Y).ToArray();
-
-            var signal = new StaticSignal(yValues, new Span(first.X, last.X));
-            signal.YAxis = new Axis() { Min = yValues.Min(), Max = yValues.Max() };
-            signals.Add(signal);
-
-            if (c.Name.Contains("TT"))
-            {
-                TempAxis.Min = Math.Min(TempAxis.Min, signal.YAxis.Min);
-                TempAxis.Max = Math.Max(TempAxis.Max, signal.YAxis.Max);
-                signal.YAxis = TempAxis;
-            }
-            else
-            {
-                signal.YAxis.ZoomAtCenter(1.1f);
-            }
-        }
-        TempAxis.ZoomAtCenter(1.1f);
-        return signals;
-    }
-
-    public async Task<List<ISignal>> LoadSignals_L()
-    {
-        var data = await LoadTestCar();
-        List<ISignal> signals = new List<ISignal>();
-        Axis TempAxis = new();
-        foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TT")))
-        {
-            var first = c.Points.First();
-            var last = c.Points.Last();
-            var yValues = c.Points.Select(x => x.Y).ToArray();
-
-            var signal = new StaticSignal(yValues, new Span(first.X, last.X));
-            signal.YAxis = new Axis() { Min = yValues.Min(), Max = yValues.Max() };
-            signals.Add(signal);
-
-            if (c.Name.Contains("TT"))
-            {
-                TempAxis.Min = Math.Min(TempAxis.Min, signal.YAxis.Min);
-                TempAxis.Max = Math.Max(TempAxis.Max, signal.YAxis.Max);
-                signal.YAxis = TempAxis;
-            }
-            else
-            {
-                signal.YAxis.ZoomAtCenter(1.1f);
-            }
-        }
-        TempAxis.ZoomAtCenter(1.1f);
-        return signals;
     }
 
     public async Task<VChannelSet> LoadTestLap()

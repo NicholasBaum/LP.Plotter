@@ -45,7 +45,7 @@ public class ChannelDataSet
         };
     }
 
-    public static ChannelDataSet CreateMerged(List<ChannelDataSet> set)
+    public static ChannelDataSet CreateMerged(IEnumerable<ChannelDataSet> set)
     {
         var channels = new List<(string Name, List<double> YValues)>();
         foreach (var c in set.First().Channels)

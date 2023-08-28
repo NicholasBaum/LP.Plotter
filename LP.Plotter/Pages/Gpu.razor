@@ -1,4 +1,5 @@
 ﻿@page "/gpu"
+@using LP.Plot.Core.Data;
 @using LP.Plot.Core.Skia;
 @using SkiaSharp
 @using SkiaSharp.Views.Blazor
@@ -44,7 +45,7 @@
     protected override async void OnInitialized()
     {
         base.OnInitialized();
-        var data = await dataService.LoadSignals_M();
+        var data = await dataService.LoadSignal_L();
         plot = Plot.CreateSignal(data);
     }
 

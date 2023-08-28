@@ -1,5 +1,4 @@
 ﻿using LP.Plot.Core.Signal;
-using LP.Plot.Core.Data;
 using static LP.Plot.Core.Data.Helper;
 
 namespace LP.Plot.Core.Data;
