@@ -1,5 +1,6 @@
 ﻿using LP.Plot.Core;
 using LP.Plot.Core.Signal;
+using LP.Plot.Core.Skia;
 using SkiaSharp.Views.Desktop;
 using SkiaSharp.Views.WPF;
 using System.Diagnostics;
@@ -39,12 +40,12 @@ public class WpfPlot
         frameTimer.Restart();
         plot.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
         renderInfo.PaintRenderInfo(e.Surface.Canvas, e.Info);
-        Debug.WriteLine($"Rendertime {frameTimer.Elapsed.TotalSeconds}:0.00");
+        Debug.WriteLine($"Rendertime {frameTimer.Elapsed.TotalSeconds}");
     }
 
     private void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
-        renderInfo.Restart();
+        renderInfo.RestartMeasuring();
         lastMousePos = e.GetPosition(control);
         control.CaptureMouse(); // Capture mouse events to track movement outside the control
     }

@@ -24,7 +24,7 @@
     <div class="row">
         <div class="col border rounded p-2 canvas-container">
 
-            <SKGLView @ref="skiaEl" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="true"
+            <SKGLView @ref="skiaEl" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="false"
             @onmousedown="OnMouseDown"
             @onmousemove="OnMouseMove"
             @onmouseup="OnMouseUp"
@@ -37,10 +37,8 @@
 @code {
     SKGLView skiaEl;
     ElementReference containerDiv;
-    int tickIndex = 0;
-    long tickSum = 0;
-    long[] tickList = new long[100];
-    long lastTick = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    int frameCount = 0;
+    long time = 0;
     LP.Plot.Core.Plot plot;
 
     protected override async void OnInitialized()
@@ -67,8 +65,8 @@
             };
         var canvas = e.Surface.Canvas;
         this.plot.Render(new SkiaRenderContext(canvas, e.Info.Width, e.Info.Height));
-        // var fps = GetCurrentFPS();
-        // canvas.DrawText($"{fps:0.00}fps", surfaceSize.Width / 2, surfaceSize.Height - 10f, font, paint);
+        var fps = GetCurrentFPS();
+        canvas.DrawText($"{fps:0.00}fps", surfaceSize.Width / 2, surfaceSize.Height - 10f, font, paint);
     }
 
     double GetCurrentFPS()
@@ -106,6 +104,7 @@
         var pany = deltaY / clientRect.AbsoluteBottom;
         plot.Pan(panx, pany);
         lastMousePos = newMousePos;
+        //skiaEl.Invalidate();
     }
     private void OnMouseUp(MouseEventArgs e)
     {
@@ -119,5 +118,6 @@
         var xPos = e.ClientX / clientRect.AbsoluteRight;
         var yPos = 1 - e.ClientY / clientRect.AbsoluteBottom;
         plot.ZoomAt(factor, xPos, yPos);
+        //skiaEl.Invalidate();
     }
 }
