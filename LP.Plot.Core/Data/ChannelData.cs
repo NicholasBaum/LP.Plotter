@@ -1,9 +1,7 @@
-﻿using LP.Plotter.Core.Models;
-using OxyPlot;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace LP.Plotter.Core.Services;
+namespace LP.Plot.Core.Data;
 
 public class ChannelDataSet
 {
