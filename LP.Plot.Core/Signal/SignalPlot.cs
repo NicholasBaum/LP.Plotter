@@ -45,7 +45,8 @@ public class SignalPlot : IRenderable
 
     private void RenderSignal(ISignal data, Axis yAxis, SKPaint paint, SKCanvas canvas, LPSize imageSize)
     {
-        SignalRenderer.FillDecimatedPath(data.YValues, data.XRange, XAxis, yAxis, imageSize, path);
+        SignalRenderer.Test(data.YValues, data.XRange, XAxis, yAxis, imageSize, path);
+        //SignalRenderer.FillDecimatedPath(data.YValues, data.XRange, XAxis, yAxis, imageSize, path);
         //SignalRenderer.FillFullPath(data.YValues, data.XRange, XAxis, yAxis, imageSize, path);
         canvas.DrawPath(path, paint);
         //SignalRenderer.DrawVerticalLines(data.YValues, data.XRange, XAxis, yAxis, canvas, paint, imageSize);

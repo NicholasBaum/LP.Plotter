@@ -6,6 +6,68 @@ namespace LP.Plot.Core.Signal;
 
 public static class SignalRenderer
 {
+    public static void Test(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
+    {
+        SKSpaceTransform t = new(size, xAxis.Range, yAxis.Range);
+        path.Reset();
+
+        // units per sample
+        var dx = xDataRange.Length / (yValues.Length - 1);
+        // units per pixel
+        var dpx = xAxis.Length / size.Width; 
+        
+        // restricting to visible range
+        var x = Math.Max(xDataRange.Min, xAxis.Min);
+        int startIndex = (int)t.ToPixelSpaceX(x);
+        // snap x to samples
+        x = xDataRange.Min + startIndex * dx;
+
+        var xMax = Math.Min(xDataRange.Max, xAxis.Max);
+        var endIndex = (xMax - x) / dx;
+
+        var nextPixelLeftBoundary = x + dpx;
+        path.MoveTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[startIndex]));        
+        
+        // the method uses the start, min, max and end y-value in a pixel
+        var start = new Point(x, yValues[startIndex]);
+        var min = start;
+        var max = start;
+
+        var reset = false;
+        for (var i = startIndex + 1; i < Math.Min(yValues.Length, endIndex); i++)
+        {
+            x += dx;
+            if (reset)
+            {
+                start = new Point(x, yValues[i]);
+                min = start;
+                max = start;
+                nextPixelLeftBoundary += dpx;
+                reset = false;
+            }
+            else if (x + dx > nextPixelLeftBoundary)
+            {
+                path.LineTo(t.ToPixelSpaceX(start.X), t.ToPixelSpaceY(start.Y));
+                path.LineTo(t.ToPixelSpaceX(min.X), t.ToPixelSpaceY(min.Y));
+                path.LineTo(t.ToPixelSpaceX(max.X), t.ToPixelSpaceY(max.Y));
+                path.LineTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[i]));
+                //var p = t.ToPixelSpaceX(nextPixelLeftBoundary);
+                //path.LineTo(p - 1, t.ToPixelSpaceY(start.Y));
+                //path.LineTo(p - 0.75f, t.ToPixelSpaceY(min.Y));
+                //path.LineTo(p - 0.5f, t.ToPixelSpaceY(max.Y));
+                //path.LineTo(p - 0.25f, t.ToPixelSpaceY(yValues[i]));
+                reset = true;
+            }
+            else
+            {
+                if (min.Y > yValues[i])
+                    min = new Point(x, yValues[i]);
+                if (max.Y < yValues[i])
+                    max = new Point(x, yValues[i]);
+            }
+        }
+    }
+
     // TODO: break when pixel space x isn't in screen bounds anymore
     /// <summary>
     /// Maximum quality by using all points.

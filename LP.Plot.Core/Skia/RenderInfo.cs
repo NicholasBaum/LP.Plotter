@@ -43,7 +43,7 @@ public class RenderInfo
         text = $"Fps {(frameCount / (double)sw.Elapsed.TotalSeconds):0.00}";
         canvas.DrawText(text, 0, 3f * bounds.Height, white);
 
-        text = $"FTime {((double)sw.Elapsed.TotalSeconds / frameCount):0.00000}";
+        text = $"FTime {((double)sw.Elapsed.TotalMilliseconds / frameCount):00000}ms";
         canvas.DrawText(text, 0, 4.5f * bounds.Height, white);
     }
 }
