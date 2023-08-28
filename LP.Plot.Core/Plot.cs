@@ -41,7 +41,7 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer!.DefaultYAxis, plot.signalRenderer!.XAxis, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer!.YAxes.RefAxis!, plot.signalRenderer!.XAxis, plot.signalRenderer!);
         return plot;
     }
 
@@ -49,14 +49,14 @@ public class Plot : IRenderable
     {
         if (signalRenderer is null) return;
         signalRenderer.XAxis.PanRelative(x);
-        signalRenderer.YAxes.FirstOrDefault()?.PanRelative(y);
+        //signalRenderer.YAxes.PanRelative(y);
     }
 
     public void ZoomAt(double factor, double x, double y)
     {
-        if (signalRenderer is null) return;
-        signalRenderer.XAxis.ZoomAtRelative(factor, x);
-        signalRenderer.YAxes.FirstOrDefault()?.ZoomAtRelative(factor, y);
+        //if (signalRenderer is null) return;
+        //signalRenderer.XAxis.ZoomAtRelative(factor, x);
+        //signalRenderer.YAxes.ZoomAtRelative(factor, y);
     }
 }
 
