@@ -12,4 +12,7 @@ public readonly struct Span
         Min = min;
         Max = max;
     }
+
+    public bool Contains(Span other)
+        => Min <= other.Min && other.Max <= Max;
 }
