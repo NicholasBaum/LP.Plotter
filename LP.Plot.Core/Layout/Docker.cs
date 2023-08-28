@@ -5,7 +5,7 @@ namespace LP.Plot.Core.Layout;
 public interface IControl : IRenderable
 {
     public IControl? Parent { get; }
-    public LPRect DesiredRect { get; }
+    public LPSize DesiredSize { get; }
     public LPRect Rect { get; }
     public void SetRect(LPRect rect);
 }
@@ -18,7 +18,7 @@ public class Docker : IControl, IRenderable
     public IControl? Right { get; set; }
     public IControl? Bottom { get; set; }
     public IControl? Center { get; set; }
-    public LPRect DesiredRect { get; set; }
+    public LPSize DesiredSize { get; set; }
     public LPRect Rect { get; private set; }
 
     private Docker() { }
@@ -43,8 +43,8 @@ public class Docker : IControl, IRenderable
     {
         var w = Rect.Width;
         // desired widths
-        var lwd = Left == null ? 0 : Math.Max(0, Left.DesiredRect.Width);
-        var rwd = Right == null ? 0 : Math.Max(0, Right.DesiredRect.Width);
+        var lwd = Left == null ? 0 : Math.Max(0, Left.DesiredSize.Width);
+        var rwd = Right == null ? 0 : Math.Max(0, Right.DesiredSize.Width);
 
         // assigned widths
         int lw = 0, rw = 0, cw = 0;
@@ -69,8 +69,8 @@ public class Docker : IControl, IRenderable
         var h = Rect.Height;
 
         // desired heights
-        var thd = Top == null ? 0 : Math.Max(0, Top.DesiredRect.Height);
-        var bhd = Bottom == null ? 0 : Math.Max(0, Bottom.DesiredRect.Height);
+        var thd = Top == null ? 0 : Math.Max(0, Top.DesiredSize.Height);
+        var bhd = Bottom == null ? 0 : Math.Max(0, Bottom.DesiredSize.Height);
 
         // assigned heights
         int th = 0, bh = 0, ch = 0;
@@ -102,10 +102,12 @@ public class Docker : IControl, IRenderable
         Center?.SetRect(LPRect.Create(lw, th, cw, ch));
     }
 
-    public static Docker CreateDefault(IRenderable plot)
+    public static Docker CreateDefault(IRenderable left, IRenderable bottom, IRenderable center)
     {
         var grid = new Docker();
-        grid.Center = new Cell() { Parent = grid, Content = plot };
+        grid.Left = new Cell() { Parent = grid, Content = left, DesiredSize = new LPSize(50, 0) };
+        grid.Bottom = new Cell() { Parent = grid, Content = bottom, DesiredSize = new LPSize(0, 150) };
+        grid.Center = new Cell() { Parent = grid, Content = center };
         return grid;
     }
 }
@@ -114,15 +116,14 @@ public class Cell : IControl
 {
     public IControl? Parent { get; set; }
     public IRenderable? Content { get; set; }
-    public LPRect DesiredRect { get; set; }
+    public LPSize DesiredSize { get; set; }
     public LPRect Rect { get; private set; }
 
     public void Render(IRenderContext ctx)
     {
         if (Content is null || Rect.IsEmpty) return;
-        ctx.Canvas.Translate(Rect.Left, Rect.Top);
+        ctx.ClientRect = Rect;
         this.Content.Render(ctx);
-        ctx.Canvas.Translate(-Rect.Left, -Rect.Top);
     }
 
     public void SetRect(LPRect rect)

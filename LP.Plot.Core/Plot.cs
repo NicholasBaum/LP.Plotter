@@ -18,7 +18,8 @@ public class Plot : IRenderable
     {
         //foreach (var r in plotables)
         //    r.Render(ctx);
-        layout.SetRect(ctx.Rect);
+        ctx.Canvas.Clear(SKColors.Teal);
+        layout.SetRect(LPRect.Create(ctx.Size));
         layout.Render(ctx);
     }
 
@@ -33,7 +34,7 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer!.YAxis, plot.signalRenderer!.XAxis, plot.signalRenderer!);
         return plot;
     }
 
@@ -62,7 +63,8 @@ public interface IRenderContext
     SKCanvas Canvas { get; }
     int Width { get; }
     int Height { get; }
-    LPRect Rect { get; }
+    LPSize Size { get; }
+    LPRect ClientRect { get; set; }
 }
 
 public class SkiaRenderContext : IRenderContext
@@ -70,7 +72,8 @@ public class SkiaRenderContext : IRenderContext
     public SKCanvas Canvas { get; }
     public int Width { get; }
     public int Height { get; }
-    public LPRect Rect => LPRect.Create(Width, Height);
+    public LPSize Size => new LPSize(Width, Height);
+    public LPRect ClientRect { get; set; }
 
     public SkiaRenderContext(SKCanvas canvas, int width, int height)
     {

@@ -257,4 +257,9 @@ public struct LPRect : IEquatable<LPRect>
         hashCode.Add(bottom);
         return hashCode.ToHashCode();
     }
+
+    internal SkiaSharp.SKRect ToSkia()
+    {
+        return new SkiaSharp.SKRect(left, top, right, bottom);
+    }
 }

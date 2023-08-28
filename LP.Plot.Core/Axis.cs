@@ -1,8 +1,10 @@
 ﻿using LP.Plot.Core.Primitives;
+using LP.Plot.Skia;
+using SkiaSharp;
 
 namespace LP.Plot.Core;
 
-public class Axis
+public class Axis : IRenderable
 {
     public Axis() { }
     public Axis(Span range) => (Min, Max) = (range.Min, range.Max);
@@ -45,5 +47,15 @@ public class Axis
     public void ZoomAtCenter(double factor)
     {
         ZoomAtRelative(factor, 0.5);
+    }
+
+    public void Render(IRenderContext ctx)
+    {
+        ctx.Canvas.Save();
+        ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
+        ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
+        ctx.Canvas.Clear(SKColors.Red);
+        ctx.Canvas.DrawLine(0, 0.5f, ctx.ClientRect.Width, 0.5f, SKPaints.Red);        
+        ctx.Canvas.Restore();
     }
 }

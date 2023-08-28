@@ -23,18 +23,22 @@ public class SignalRenderer : IRenderable
 
     public void Render(IRenderContext ctx)
     {
+        ctx.Canvas.Save();
+        ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
+        ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
         ctx.Canvas.Clear(SKColors.Black);
-
-        CreateDecimatedPath2(data.YValues, data.XRange, XAxis, YAxis, ctx.Width, ctx.Height);
-        //CreatePath(data.YValues, data.XRange, XAxis, YAxis, ctx.Width, ctx.Height);
+        //CreateDecimatedPath(data.YValues, data.XRange, XAxis, YAxis, ctx.ClientRect.Size);
+        CreateDecimatedPath2(data.YValues, data.XRange, XAxis, YAxis, ctx.ClientRect.Size);
+        //CreatePath(data.YValues, data.XRange, XAxis, YAxis, ctx.ClientRect.Size);
         ctx.Canvas.DrawPath(path, Paint);
-        //RenderHighDensity(data.YValues, data.XRange, YAxis, ctx.Canvas, Paint, ctx.Width, ctx.Height);
-
+        //RenderHighDensity(data.YValues, data.XRange, YAxis, ctx.Canvas, Paint, ctx.ClientRect.Size);
+        ctx.Canvas.Restore();
     }
 
-    private void RenderHighDensity(double[] yValues, Span xDataRange, Axis yAxis, SKCanvas canvas, SKPaint paint, int imageWidth, int imageHeight)
+    // TODO: need to implement and switch to low density rendermode when necessary
+    private void RenderHighDensity(double[] yValues, Span xDataRange, Axis yAxis, SKCanvas canvas, SKPaint paint, LPSize size)
     {
-        var verticalBars = GetVerticalBars(yValues, xDataRange, XAxis, yAxis, imageWidth, imageHeight);
+        var verticalBars = GetVerticalBars(yValues, xDataRange, XAxis, yAxis, size);
         for (int i = 0; i < verticalBars.Length; i++)
         {
             float x = i + 0.5f;
@@ -42,8 +46,10 @@ public class SignalRenderer : IRenderable
         }
     }
 
-    private static Span[] GetVerticalBars(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
+    private static Span[] GetVerticalBars(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size)
     {
+        var imageWidth = size.Width;
+        var imageHeight = size.Height;
         SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
         var bars = new Span[imageWidth];
         var unitsPerPixel = xAxis.Length / imageWidth;
@@ -76,8 +82,10 @@ public class SignalRenderer : IRenderable
     }
 
     // tranlates pixels to coordinate space and cycles through the samples taking 4 samples per pixel
-    private void CreateDecimatedPath2(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
+    private void CreateDecimatedPath2(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size)
     {
+        var imageWidth = size.Width;
+        var imageHeight = size.Height;
         SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
         path.Reset();
         var dx = xDataRange.Length / (yValues.Length - 1); // units per sample
@@ -139,8 +147,10 @@ public class SignalRenderer : IRenderable
     // calculates what samples lie in a pixel only works if this can be calculated easily
     // code is only prototype 
     // i think it creates step lines
-    private void CreateDecimatedPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
+    private void CreateDecimatedPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size)
     {
+        var imageWidth = size.Width;
+        var imageHeight = size.Height;
         SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
         path.Reset();
         var unitsPerPixel = XAxis.Length / imageWidth;
@@ -179,8 +189,10 @@ public class SignalRenderer : IRenderable
     }
 
     // TODO: break when pixel space x isn't in screen bounds anymore
-    private void CreatePath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, int imageWidth, int imageHeight)
+    private void CreatePath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size)
     {
+        var imageWidth = size.Width;
+        var imageHeight = size.Height;
         SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
         path.Reset();
         var dx = xDataRange.Length / (yValues.Length - 1);
