@@ -9,7 +9,7 @@ namespace LP.Plot.Core;
 public class Plot : IRenderable
 {
     private List<IRenderable> plotables { get; } = new();
-    private Signal.SignalsPlot? signalRenderer = null;
+    private Signal.SignalPlot? signalRenderer = null;
     private Docker layout = null!;
 
     protected Plot() { }
@@ -23,9 +23,9 @@ public class Plot : IRenderable
         layout.Render(ctx);
     }
 
-    public Signal.SignalsPlot AddSignal(ISignal data)
+    public SignalPlot AddSignal(ISignal data)
     {
-        this.signalRenderer = new Signal.SignalsPlot(data);
+        this.signalRenderer = new SignalPlot(data);
         plotables.Add(this.signalRenderer);
         return this.signalRenderer;
     }
@@ -42,14 +42,14 @@ public class Plot : IRenderable
     {
         if (signalRenderer is null) return;
         signalRenderer.XAxis.PanRelative(x);
-        signalRenderer.DefaultYAxis.PanRelative(y);
+        signalRenderer.YAxes.FirstOrDefault()?.PanRelative(y);
     }
 
     public void ZoomAt(double factor, double x, double y)
     {
         if (signalRenderer is null) return;
         signalRenderer.XAxis.ZoomAtRelative(factor, x);
-        signalRenderer.DefaultYAxis.ZoomAtRelative(factor, y);
+        signalRenderer.YAxes.FirstOrDefault()?.ZoomAtRelative(factor, y);
     }
 }
 

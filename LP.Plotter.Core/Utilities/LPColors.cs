@@ -6,8 +6,7 @@ namespace LP.Plotter.Core.Utilities;
 public static class SKPaints
 {
     static SKPaints()
-    {
-        paints.Add(Black);
+    {        
         paints.Add(Orange);
         paints.Add(Green);
         paints.Add(Blue);

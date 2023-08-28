@@ -2,32 +2,38 @@
 using LP.Plotter.Core.Models;
 using LP.Plot.Core.Signal;
 using LP.Plot.Core.Primitives;
+using LP.Plot.Core;
 
 namespace LP.Plotter.Core.Services;
 
 public class LocalDataService
 {
-    public ISignal LoadSignal_M()
+    public ISignal LoadSignal_M() => LoadSignals_M().First();
+
+    public List<ISignal> LoadSignals_M()
     {
         var data = LoadTest();
-        var signal = new StaticSignal(data.SpeedChannel.Points.Select(x => x.Y).ToArray(), new Span(data.SpeedChannel.Points.First().X, data.SpeedChannel.Points.Last().X));
-        return signal;
-        //foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TT")))
-        //{
-        //    var yValues = c.Points.Select(x => (float)x.Y).ToArray();
-        //    var yaxis = new Axis() { Min = (float)yValues.Min(), Max = (float)yValues.Max() }.Scale(1.1f);
-        //    if (c.Name.Contains("TT"))
-        //    {
-        //        TempAxis.Min = Math.Min(TempAxis.Min, yaxis.Min);
-        //        TempAxis.Max = Math.Max(TempAxis.Max, yaxis.Max);
-        //        yaxis = TempAxis;
-        //    }
-        //    channels.Add((yValues, yaxis, SKPaints.NextPaint()));
-        //}
-        //var min = data.SpeedChannel.Points.First().X;
-        //var max = data.SpeedChannel.Points.Last().X;
-        //XAxis = new Axis() { Min = (float)min, Max = (float)max };
-        //XDataRange = new Axis() { Min = (float)min, Max = (float)max };
+        List<ISignal> signals = new List<ISignal>();
+        Axis TempAxis = new();
+        foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TttT")))
+        {
+            var first = c.Points.First();
+            var last = c.Points.Last();
+            var yValues = c.Points.Select(x => x.Y).ToArray();
+
+            var signal = new StaticSignal(yValues, new Span(first.X, last.X));
+            signal.YAxis = new Axis() { Min = yValues.Min(), Max = yValues.Max() };
+            signals.Add(signal);
+
+            if (c.Name.Contains("TT"))
+            {
+                TempAxis.Min = Math.Min(TempAxis.Min, signal.YAxis.Min);
+                TempAxis.Max = Math.Max(TempAxis.Max, signal.YAxis.Max);
+                signal.YAxis = TempAxis;
+            }
+        }
+        TempAxis.ZoomAtCenter(1.1f);
+        return signals;
     }
 
     public VChannelSet LoadTest()

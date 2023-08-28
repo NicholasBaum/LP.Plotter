@@ -9,8 +9,8 @@ public class StaticSignal : ISignal
     public double Period { get; }
     public Span YRange { get; }
     public Span XRange { get; }
-    public Axis? YAxis { get; } = null;
-    public SKPaint? Paint { get; } = null;
+    public Axis? YAxis { get; set; } = null;
+    public SKPaint? Paint { get; set; } = null;
 
     public StaticSignal(double[] yValues, Span xRange)
     {

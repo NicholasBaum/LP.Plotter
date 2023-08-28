@@ -4,21 +4,32 @@ using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-public class SignalsPlot : IRenderable
+public class SignalPlot : IRenderable
 {
     private List<ISignal> data = new();
     public Axis XAxis = new();
     public Axis DefaultYAxis = new();
     private SKPath path = new SKPath();
     private SKPaint DefaultPaint = SKPaints.White;
+    public IEnumerable<Axis> YAxes => data.Where(x => x.YAxis is not null).Select(x => x.YAxis!);
 
-
-    public SignalsPlot(ISignal data)
+    public SignalPlot(ISignal data)
     {
         this.data.Add(data);
         this.XAxis = new Axis(data.XRange);
         this.DefaultYAxis = new Axis(data.YRange);
         this.DefaultYAxis.ZoomAtCenter(1.1);
+    }
+
+    public SignalPlot(IEnumerable<ISignal> signals)
+    {
+        this.data.AddRange(signals);
+        XAxis = new Axis(signals.First().XRange);
+        DefaultYAxis = new Axis(signals.First().YRange);
+        foreach (var s in signals)
+        {
+            s.Paint = s.Paint ?? SKPaints.NextPaint();
+        }
     }
 
     public void Render(IRenderContext ctx)
