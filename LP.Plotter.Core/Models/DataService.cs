@@ -52,6 +52,36 @@ public class DataService
         return signals;
     }
 
+    public async Task<List<ISignal>> LoadSignals_L()
+    {
+        var data = await LoadTestCar();
+        List<ISignal> signals = new List<ISignal>();
+        Axis TempAxis = new();
+        foreach (var c in data.Channels.Where(x => x.Name.Contains("Speed") || x.Name.Contains("TT")))
+        {
+            var first = c.Points.First();
+            var last = c.Points.Last();
+            var yValues = c.Points.Select(x => x.Y).ToArray();
+
+            var signal = new StaticSignal(yValues, new Span(first.X, last.X));
+            signal.YAxis = new Axis() { Min = yValues.Min(), Max = yValues.Max() };
+            signals.Add(signal);
+
+            if (c.Name.Contains("TT"))
+            {
+                TempAxis.Min = Math.Min(TempAxis.Min, signal.YAxis.Min);
+                TempAxis.Max = Math.Max(TempAxis.Max, signal.YAxis.Max);
+                signal.YAxis = TempAxis;
+            }
+            else
+            {
+                signal.YAxis.ZoomAtCenter(1.1f);
+            }
+        }
+        TempAxis.ZoomAtCenter(1.1f);
+        return signals;
+    }
+
     public async Task<VChannelSet> LoadTestLap()
     {
         var infos = await this.GetFileInfos();
@@ -63,7 +93,15 @@ public class DataService
     {
         var infos = await this.GetFileInfos();
         var runInfos = infos.Where(x => x.Path.Contains("T2303_IMO_#29\\D1PMRun1"));
-        var run = await LoadAsRun(runInfos);
+        var run = await MergeLaps(runInfos);
+        return run;
+    }
+
+    public async Task<VChannelSet> LoadTestCar()
+    {
+        var infos = await this.GetFileInfos();
+        var runInfos = infos.Where(x => x.Path.Contains("T2303_IMO_#29"));
+        var run = await MergeLaps(runInfos);
         return run;
     }
 
@@ -75,7 +113,7 @@ public class DataService
         return VChannelSet.Create(info, csvDataString);
     }
 
-    public async Task<VChannelSet> LoadAsRun(IEnumerable<CsvInfo> infos)
+    public async Task<VChannelSet> MergeLaps(IEnumerable<CsvInfo> infos)
     {
         var tasks = infos.Select(LoadChannels).ToList();
         var sets = await Task.WhenAll(tasks);

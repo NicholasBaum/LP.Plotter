@@ -115,7 +115,7 @@
         {
             item.IsLoading = true;
             item.HasLoadError = false;
-            var result = await dataService.LoadAsRun(item.Items!.Select(x => x.Source!));
+            var result = await dataService.MergeLaps(item.Items!.Select(x => x.Source!));
             item.IsLoading = false;
             appService.CurrentPlot.Add(result);
 
