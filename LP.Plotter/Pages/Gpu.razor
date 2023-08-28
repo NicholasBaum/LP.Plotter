@@ -46,7 +46,7 @@
     protected override async void OnInitialized()
     {
         base.OnInitialized();
-        var data = await dataService.LoadSignal_M();
+        var data = await dataService.LoadSignals_M();
         plot = Plot.CreateSignal(data);
     }
 
