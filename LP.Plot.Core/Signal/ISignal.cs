@@ -1,8 +1,9 @@
 ﻿using LP.Plot.Core.Primitives;
+using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-public interface ISignalSource
+public interface ISignal
 {
     /// <summary>
     /// x distance between two samples
@@ -10,5 +11,7 @@ public interface ISignalSource
     double Period { get; }
     Span YRange { get; }
     Span XRange { get; }
+    Axis? YAxis { get; }
+    SKPaint? Paint { get; }
     double[] YValues { get; }
 }

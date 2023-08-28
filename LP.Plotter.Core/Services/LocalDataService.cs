@@ -7,7 +7,7 @@ namespace LP.Plotter.Core.Services;
 
 public class LocalDataService
 {
-    public ISignalSource LoadSignal_M()
+    public ISignal LoadSignal_M()
     {
         var data = LoadTest();
         var signal = new StaticSignal(data.SpeedChannel.Points.Select(x => x.Y).ToArray(), new Span(data.SpeedChannel.Points.First().X, data.SpeedChannel.Points.Last().X));

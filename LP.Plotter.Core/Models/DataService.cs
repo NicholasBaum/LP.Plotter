@@ -14,7 +14,7 @@ public class DataService
         this.httpClient = httpClient;
     }
 
-    public async Task<ISignalSource> LoadSignal_M()
+    public async Task<ISignal> LoadSignal_M()
     {
         var data = await LoadTestRun();
         var signal = new StaticSignal(data.SpeedChannel.Points.Select(x => x.Y).ToArray(), new Span(data.SpeedChannel.Points.First().X, data.SpeedChannel.Points.Last().X));

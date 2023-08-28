@@ -18,7 +18,7 @@ public class WpfPlot
     private SKElement skiaEl;
     private Core.Plot plot;
 
-    public WpfPlot(ISignalSource data, Control control, SKElement skiaEl)
+    public WpfPlot(ISignal data, Control control, SKElement skiaEl)
     {
         plot = Core.Plot.CreateSignal(data);
 

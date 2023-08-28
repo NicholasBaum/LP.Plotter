@@ -9,7 +9,7 @@ namespace LP.Plot.Core;
 public class Plot : IRenderable
 {
     private List<IRenderable> plotables { get; } = new();
-    private Signal.Signal? signalRenderer = null;
+    private Signal.SignalsPlot? signalRenderer = null;
     private Docker layout = null!;
 
     protected Plot() { }
@@ -23,18 +23,18 @@ public class Plot : IRenderable
         layout.Render(ctx);
     }
 
-    public Signal.Signal AddSignal(ISignalSource data)
+    public Signal.SignalsPlot AddSignal(ISignal data)
     {
-        this.signalRenderer = new Signal.Signal(data);
+        this.signalRenderer = new Signal.SignalsPlot(data);
         plotables.Add(this.signalRenderer);
         return this.signalRenderer;
     }
 
-    public static Plot CreateSignal(ISignalSource data)
+    public static Plot CreateSignal(ISignal data)
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer!.YAxis, plot.signalRenderer!.XAxis, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer!.DefaultYAxis, plot.signalRenderer!.XAxis, plot.signalRenderer!);
         return plot;
     }
 
@@ -42,14 +42,14 @@ public class Plot : IRenderable
     {
         if (signalRenderer is null) return;
         signalRenderer.XAxis.PanRelative(x);
-        signalRenderer.YAxis.PanRelative(y);
+        signalRenderer.DefaultYAxis.PanRelative(y);
     }
 
     public void ZoomAt(double factor, double x, double y)
     {
         if (signalRenderer is null) return;
         signalRenderer.XAxis.ZoomAtRelative(factor, x);
-        signalRenderer.YAxis.ZoomAtRelative(factor, y);
+        signalRenderer.DefaultYAxis.ZoomAtRelative(factor, y);
     }
 }
 
