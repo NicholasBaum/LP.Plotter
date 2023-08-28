@@ -7,6 +7,8 @@ public class SKSpaceTransform
     LinearTransform xTransform;
     LinearTransform yTransform;
 
+    public SKSpaceTransform(LPSize imageSize, Span xRange, Span yRange) : this(imageSize.Width, imageSize.Height, xRange, yRange) { }
+
     public SKSpaceTransform(int imageWidth, int imageHeight, Span xRange, Span yRange)
     {
         this.xTransform = new LinearTransform(xRange, imageWidth);
