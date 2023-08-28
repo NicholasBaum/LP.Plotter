@@ -6,91 +6,6 @@ namespace LP.Plot.Core.Signal;
 
 public static class SignalRenderer
 {
-    public static void Test(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
-    {
-        SKSpaceTransform t = new(size, xAxis.Range, yAxis.Range);
-        path.Reset();
-
-        // units per sample
-        var dx = xDataRange.Length / (yValues.Length - 1);
-        // units per pixel
-        var dpx = xAxis.Length / size.Width; 
-        
-        // restricting to visible range
-        var x = Math.Max(xDataRange.Min, xAxis.Min);
-        int startIndex = (int)t.ToPixelSpaceX(x);
-        // snap x to samples
-        x = xDataRange.Min + startIndex * dx;
-
-        var xMax = Math.Min(xDataRange.Max, xAxis.Max);
-        var endIndex = (xMax - x) / dx;
-
-        var nextPixelLeftBoundary = x + dpx;
-        path.MoveTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[startIndex]));        
-        
-        // the method uses the start, min, max and end y-value in a pixel
-        var start = new Point(x, yValues[startIndex]);
-        var min = start;
-        var max = start;
-
-        var reset = false;
-        for (var i = startIndex + 1; i < Math.Min(yValues.Length, endIndex); i++)
-        {
-            x += dx;
-            if (reset)
-            {
-                start = new Point(x, yValues[i]);
-                min = start;
-                max = start;
-                nextPixelLeftBoundary += dpx;
-                reset = false;
-            }
-            else if (x + dx > nextPixelLeftBoundary)
-            {
-                path.LineTo(t.ToPixelSpaceX(start.X), t.ToPixelSpaceY(start.Y));
-                path.LineTo(t.ToPixelSpaceX(min.X), t.ToPixelSpaceY(min.Y));
-                path.LineTo(t.ToPixelSpaceX(max.X), t.ToPixelSpaceY(max.Y));
-                path.LineTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[i]));
-                //var p = t.ToPixelSpaceX(nextPixelLeftBoundary);
-                //path.LineTo(p - 1, t.ToPixelSpaceY(start.Y));
-                //path.LineTo(p - 0.75f, t.ToPixelSpaceY(min.Y));
-                //path.LineTo(p - 0.5f, t.ToPixelSpaceY(max.Y));
-                //path.LineTo(p - 0.25f, t.ToPixelSpaceY(yValues[i]));
-                reset = true;
-            }
-            else
-            {
-                if (min.Y > yValues[i])
-                    min = new Point(x, yValues[i]);
-                if (max.Y < yValues[i])
-                    max = new Point(x, yValues[i]);
-            }
-        }
-    }
-
-    // TODO: break when pixel space x isn't in screen bounds anymore
-    /// <summary>
-    /// Maximum quality by using all points.
-    /// </summary>
-    /// <param name="yValues"></param>
-    /// <param name="xDataRange"></param>
-    /// <param name="xAxis"></param>
-    /// <param name="yAxis"></param>
-    /// <param name="size"></param>
-    /// <param name="path"></param>
-    public static void FillFullPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
-    {
-        var imageWidth = size.Width;
-        var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
-        path.Reset();
-        var dx = xDataRange.Length / (yValues.Length - 1);
-        path.MoveTo(t.ToPixelSpaceX(xDataRange.Min), t.ToPixelSpaceY(yValues[0]));
-        for (int i = 1; i < yValues.Length - 1; i++)
-            path.LineTo(t.ToPixelSpaceX(xDataRange.Min + i * dx), t.ToPixelSpaceY(yValues[i]));
-    }
-
-    // tranlates pixels to coordinate space and cycles through the samples taking 4 samples per pixel
     /// <summary>
     /// Draws only as many points as necessary, max 4 per pixel, theoretically this should have full quality.
     /// </summary>
@@ -102,21 +17,33 @@ public static class SignalRenderer
     /// <param name="path"></param>
     public static void FillDecimatedPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
     {
-        var imageWidth = size.Width;
-        var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
+        SKSpaceTransform t = new(size, xAxis.Range, yAxis.Range);
         path.Reset();
-        var dx = xDataRange.Length / (yValues.Length - 1); // units per sample
-        var x = xDataRange.Min;
+
+        // units per sample
+        var dx = xDataRange.Length / (yValues.Length - 1);
+        // units per pixel
+        var dpx = xAxis.Length / size.Width;
+
+        // restricting to visible range
+        var x = Math.Max(xDataRange.Min, xAxis.Min);
+        int startIndex = (int)t.ToPixelSpaceX(x);
+        // snap x to samples
+        x = xDataRange.Min + startIndex * dx;
+
+        var xMax = Math.Min(xDataRange.Max, xAxis.Max);
+        var endIndex = (xMax - x) / dx;
+
+        var nextPixelLeftBoundary = x + dpx;
+        path.MoveTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[startIndex]));
+
         // the method uses the start, min, max and end y-value in a pixel
-        var start = new Point(0, yValues[0]);
+        var start = new Point(x, yValues[startIndex]);
         var min = start;
         var max = start;
-        var dpx = xAxis.Length / imageWidth; // units per pixel
-        var nextPixelLeftBoundary = xDataRange.Min + dpx;
-        path.MoveTo(t.ToPixelSpaceX(xDataRange.Min), t.ToPixelSpaceY(yValues[0]));
+
         var reset = false;
-        for (var i = 1; i < yValues.Length; i++)
+        for (var i = startIndex + 1; i < Math.Min(yValues.Length, endIndex); i++)
         {
             x += dx;
             if (reset)
@@ -160,6 +87,28 @@ public static class SignalRenderer
             X = x;
             Y = y;
         }
+    }
+
+    // TODO: break when pixel space x isn't in screen bounds anymore
+    /// <summary>
+    /// Maximum quality by using all points.
+    /// </summary>
+    /// <param name="yValues"></param>
+    /// <param name="xDataRange"></param>
+    /// <param name="xAxis"></param>
+    /// <param name="yAxis"></param>
+    /// <param name="size"></param>
+    /// <param name="path"></param>
+    public static void FillFullPath(double[] yValues, Span xDataRange, Axis xAxis, Axis yAxis, LPSize size, SKPath path)
+    {
+        var imageWidth = size.Width;
+        var imageHeight = size.Height;
+        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis.Range, yAxis.Range);
+        path.Reset();
+        var dx = xDataRange.Length / (yValues.Length - 1);
+        path.MoveTo(t.ToPixelSpaceX(xDataRange.Min), t.ToPixelSpaceY(yValues[0]));
+        for (int i = 1; i < yValues.Length - 1; i++)
+            path.LineTo(t.ToPixelSpaceX(xDataRange.Min + i * dx), t.ToPixelSpaceY(yValues[i]));
     }
 
     // TODO: need to implement and switch to low density rendermode when necessary
