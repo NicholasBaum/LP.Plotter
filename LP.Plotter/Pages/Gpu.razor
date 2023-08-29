@@ -73,7 +73,7 @@
         var clientRect = await containerDiv.MudGetBoundingClientRectAsync();
         var panx = -deltaX / clientRect.AbsoluteRight;
         var pany = deltaY / clientRect.AbsoluteBottom;
-        plot.Pan(panx, pany);
+        plot.PanRelative(panx, pany);
         lastMousePos = newMousePos;
         skiaEl.Invalidate();
     }
@@ -88,7 +88,7 @@
         var clientRect = await containerDiv.MudGetBoundingClientRectAsync();
         var xPos = e.ClientX / clientRect.AbsoluteRight;
         var yPos = 1 - e.ClientY / clientRect.AbsoluteBottom;
-        plot.ZoomAt(factor, xPos, yPos);
+        plot.ZoomAtRelative(factor, xPos, yPos);
         skiaEl.Invalidate();
     }
 }

@@ -15,7 +15,7 @@ public class StaticSignal : ISignal
 
     public StaticSignal(double[] yValues, Span xRange)
     {
-        this.YValues = yValues;
+        YValues = yValues;
         XRange = xRange;
         YRange = new Span(yValues.Min(), yValues.Max());
         Period = XRange.Length / yValues.Length;

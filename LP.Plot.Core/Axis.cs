@@ -7,6 +7,7 @@ namespace LP.Plot.Core;
 public class Axis : IRenderable
 {
     public Axis() { }
+    public Axis(double min, double max) => (Min, Max) = (min, max);
     public Axis(Span range) => (Min, Max) = (range.Min, range.Max);
     public Span Range => new Span(Min, Max);
     public double Min { get; set; } = float.MaxValue;
@@ -55,7 +56,9 @@ public class Axis : IRenderable
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
         ctx.Canvas.Clear(SKColors.Red);
-        ctx.Canvas.DrawLine(0, 0.5f, ctx.ClientRect.Width, 0.5f, SKPaints.Red);        
+        ctx.Canvas.DrawLine(0, 0.5f, ctx.ClientRect.Width, 0.5f, SKPaints.Red);
         ctx.Canvas.Restore();
     }
+
+
 }

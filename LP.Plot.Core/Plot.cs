@@ -1,5 +1,4 @@
-﻿
-using LP.Plot.Core.Layout;
+﻿using LP.Plot.Core.Layout;
 using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
 using SkiaSharp;
@@ -8,16 +7,13 @@ namespace LP.Plot.Core;
 
 public class Plot : IRenderable
 {
-    private List<IRenderable> plotables { get; } = new();
-    private Signal.SignalPlot? signalRenderer = null;
+    private SignalPlot signalRenderer = null!;
     private Docker layout = null!;
 
     protected Plot() { }
 
     public void Render(IRenderContext ctx)
     {
-        //foreach (var r in plotables)
-        //    r.Render(ctx);
         ctx.Canvas.Clear(SKColors.Teal);
         layout.SetRect(LPRect.Create(ctx.Size));
         layout.Render(ctx);
@@ -27,10 +23,8 @@ public class Plot : IRenderable
         => AddSignal(new List<ISignal>() { data });
 
     public SignalPlot AddSignal(IEnumerable<ISignal> data)
-
     {
         this.signalRenderer = new SignalPlot(data);
-        plotables.Add(this.signalRenderer);
         return this.signalRenderer;
     }
 
@@ -41,22 +35,22 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer!.YAxes.RefAxis!, plot.signalRenderer!.XAxis, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer.Axes.XAxis, plot.signalRenderer.Axes.XAxis, plot.signalRenderer!);
         return plot;
     }
 
-    public void Pan(double x, double y)
+    public void PanRelative(double x, double y)
     {
         if (signalRenderer is null) return;
-        signalRenderer.XAxis.PanRelative(x);
-        signalRenderer.YAxes.PanRelative(y);
+        signalRenderer.Axes.PanRelativeX(x);
+        signalRenderer.Axes.PanRelative(y);
     }
 
-    public void ZoomAt(double factor, double x, double y)
+    public void ZoomAtRelative(double factor, double x, double y)
     {
         if (signalRenderer is null) return;
-        signalRenderer.XAxis.ZoomAtRelative(factor, x);
-        signalRenderer.YAxes.ZoomAtRelative(factor, y);
+        signalRenderer.Axes.ZoomAtRelativeX(factor, x);
+        signalRenderer.Axes.ZoomAtRelative(factor, y);
     }
 }
 
