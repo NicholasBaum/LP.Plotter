@@ -102,11 +102,11 @@ public class Docker : IControl, IRenderable
         Center?.SetRect(LPRect.Create(lw, th, cw, ch));
     }
 
-    public static Docker CreateDefault(IRenderable left, IRenderable bottom, IRenderable center)
+    public static Docker CreateDefault(IRenderable left, int width, IRenderable bottom, int height, IRenderable center)
     {
         var grid = new Docker();
-        grid.Left = new Cell() { Parent = grid, Content = left, DesiredSize = new LPSize(50, 0) };
-        grid.Bottom = new Cell() { Parent = grid, Content = bottom, DesiredSize = new LPSize(0, 150) };
+        grid.Left = new Cell() { Parent = grid, Content = left, DesiredSize = new LPSize(width, 0) };
+        grid.Bottom = new Cell() { Parent = grid, Content = bottom, DesiredSize = new LPSize(0, height) };
         grid.Center = new Cell() { Parent = grid, Content = center };
         return grid;
     }
