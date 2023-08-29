@@ -74,7 +74,9 @@ public class SignalPlot : IRenderable
 
     private void RenderFromBuffer(IRenderContext ctx)
     {
-        ctx.Canvas.DrawSurface(buffer.Surface, (float)(-buffer.SurfaceSize.Width * Axes.RelativeOffsetX), (float)(buffer.SurfaceSize.Height * Axes.RelativeOffsetY));
+        var xOffset = buffer.XD2p.Transform(XAxis.Min);
+        var yOffset = buffer.YD2p.Transform(Axes.YWrappers.First().Source.Max);
+        ctx.Canvas.DrawSurface(buffer.Surface, (float)-xOffset, (float)-yOffset);
     }
 
     private void RenderToBuffer(IRenderContext ctx)
@@ -118,20 +120,26 @@ public class SignalPlot : IRenderable
 
         //var vXRange = new Span(xRange_new.Min <= MaxXRange.Min ? double.MinValue : MaxXRange.Min, MaxXRange.Max <= xRange_new.Max ? double.MaxValue : MaxXRange.Max);
         var vXRange = new Span(double.MinValue, double.MaxValue);
-        buffer = new Buffer(ctx.ClientRect.Size, surface_B, xRange_new, vXRange, size_new);
+        var xD2p = new LPTransform(xRange_new, new Span(0, size_new.Width));
+        var yRange = data.First().YAxis!.Range.ScaleAtCenter(max_scale);
+        var yD2p = new LPTransform(yRange.Min, yRange.Max, size_new.Height, 0);
+        buffer = new Buffer(ctx.ClientRect.Size, surface_B, xRange_new, vXRange, size_new, xD2p, yD2p);
     }
 
     private class Buffer : IDisposable
     {
-        public Buffer(LPSize clientRectSize, SKSurface surface, Span actualXRange, Span supportedXRange, LPSize surfaceSize)
+        public Buffer(LPSize clientRectSize, SKSurface surface, Span actualXRange, Span supportedXRange, LPSize surfaceSize, LPTransform xD2p, LPTransform yD2p)
         {
             ClientRectSize = clientRectSize;
             Surface = surface;
             SurfaceSize = surfaceSize;
             ActualXRange = actualXRange;
             SupportedXRange = supportedXRange;
+            XD2p = xD2p;
+            YD2p = yD2p;
         }
-
+        public LPTransform XD2p { get; }
+        public LPTransform YD2p { get; }
         private LPSize ClientRectSize { get; }
         public SKSurface Surface { get; }
         public LPSize SurfaceSize { get; }

@@ -1,4 +1,6 @@
-﻿namespace LP.Plot.Core.Signal;
+﻿using System.Diagnostics;
+
+namespace LP.Plot.Core.Signal;
 
 internal class AxisWrapper
 {
@@ -11,7 +13,8 @@ internal class AxisWrapper
 
 internal class AxesTracker
 {
-    public List<AxisWrapper> YAxes { get; } = new List<AxisWrapper>();
+    public List<AxisWrapper> YWrappers { get; } = new List<AxisWrapper>();
+    private IEnumerable<Axis> DistinctYAxes => YWrappers.Select(x => x.Source).Distinct();
     public AxisWrapper XAxis { get; }
 
     public AxesTracker(Axis xAxis)
@@ -21,44 +24,39 @@ internal class AxesTracker
 
     public void AddY(Axis yAxis)
     {
-        YAxes.Add(new(yAxis));
+        YWrappers.Add(new(yAxis));
     }
 
     public void PanRelativeX(double relativeOffset)
     {
         XAxis.Source.PanRelative(relativeOffset);
-        this.RelativeOffsetX += relativeOffset;
-
     }
 
     public void PanRelative(double relativeOffset)
     {
-        foreach (var axis in YAxes)
+        foreach (var axis in DistinctYAxes)
         {
-            axis.Source.PanRelative(relativeOffset);
+            Debug.WriteLine(axis);
+            axis.PanRelative(relativeOffset);
+            Debug.WriteLine(axis);
         }
-        this.RelativeOffsetY += relativeOffset;
     }
 
     public void ZoomAtRelativeX(double factor, double relativePosition)
     {
         XAxis.Source.ZoomAtRelative(factor, relativePosition);
-        RelativeOffsetX *= factor;
         isDirty = true;
     }
 
     public void ZoomAtRelative(double factor, double relativePosition)
     {
-        foreach (var axis in YAxes)
+        foreach (var axis in DistinctYAxes)
         {
-            axis.Source.ZoomAtRelative(factor, relativePosition);
+            axis.ZoomAtRelative(factor, relativePosition);
+            Debug.WriteLine(axis);
         }
-        RelativeOffsetY *= factor;
         isDirty = true;
     }
-
-    public double RelativeOffsetY { get; private set; }
-    public double RelativeOffsetX { get; private set; }
 
     private bool isDirty = false;
     public bool IsDirty()
@@ -68,7 +66,6 @@ internal class AxesTracker
 
     public void Reset()
     {
-        RelativeOffsetY = 0.0;
         isDirty = false;
     }
 }
