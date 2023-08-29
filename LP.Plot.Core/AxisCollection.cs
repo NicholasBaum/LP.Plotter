@@ -4,7 +4,7 @@ internal class AxisCollection
 {
     private List<Axis> Axes { get; } = new List<Axis>();
     public Axis? RefAxis => Axes.First();
-
+    public bool IsDirty { get; set; }
     public void Add(Axis yAxis)
     {
         Axes.Add(yAxis);
@@ -24,5 +24,6 @@ internal class AxisCollection
         {
             axis.ZoomAtRelative(factor, relativePosition);
         }
+        IsDirty = true;
     }
 }

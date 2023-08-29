@@ -53,7 +53,8 @@ public class SignalPlot : IRenderable
     {
         if (buffer == null
             || buffer.CanvasSize != size
-            || !buffer.XRange.Contains(XAxis.Range))
+            || !buffer.VirtualXRange.Contains(XAxis.Range)
+            || YAxes.IsDirty)
             return false;
         else
             return true;
@@ -75,25 +76,36 @@ public class SignalPlot : IRenderable
         //var canvas = surface.Canvas;
 
         buffer?.Dispose();
-        LPSize size = ctx.ClientRect.Size;
-        Span bufferedXRange = new Span(double.MinValue, double.MaxValue);
-        var surface = SKSurface.Create(new SKImageInfo(size.Width, size.Height));
-        var canvas = surface.Canvas;
+        var xAxis_B = new Span(0, data.Max(x => x.XRange.Max));
+        var dpx = XAxis.Length / ctx.ClientRect.Size.Width;
+        // yvalues might be of the canvas as well
+        // have to calc the yaxis taking the max yrange and adjust canvas height
+        LPSize size_B = new((int)(xAxis_B.Length / dpx), ctx.ClientRect.Size.Height);
+        Span xDataRange_B = new Span(double.MinValue, double.MaxValue);
+        var surface_B = SKSurface.Create(new SKImageInfo(size_B.Width, size_B.Height));
+        var canvas_B = surface_B.Canvas;
         foreach (ISignal s in data)
         {
-            var renderedXRange = new Span(XAxis.Min <= s.XRange.Min ? double.MinValue : XAxis.Min, s.XRange.Max <= XAxis.Max ? double.MaxValue : XAxis.Max);
-            bufferedXRange = new Span(Math.Max(bufferedXRange.Min, renderedXRange.Min), Math.Min(bufferedXRange.Max, renderedXRange.Max));
-            RenderSignal(s, s.YAxis ?? YAxes.RefAxis, s.Paint ?? DefaultPaint, canvas, ctx.ClientRect.Size);
+            var renderedXRange = new Span
+                (
+                xAxis_B.Min <= s.XRange.Min ? double.MinValue : xAxis_B.Min,
+                s.XRange.Max <= xAxis_B.Max ? double.MaxValue : xAxis_B.Max
+                );
+            //xDataRange_B = new Span(Math.Max(xDataRange_B.Min, renderedXRange.Min), Math.Min(xDataRange_B.Max, renderedXRange.Max));
+            RenderSignal(s, s.YAxis ?? YAxes.RefAxis, s.Paint ?? DefaultPaint, canvas_B, size_B);
         }
+
         buffer = new Buffer()
         {
             CanvasSize = ctx.ClientRect.Size,
-            Surface = surface,
-            XRange = XAxis.Range,
-            VirtualXRange = bufferedXRange,
+            VirtualCanvasSize = size_B,
+            Surface = surface_B,
+            XRange = xAxis_B,
+            VirtualXRange = xDataRange_B,
             YRange = YAxes.RefAxis.Range
         };
-        ctx.Canvas.DrawSurface(surface, 0, 0);
+        RenderFromBuffer(ctx);
+        YAxes.IsDirty = false;
     }
 
     private void RenderAllSignal(IRenderContext ctx)
@@ -113,6 +125,7 @@ public class SignalPlot : IRenderable
     private class Buffer : IDisposable
     {
         public LPSize CanvasSize { get; set; }
+        public LPSize VirtualCanvasSize { get; set; }
         public required SKSurface Surface { get; init; }
         public Span XRange { get; set; }
         public Span VirtualXRange { get; set; }

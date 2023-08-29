@@ -49,14 +49,14 @@ public class Plot : IRenderable
     {
         if (signalRenderer is null) return;
         signalRenderer.XAxis.PanRelative(x);
-        //signalRenderer.YAxes.PanRelative(y);
+        signalRenderer.YAxes.PanRelative(y);
     }
 
     public void ZoomAt(double factor, double x, double y)
     {
-        //if (signalRenderer is null) return;
-        //signalRenderer.XAxis.ZoomAtRelative(factor, x);
-        //signalRenderer.YAxes.ZoomAtRelative(factor, y);
+        if (signalRenderer is null) return;
+        signalRenderer.XAxis.ZoomAtRelative(factor, x);
+        signalRenderer.YAxes.ZoomAtRelative(factor, y);
     }
 }
 
