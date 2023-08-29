@@ -2,7 +2,7 @@
 
 internal class AxisWrapper
 {
-    public Axis Source { get; }    
+    public Axis Source { get; }
     public AxisWrapper(Axis axis)
     {
         Source = axis;
@@ -11,8 +11,8 @@ internal class AxisWrapper
 
 internal class AxesTracker
 {
-    private List<AxisWrapper> YAxes { get; } = new List<AxisWrapper>();
-    internal AxisWrapper XAxis { get; }
+    public List<AxisWrapper> YAxes { get; } = new List<AxisWrapper>();
+    public AxisWrapper XAxis { get; }
 
     public AxesTracker(Axis xAxis)
     {
@@ -51,7 +51,7 @@ internal class AxesTracker
     {
         foreach (var axis in YAxes)
         {
-            axis.Source.ZoomAtRelative(factor, relativePosition);            
+            axis.Source.ZoomAtRelative(factor, relativePosition);
         }
         RelativeOffsetY *= factor;
         isDirty = true;
