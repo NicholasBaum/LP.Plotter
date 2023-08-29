@@ -1,48 +1,59 @@
 ﻿namespace LP.Plot.Core.Signal;
 
+internal class AxisWrapper
+{
+    public Axis Source { get; }    
+    public AxisWrapper(Axis axis)
+    {
+        Source = axis;
+    }
+}
+
 internal class AxesTracker
 {
-    private List<Axis> YAxes { get; } = new List<Axis>();
-    internal Axis XAxis { get; }
+    private List<AxisWrapper> YAxes { get; } = new List<AxisWrapper>();
+    internal AxisWrapper XAxis { get; }
 
     public AxesTracker(Axis xAxis)
     {
-        XAxis = xAxis;
+        XAxis = new AxisWrapper(xAxis);
     }
 
     public void AddY(Axis yAxis)
     {
-        YAxes.Add(yAxis);
+        YAxes.Add(new(yAxis));
     }
 
     public void PanRelativeX(double relativeOffset)
     {
-        XAxis.PanRelative(relativeOffset);
+        XAxis.Source.PanRelative(relativeOffset);
         this.RelativeOffsetX += relativeOffset;
 
     }
 
     public void PanRelative(double relativeOffset)
     {
-        foreach (Axis axis in YAxes)
+        foreach (var axis in YAxes)
         {
-            axis.PanRelative(relativeOffset);
+            axis.Source.PanRelative(relativeOffset);
         }
         this.RelativeOffsetY += relativeOffset;
     }
 
     public void ZoomAtRelativeX(double factor, double relativePosition)
     {
-        XAxis.ZoomAtRelative(factor, relativePosition);
+        XAxis.Source.ZoomAtRelative(factor, relativePosition);
+        RelativeOffsetX *= factor;
         isDirty = true;
     }
 
     public void ZoomAtRelative(double factor, double relativePosition)
     {
-        foreach (Axis axis in YAxes)
+        foreach (var axis in YAxes)
         {
-            axis.ZoomAtRelative(factor, relativePosition);
+            axis.Source.ZoomAtRelative(factor, relativePosition);            
         }
+        RelativeOffsetY *= factor;
         isDirty = true;
     }
 

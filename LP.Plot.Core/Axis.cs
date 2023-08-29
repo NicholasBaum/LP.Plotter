@@ -60,5 +60,8 @@ public class Axis : IRenderable
         ctx.Canvas.Restore();
     }
 
-
+    public override string ToString()
+    {
+        return $"[Min: {Min}, Max: {Max}, Length: {Length}]";
+    }
 }
