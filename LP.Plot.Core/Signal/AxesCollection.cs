@@ -3,12 +3,14 @@
 public class AxesCollection : IAxes
 {
     public Axis XAxis { get; }
-    public IEnumerable<Axis> YAxes { get; }
+    public HashSet<Axis> YAxes { get; }
+
+    IEnumerable<Axis> IAxes.YAxes => YAxes;
 
     public AxesCollection(Axis xAxis, IEnumerable<Axis> yAxes)
     {
         XAxis = xAxis;
-        YAxes = yAxes.ToList();
+        YAxes = new HashSet<Axis>(yAxes.Where(x => x != xAxis));
     }
 
     public virtual void PanRelativeX(double offset)

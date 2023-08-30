@@ -3,7 +3,7 @@
 public class AxesTracker : IAxes
 {
     public Axis XAxis => XAxisTracked.Source;
-    public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source).Distinct();
+    public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source);
 
     private AxisTracker XAxisTracked { get; }
     private List<AxisTracker> YAxesTracked { get; } = new List<AxisTracker>();
@@ -12,7 +12,11 @@ public class AxesTracker : IAxes
     public AxesTracker(Axis xAxis, IEnumerable<Axis> yAxes)
     {
         XAxisTracked = new AxisTracker(xAxis);
-        YAxesTracked = yAxes.Select(x => new AxisTracker(x)).ToList();
+        YAxesTracked = yAxes
+            .Distinct()
+            .Where(x => x != XAxis)
+            .Select(x => new AxisTracker(x))
+            .ToList();
     }
 
     public bool ShouldRerender() => wasZoomed;
