@@ -39,7 +39,7 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer.YAxes.First(), plot.leftAxisWidth, plot.signalRenderer.XAxis, plot.bottomAxisHeight, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalRenderer.XAxis, plot.bottomAxisHeight, plot.signalRenderer!);
         return plot;
     }
 

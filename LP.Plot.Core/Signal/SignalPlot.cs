@@ -9,19 +9,24 @@ public class SignalPlot : IRenderable
 {
     private List<ISignal> data = new();
     public readonly Axis XAxis = new();
-    public IEnumerable<Axis> YAxes => Axes.YAxes;
     internal AxesTracker Axes;
-    private Span MaxXRange;
+
+    private ISignal Ref_Signal => data.First();
+    private Axis Ref_YAxis => Ref_Signal.YAxis!;
+    private Span Ref_YRange_Max => Ref_Signal.YRange;
+    private Span XRange_Max;
+
     private SKPath path = new SKPath();
-    private readonly SKPaint DefaultPaint = SKPaints.White;
+
+
 
     public SignalPlot(ISignal data) : this(new List<ISignal>() { data }) { }
 
     public SignalPlot(IEnumerable<ISignal> signals)
     {
         this.data.AddRange(signals);
-        MaxXRange = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
-        XAxis = new Axis(MaxXRange) { Position = AxisPosition.Bottom };
+        XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
+        XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
         Axes = new AxesTracker(XAxis);
         foreach (var s in signals)
         {
@@ -62,24 +67,17 @@ public class SignalPlot : IRenderable
             Debug.WriteLine($"IsDirty");
         }
 
-        return buffer != null && !Axes.IsDirty() && buffer.IsSupported(newClientRectSize, XAxis);
-    }
-
-    private int CalcRenderLength(Span renderedAxisRange, Span visibleAxisRange, int clientLength)
-    {
-        var pixelsPerUnit = clientLength / visibleAxisRange.Length;
-        var length = (int)(renderedAxisRange.Length * pixelsPerUnit);
-        return length;
+        return buffer != null && !Axes.IsDirty() && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
     }
 
     private void RenderFromBuffer(IRenderContext ctx)
     {
         var xOffset = buffer.XD2p.Transform(XAxis.Min);
-        var yOffset = buffer.YD2p.Transform(YAxes.First().Max);
+        var yOffset = buffer.YD2p.Transform(Ref_YAxis.Max);
         ctx.Canvas.DrawSurface(buffer.Surface, (float)-xOffset, (float)-yOffset);
     }
 
-    private void RenderToBuffer(IRenderContext ctx)
+    private void RenderToBuffer(IRenderContext ctx, int widthLimit = 3000, int heightLimit = 3000)
     {
         System.Diagnostics.Debug.WriteLine("ReRendering");
 
@@ -88,7 +86,10 @@ public class SignalPlot : IRenderable
         var rect = ctx.ClientRect;
         // pixels per unit
         var xDensity = rect.Width / XAxis.Length;
-        var xRange_new = MaxXRange;
+        var xRange_new = XRange_Max;
+        var limit = Math.Max(widthLimit, rect.Width) / xDensity;
+        if (xRange_new.Length > limit)
+            xRange_new = XAxis.Range.ScaleAtCenter(limit / XAxis.Length);
         var width_new = (int)(xRange_new.Length * xDensity);
         // the necessary height to completly draw all signals with the original density/zoom factor
         double max_scale = 1;
@@ -103,7 +104,8 @@ public class SignalPlot : IRenderable
             else
                 max_scale = Math.Max(max_scale, scale);
         }
-        var height_new = Math.Ceiling(rect.Height * max_scale);
+        var yLimit = Math.Max(heightLimit, rect.Height);
+        var height_new = Math.Min(yLimit, Math.Ceiling(rect.Height * max_scale));
         // correcting scale again
         max_scale = height_new / rect.Height;
         LPSize size_new = new(width_new, (int)height_new);
@@ -118,23 +120,27 @@ public class SignalPlot : IRenderable
             canvas_B.DrawPath(path, s.Paint);
         }
 
-        //var vXRange = new Span(xRange_new.Min <= MaxXRange.Min ? double.MinValue : MaxXRange.Min, MaxXRange.Max <= xRange_new.Max ? double.MaxValue : MaxXRange.Max);
-        var vXRange = new Span(double.MinValue, double.MaxValue);
+        var xRange_virtual = CalcSupport(xRange_new, XRange_Max);
         var xD2p = new LPTransform(xRange_new, new Span(0, size_new.Width));
-        var yRange = data.First().YAxis!.Range.ScaleAtCenter(max_scale);
+        var yRange = Ref_YAxis.Range.ScaleAtCenter(max_scale);
+        var yRange_virtual = CalcSupport(yRange, Ref_YRange_Max);
         var yD2p = new LPTransform(yRange.Min, yRange.Max, size_new.Height, 0);
-        buffer = new Buffer(ctx.ClientRect.Size, surface_B, xRange_new, vXRange, size_new, xD2p, yD2p);
+        buffer = new Buffer(rect.Size, surface_B, xRange_virtual, yRange_virtual, size_new, xD2p, yD2p);
+        Debug.WriteLine(size_new);
     }
+
+    private static Span CalcSupport(Span range, Span dataRange)
+        => new Span(range.Min <= dataRange.Min ? double.MinValue : range.Min, dataRange.Max <= range.Max ? double.MaxValue : range.Max);
 
     private class Buffer : IDisposable
     {
-        public Buffer(LPSize clientRectSize, SKSurface surface, Span actualXRange, Span supportedXRange, LPSize surfaceSize, LPTransform xD2p, LPTransform yD2p)
+        public Buffer(LPSize clientRectSize, SKSurface surface, Span supportedXRange, Span supportedYRange, LPSize surfaceSize, LPTransform xD2p, LPTransform yD2p)
         {
             ClientRectSize = clientRectSize;
             Surface = surface;
             SurfaceSize = surfaceSize;
-            ActualXRange = actualXRange;
-            SupportedXRange = supportedXRange;
+            this.supportedXRange = supportedXRange;
+            this.supportedYRange = supportedYRange;
             XD2p = xD2p;
             YD2p = yD2p;
         }
@@ -145,45 +151,34 @@ public class SignalPlot : IRenderable
         public LPSize SurfaceSize { get; }
 
         /// <summary>
-        /// The range of data that was rendered.
-        /// </summary>
-        public Span ActualXRange { get; }
-        /// <summary>
         /// The range that can be rendered from the buffer e.g. returns an infinite span if all data was rendered to the buffer.
         /// </summary>
-        private Span SupportedXRange { get; }
+        private readonly Span supportedXRange;
+        private readonly Span supportedYRange;
 
         public void Dispose()
         {
             Surface?.Dispose();
         }
 
-        internal bool IsSupported(LPSize newClientRectSize, Axis xAxis)
+        internal bool IsSupported(LPSize newClientRectSize, Span xRange, Span yRange)
         {
             if (newClientRectSize != ClientRectSize)
             {
                 Debug.WriteLine("Client Missmatch");
                 return false;
             }
-            //var newDpx = xAxis.Length / newClientRectSize.Width;
-            //if (!FloatEquals(Dpx, newDpx, 1e-10))
-            //{
-            //    Debug.WriteLine("Dpx Missmatch");
-            //    return false;
-            //}
-            if (!SupportedXRange.Contains(xAxis.Range))
+            if (!supportedXRange.Contains(xRange))
             {
-                Debug.WriteLine("Range not supported");
+                Debug.WriteLine("X-Range not supported");
+                return false;
+            }
+            if (!supportedYRange.Contains(yRange))
+            {
+                Debug.WriteLine("Y-Range not supported");
                 return false;
             }
             return true;
-        }
-
-        bool FloatEquals(double x, double y, double tolerance)
-        {
-            var diff = Math.Abs(x - y);
-            return diff <= tolerance ||
-                   diff <= Math.Max(Math.Abs(x), Math.Abs(y)) * tolerance;
         }
     }
 }
