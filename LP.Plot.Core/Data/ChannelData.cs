@@ -14,21 +14,21 @@ public class ChannelDataSet
     {
         var lines = csvData.Split('\n').Where(x => !string.IsNullOrEmpty(x)).ToArray();
         var headers = lines[0].Split(',');
-        var channels = new List<(string Name, List<double> YValues)>();
+        var channels = new List<(string Name, double[] YValues)>();
 
         for (var j = 0; j < headers.Length - 1; j++)
-            channels.Add(new(headers[j], new List<double>(lines.Length + 10)));
+            channels.Add(new(headers[j], new double[lines.Length]));
 
         for (var i = 1; i < lines.Length; i++)
         {
             var values = lines[i].Split(',');
             var splits = values[0].Split(":").Select(float.Parse).ToArray(); // e.g. 112:52
             var time = splits[0] + splits[1] / 100;
-            channels.First().YValues.Add(time);
+            channels.First().YValues[i] = time;
 
             for (var j = 1; j < values.Length - 1; j++)
             {
-                channels[j].YValues.Add(float.Parse(values[j], NumberStyles.Float, CultureInfo.InvariantCulture));
+                channels[j].YValues[i] = float.Parse(values[j], NumberStyles.Float, CultureInfo.InvariantCulture);
             }
         }
         return channels.Select(x => new ChannelData(x.Name, x.YValues.ToArray())).ToList();
