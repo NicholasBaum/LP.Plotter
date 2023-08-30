@@ -12,9 +12,10 @@ var h = 1080;
 var surface = SKSurface.Create(new SKImageInfo(w, h));
 var canvas = surface.Canvas;
 var runs = 100;
+var xAxisRange = new Span(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
 
 //var zoom = 0.1;
-//var xAxisRange = new Span(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max)).ScaleAtCenter(zoom);
+//xAxisRange.ScaleAtCenter(zoom);
 //foreach (var s in signals)
 //    s.YAxis.ZoomAtRelative(zoom, 0.5);
 
