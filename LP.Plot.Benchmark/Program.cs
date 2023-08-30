@@ -39,6 +39,7 @@ Console.WriteLine("Full Time");
 Console.WriteLine($"TotalTime: {fullTime}\t\tFrameTime: {fullTime.TotalMilliseconds / runs}");
 
 SaveImage(surface);
+Process.Start(new ProcessStartInfo("output.png") { UseShellExecute = true });
 
 sw.Restart();
 for (int i = 0; i < runs; i++)
