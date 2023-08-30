@@ -126,43 +126,45 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         var yRange = Ref_YAxis.Range.ScaleAtCenter(max_scale);
         var yRange_virtual = CalcSupport(yRange, Ref_YRange_Max);
         var yD2p = new LPTransform(yRange.Min, yRange.Max, size_new.Height, 0);
-        buffer = new Buffer(rect.Size, surface_B, xRange_virtual, yRange_virtual, size_new, xD2p, yD2p);
+        buffer = new Buffer(rect.Size, surface_B, xRange_virtual, yRange_virtual, xD2p, yD2p);
         Debug.WriteLine(size_new);
     }
 
     private static Span CalcSupport(Span range, Span dataRange)
         => new Span(range.Min <= dataRange.Min ? double.MinValue : range.Min, dataRange.Max <= range.Max ? double.MaxValue : range.Max);
 
+
+
+
+
+
+
     private class Buffer : IDisposable
     {
-        public Buffer(LPSize clientRectSize, SKSurface surface, Span supportedXRange, Span supportedYRange, LPSize surfaceSize, LPTransform xD2p, LPTransform yD2p)
+        public SKSurface Surface { get; }
+        public LPTransform XD2p { get; }
+        public LPTransform YD2p { get; }
+
+        private LPSize ClientRectSize { get; }
+        private readonly Span supportedXRange;
+        private readonly Span supportedYRange;
+
+        public Buffer(LPSize clientRectSize, SKSurface surface, Span supportedXRange, Span supportedYRange, LPTransform xD2p, LPTransform yD2p)
         {
             ClientRectSize = clientRectSize;
             Surface = surface;
-            SurfaceSize = surfaceSize;
             this.supportedXRange = supportedXRange;
             this.supportedYRange = supportedYRange;
             XD2p = xD2p;
             YD2p = yD2p;
         }
-        public LPTransform XD2p { get; }
-        public LPTransform YD2p { get; }
-        private LPSize ClientRectSize { get; }
-        public SKSurface Surface { get; }
-        public LPSize SurfaceSize { get; }
-
-        /// <summary>
-        /// The range that can be rendered from the buffer e.g. returns an infinite span if all data was rendered to the buffer.
-        /// </summary>
-        private readonly Span supportedXRange;
-        private readonly Span supportedYRange;
 
         public void Dispose()
         {
             Surface?.Dispose();
         }
 
-        internal bool IsSupported(LPSize newClientRectSize, Span xRange, Span yRange)
+        public bool IsSupported(LPSize newClientRectSize, Span xRange, Span yRange)
         {
             if (newClientRectSize != ClientRectSize)
             {
