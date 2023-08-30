@@ -7,7 +7,7 @@ namespace LP.Plot.Core;
 
 public class Plot : IRenderable
 {
-    private ISignalPlot signalRenderer = null!;
+    private ISignalPlot signalPlot = null!;
     private Docker layout = null!;
     private int leftAxisWidth = 75;
     private int bottomAxisHeight = 75;
@@ -28,8 +28,8 @@ public class Plot : IRenderable
 
     public ISignalPlot AddSignal(IEnumerable<ISignal> data)
     {
-        this.signalRenderer = new BufferedSignalPlot(data);
-        return this.signalRenderer;
+        this.signalPlot = new BufferedSignalPlot(data);
+        return this.signalPlot;
     }
 
     public static Plot CreateSignal(ISignal data)
@@ -39,29 +39,29 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalRenderer.Axes.XAxis, plot.bottomAxisHeight, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalPlot.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalPlot.Axes.XAxis, plot.bottomAxisHeight, plot.signalPlot!);
         return plot;
     }
 
     public void PanRelative(double x, double y)
     {
-        if (signalRenderer is null || canvasSize.IsEmpty) return;
+        if (signalPlot is null || canvasSize.IsEmpty) return;
         // correcting for actual graph area
         x *= (float)canvasSize.Width / (canvasSize.Width - leftAxisWidth);
         y *= (float)canvasSize.Height / (canvasSize.Height - bottomAxisHeight);
 
-        signalRenderer.Axes.PanRelativeX(x);
-        signalRenderer.Axes.PanRelative(y);
+        signalPlot.Axes.PanRelativeX(x);
+        signalPlot.Axes.PanRelative(y);
     }
 
     public void ZoomAtRelative(double factor, double x, double y)
     {
-        if (signalRenderer is null || canvasSize.IsEmpty) return;
+        if (signalPlot is null || canvasSize.IsEmpty) return;
         var w = canvasSize.Width;
         x = (w * x - leftAxisWidth) / (w - leftAxisWidth);
-        signalRenderer.Axes.ZoomAtRelativeX(factor, x);
+        signalPlot.Axes.ZoomAtRelativeX(factor, x);
         var h = canvasSize.Height;
         y = (h * y - bottomAxisHeight) / (h - bottomAxisHeight);
-        signalRenderer.Axes.ZoomAtRelative(factor, y);
+        signalPlot.Axes.ZoomAtRelative(factor, y);
     }
 }
