@@ -31,4 +31,7 @@ public readonly struct Span
         var max = mid + newRightSide;
         return new Span(min, max);
     }
+
+    public Span GetBounding(Span other)
+        => new Span(Math.Min(Min, other.Min), Math.Max(Max, other.Max));
 }
