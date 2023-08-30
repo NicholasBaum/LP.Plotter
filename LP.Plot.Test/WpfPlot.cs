@@ -59,7 +59,7 @@ public class WpfPlot
             double deltaY = newMousePos.Y - lastMousePos.Y;
             var panx = -deltaX / skiaEl.ActualWidth;
             var pany = deltaY / skiaEl.ActualHeight;
-            plot.Pan(panx, pany);
+            plot.PanRelative(panx, pany);
             skiaEl.InvalidateVisual();
             lastMousePos = newMousePos;
         }
@@ -78,7 +78,7 @@ public class WpfPlot
         var pos = e.GetPosition(skiaEl);
         var xPos = pos.X / skiaEl.ActualWidth;
         var yPos = 1 - pos.Y / skiaEl.ActualHeight;
-        plot.ZoomAt(factor, xPos, yPos);
+        plot.ZoomAtRelative(factor, xPos, yPos);
         skiaEl.InvalidateVisual();
     }
 }

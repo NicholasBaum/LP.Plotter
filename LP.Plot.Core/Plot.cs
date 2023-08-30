@@ -1,5 +1,4 @@
-﻿
-using LP.Plot.Core.Layout;
+﻿using LP.Plot.Core.Layout;
 using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
 using SkiaSharp;
@@ -8,29 +7,28 @@ namespace LP.Plot.Core;
 
 public class Plot : IRenderable
 {
-    private List<IRenderable> plotables { get; } = new();
-    private Signal.SignalPlot? signalRenderer = null;
+    private BufferedSignalPlot signalRenderer = null!;
     private Docker layout = null!;
+    private int leftAxisWidth = 75;
+    private int bottomAxisHeight = 75;
+    private LPSize canvasSize;
 
     protected Plot() { }
 
     public void Render(IRenderContext ctx)
     {
-        //foreach (var r in plotables)
-        //    r.Render(ctx);
-        ctx.Canvas.Clear(SKColors.Teal);
+        canvasSize = ctx.Size;
+        ctx.Canvas.Clear(SKColors.Black);
         layout.SetRect(LPRect.Create(ctx.Size));
         layout.Render(ctx);
     }
 
-    public SignalPlot AddSignal(ISignal data)
+    public BufferedSignalPlot AddSignal(ISignal data)
         => AddSignal(new List<ISignal>() { data });
 
-    public SignalPlot AddSignal(IEnumerable<ISignal> data)
-
+    public BufferedSignalPlot AddSignal(IEnumerable<ISignal> data)
     {
-        this.signalRenderer = new SignalPlot(data);
-        plotables.Add(this.signalRenderer);
+        this.signalRenderer = new BufferedSignalPlot(data);
         return this.signalRenderer;
     }
 
@@ -41,22 +39,30 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer!.DefaultYAxis, plot.signalRenderer!.XAxis, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalRenderer.XAxis, plot.bottomAxisHeight, plot.signalRenderer!);
         return plot;
     }
 
-    public void Pan(double x, double y)
+    public void PanRelative(double x, double y)
     {
-        if (signalRenderer is null) return;
-        signalRenderer.XAxis.PanRelative(x);
-        signalRenderer.YAxes.FirstOrDefault()?.PanRelative(y);
+        if (signalRenderer is null || canvasSize.IsEmpty) return;
+        // correcting for actual graph area
+        x *= (float)canvasSize.Width / (canvasSize.Width - leftAxisWidth);
+        y *= (float)canvasSize.Height / (canvasSize.Height - bottomAxisHeight);
+
+        signalRenderer.Axes.PanRelativeX(x);
+        signalRenderer.Axes.PanRelative(y);
     }
 
-    public void ZoomAt(double factor, double x, double y)
+    public void ZoomAtRelative(double factor, double x, double y)
     {
-        if (signalRenderer is null) return;
-        signalRenderer.XAxis.ZoomAtRelative(factor, x);
-        signalRenderer.YAxes.FirstOrDefault()?.ZoomAtRelative(factor, y);
+        if (signalRenderer is null || canvasSize.IsEmpty) return;
+        var w = canvasSize.Width;
+        x = (w * x - leftAxisWidth) / (w - leftAxisWidth);
+        signalRenderer.Axes.ZoomAtRelativeX(factor, x);
+        var h = canvasSize.Height;
+        y = (h * y - bottomAxisHeight) / (h - bottomAxisHeight);
+        signalRenderer.Axes.ZoomAtRelative(factor, y);
     }
 }
 
