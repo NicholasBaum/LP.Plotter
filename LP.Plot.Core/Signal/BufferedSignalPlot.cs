@@ -10,7 +10,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
     IAxes ISignalPlot.Axes => Axes;
 
     private List<ISignal> data = new();
-    private readonly Axis XAxis = new();
+    private Axis XAxis = new();
     private AxesTracker Axes { get; }
     private ISignal Ref_Signal => data.First();
     private Axis Ref_YAxis => Ref_Signal.YAxis!;
@@ -27,7 +27,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         this.data.AddRange(signals);
         XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
-        Axes = new AxesTracker(XAxis);
+        List<Axis> yAxes = new();
         foreach (var s in signals)
         {
             s.Paint ??= SKPaints.NextPaint();
@@ -36,8 +36,9 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
                 s.YAxis = new Axis(s.YRange);
                 s.YAxis.ZoomAtCenter(1.1);
             }
-            Axes.AddY(s.YAxis);
+            yAxes.Add(s.YAxis);
         }
+        Axes = new(XAxis, yAxes);
     }
 
     public void Render(IRenderContext ctx)

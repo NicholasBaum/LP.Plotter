@@ -1,30 +1,17 @@
 ﻿namespace LP.Plot.Core.Signal;
 
-internal class AxisWrapper
-{
-    public Axis Source { get; }
-    public AxisWrapper(Axis axis)
-    {
-        Source = axis;
-    }
-}
-
 public class AxesTracker : IAxes
 {
-    public Axis XAxis => TrackedXAxis.Source;
-    public IEnumerable<Axis> YAxes => YWrappers.Select(x => x.Source).Distinct();
+    public Axis XAxis => XAxisTracked.Source;
+    public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source).Distinct();
 
-    private List<AxisWrapper> YWrappers { get; } = new List<AxisWrapper>();
-    private AxisWrapper TrackedXAxis { get; }
+    private AxisWrapper XAxisTracked { get; }
+    private List<AxisWrapper> YAxesTracked { get; } = new List<AxisWrapper>();
 
-    public AxesTracker(Axis xAxis)
+    public AxesTracker(Axis xAxis, IEnumerable<Axis> yAxes)
     {
-        TrackedXAxis = new AxisWrapper(xAxis);
-    }
-
-    public void AddY(Axis yAxis)
-    {
-        YWrappers.Add(new(yAxis));
+        XAxisTracked = new AxisWrapper(xAxis);
+        YAxesTracked = yAxes.Select(x => new AxisWrapper(x)).ToList();
     }
 
     public void PanRelativeX(double relativeOffset)
@@ -64,5 +51,14 @@ public class AxesTracker : IAxes
     public void Reset()
     {
         isDirty = false;
+    }
+
+    private class AxisWrapper
+    {
+        public Axis Source { get; }
+        public AxisWrapper(Axis axis)
+        {
+            Source = axis;
+        }
     }
 }

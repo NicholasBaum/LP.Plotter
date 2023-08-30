@@ -65,33 +65,3 @@ public class Plot : IRenderable
         signalRenderer.Axes.ZoomAtRelative(factor, y);
     }
 }
-
-public interface IRenderable
-{
-    void Render(IRenderContext ctx);
-}
-
-public interface IRenderContext
-{
-    SKCanvas Canvas { get; }
-    int Width { get; }
-    int Height { get; }
-    LPSize Size { get; }
-    LPRect ClientRect { get; set; }
-}
-
-public class SkiaRenderContext : IRenderContext
-{
-    public SKCanvas Canvas { get; }
-    public int Width { get; }
-    public int Height { get; }
-    public LPSize Size => new LPSize(Width, Height);
-    public LPRect ClientRect { get; set; }
-
-    public SkiaRenderContext(SKCanvas canvas, int width, int height)
-    {
-        Canvas = canvas ?? throw new ArgumentNullException(nameof(canvas));
-        Width = width;
-        Height = height;
-    }
-}
