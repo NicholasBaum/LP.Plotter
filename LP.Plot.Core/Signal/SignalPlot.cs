@@ -1,5 +1,4 @@
 ﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Core.Skia;
 using LP.Plot.Skia;
 using SkiaSharp;
 using System.Diagnostics;
@@ -10,6 +9,7 @@ public class SignalPlot : IRenderable
 {
     private List<ISignal> data = new();
     public readonly Axis XAxis = new();
+    public IEnumerable<Axis> YAxes => Axes.YAxes;
     internal AxesTracker Axes;
     private Span MaxXRange;
     private SKPath path = new SKPath();
@@ -21,7 +21,7 @@ public class SignalPlot : IRenderable
     {
         this.data.AddRange(signals);
         MaxXRange = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
-        XAxis = new Axis(MaxXRange);
+        XAxis = new Axis(MaxXRange) { Position = AxisPosition.Bottom };
         Axes = new AxesTracker(XAxis);
         foreach (var s in signals)
         {
@@ -75,7 +75,7 @@ public class SignalPlot : IRenderable
     private void RenderFromBuffer(IRenderContext ctx)
     {
         var xOffset = buffer.XD2p.Transform(XAxis.Min);
-        var yOffset = buffer.YD2p.Transform(Axes.YWrappers.First().Source.Max);
+        var yOffset = buffer.YD2p.Transform(YAxes.First().Max);
         ctx.Canvas.DrawSurface(buffer.Surface, (float)-xOffset, (float)-yOffset);
     }
 

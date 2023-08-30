@@ -9,8 +9,8 @@ public class Plot : IRenderable
 {
     private SignalPlot signalRenderer = null!;
     private Docker layout = null!;
-    private int leftAxisWidth = 50;
-    private int bottomAxisHeight = 150;
+    private int leftAxisWidth = 75;
+    private int bottomAxisHeight = 75;
     private LPSize canvasSize;
 
     protected Plot() { }
@@ -18,7 +18,7 @@ public class Plot : IRenderable
     public void Render(IRenderContext ctx)
     {
         canvasSize = ctx.Size;
-        ctx.Canvas.Clear(SKColors.Teal);
+        ctx.Canvas.Clear(SKColors.Black);
         layout.SetRect(LPRect.Create(ctx.Size));
         layout.Render(ctx);
     }
@@ -39,7 +39,7 @@ public class Plot : IRenderable
     {
         var plot = new Plot();
         plot.AddSignal(data);
-        plot.layout = Docker.CreateDefault(plot.signalRenderer.XAxis, plot.leftAxisWidth, plot.signalRenderer.XAxis, plot.bottomAxisHeight, plot.signalRenderer!);
+        plot.layout = Docker.CreateDefault(plot.signalRenderer.YAxes.First(), plot.leftAxisWidth, plot.signalRenderer.XAxis, plot.bottomAxisHeight, plot.signalRenderer!);
         return plot;
     }
 

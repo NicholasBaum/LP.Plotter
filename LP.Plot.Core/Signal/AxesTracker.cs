@@ -13,8 +13,8 @@ internal class AxisWrapper
 
 internal class AxesTracker
 {
-    public List<AxisWrapper> YWrappers { get; } = new List<AxisWrapper>();
-    private IEnumerable<Axis> DistinctYAxes => YWrappers.Select(x => x.Source).Distinct();
+    private List<AxisWrapper> YWrappers { get; } = new List<AxisWrapper>();
+    public IEnumerable<Axis> YAxes => YWrappers.Select(x => x.Source).Distinct();
     public AxisWrapper XAxis { get; }
 
     public AxesTracker(Axis xAxis)
@@ -34,11 +34,9 @@ internal class AxesTracker
 
     public void PanRelative(double relativeOffset)
     {
-        foreach (var axis in DistinctYAxes)
+        foreach (var axis in YAxes)
         {
-            Debug.WriteLine(axis);
             axis.PanRelative(relativeOffset);
-            Debug.WriteLine(axis);
         }
     }
 
@@ -50,10 +48,9 @@ internal class AxesTracker
 
     public void ZoomAtRelative(double factor, double relativePosition)
     {
-        foreach (var axis in DistinctYAxes)
+        foreach (var axis in YAxes)
         {
             axis.ZoomAtRelative(factor, relativePosition);
-            Debug.WriteLine(axis);
         }
         isDirty = true;
     }
