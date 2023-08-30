@@ -7,7 +7,7 @@ namespace LP.Plot.Core;
 
 public class Plot : IRenderable
 {
-    private SignalPlot signalRenderer = null!;
+    private BufferedSignalPlot signalRenderer = null!;
     private Docker layout = null!;
     private int leftAxisWidth = 75;
     private int bottomAxisHeight = 75;
@@ -23,12 +23,12 @@ public class Plot : IRenderable
         layout.Render(ctx);
     }
 
-    public SignalPlot AddSignal(ISignal data)
+    public BufferedSignalPlot AddSignal(ISignal data)
         => AddSignal(new List<ISignal>() { data });
 
-    public SignalPlot AddSignal(IEnumerable<ISignal> data)
+    public BufferedSignalPlot AddSignal(IEnumerable<ISignal> data)
     {
-        this.signalRenderer = new SignalPlot(data);
+        this.signalRenderer = new BufferedSignalPlot(data);
         return this.signalRenderer;
     }
 

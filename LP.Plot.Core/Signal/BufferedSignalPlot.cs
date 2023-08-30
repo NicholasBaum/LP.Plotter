@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace LP.Plot.Core.Signal;
 
-public class SignalPlot : IRenderable
+public class BufferedSignalPlot : IRenderable
 {
     private List<ISignal> data = new();
     public readonly Axis XAxis = new();
@@ -20,9 +20,9 @@ public class SignalPlot : IRenderable
 
 
 
-    public SignalPlot(ISignal data) : this(new List<ISignal>() { data }) { }
+    public BufferedSignalPlot(ISignal data) : this(new List<ISignal>() { data }) { }
 
-    public SignalPlot(IEnumerable<ISignal> signals)
+    public BufferedSignalPlot(IEnumerable<ISignal> signals)
     {
         this.data.AddRange(signals);
         XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
