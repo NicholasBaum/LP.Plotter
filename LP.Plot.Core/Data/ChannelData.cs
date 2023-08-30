@@ -22,8 +22,8 @@ public class ChannelDataSet
         for (var i = 1; i < lines.Length; i++)
         {
             var values = lines[i].Split(',');
-            var splits = values[0].Split(":").Select(float.Parse).ToArray(); // e.g. 112:52
-            var time = splits[0] + splits[1] / 100;
+            var splits = values[0].Split(":"); // e.g. 112:52
+            var time = float.Parse(splits[0]) + float.Parse(splits[1]) / 100;
             channels.First().YValues[i] = time;
 
             for (var j = 1; j < values.Length - 1; j++)
