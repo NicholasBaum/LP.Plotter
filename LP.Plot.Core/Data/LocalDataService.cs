@@ -16,7 +16,7 @@ public class LocalDataService
     public ChannelDataSet LoadTestLap()
     {
         var folder = @"D:\work\LP.Plotter\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\D1PMRun1";
-        return LoadFiles(Directory.GetFiles(folder));
+        return LoadFile(Directory.GetFiles(folder).First());
     }
 
     public ChannelDataSet LoadTestRun()
@@ -31,18 +31,20 @@ public class LocalDataService
         return LoadFiles(Directory.GetFiles(folder, "*.csv", searchOption: SearchOption.AllDirectories));
     }
 
+    private ChannelDataSet LoadFile(string file)
+    {
+        var text = File.ReadAllText(file);
+        return ChannelDataSet.Create(new CsvInfo()
+        {
+            FileName = Path.GetFileName(file),
+            Path = file,
+            Url = file
+        }, text);
+    }
+
     private ChannelDataSet LoadFiles(IEnumerable<string> files)
     {
-        var set = files.Select(x =>
-        {
-            var text = File.ReadAllText(x);
-            return ChannelDataSet.Create(new CsvInfo()
-            {
-                FileName = Path.GetFileName(x),
-                Path = x,
-                Url = x
-            }, text);
-        }).ToList();
+        var set = files.Select(LoadFile).ToList();
         return ChannelDataSet.CreateMerged(set);
     }
 }
