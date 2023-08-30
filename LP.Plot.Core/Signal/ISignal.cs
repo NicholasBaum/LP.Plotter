@@ -11,7 +11,7 @@ public interface ISignal
     double Period { get; }
     Span YRange { get; }
     Span XRange { get; }
-    Axis? YAxis { get; set; }
-    SKPaint? Paint { get; set; }
+    Axis YAxis { get; set; }
+    SKPaint Paint { get; set; }
     double[] YValues { get; }
 }

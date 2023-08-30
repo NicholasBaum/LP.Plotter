@@ -227,7 +227,7 @@ public struct LPRect : IEquatable<LPRect>
         return false;
     }
 
-    public override readonly bool Equals(object obj)
+    public override readonly bool Equals(object? obj)
     {
         if (obj is LPRect)
         {
