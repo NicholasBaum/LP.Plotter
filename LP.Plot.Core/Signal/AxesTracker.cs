@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace LP.Plot.Core.Signal;
+﻿namespace LP.Plot.Core.Signal;
 
 internal class AxisWrapper
 {
@@ -11,15 +9,17 @@ internal class AxisWrapper
     }
 }
 
-internal class AxesTracker
+public class AxesTracker : IAxes
 {
-    private List<AxisWrapper> YWrappers { get; } = new List<AxisWrapper>();
+    public Axis XAxis => TrackedXAxis.Source;
     public IEnumerable<Axis> YAxes => YWrappers.Select(x => x.Source).Distinct();
-    public AxisWrapper XAxis { get; }
+
+    private List<AxisWrapper> YWrappers { get; } = new List<AxisWrapper>();
+    private AxisWrapper TrackedXAxis { get; }
 
     public AxesTracker(Axis xAxis)
     {
-        XAxis = new AxisWrapper(xAxis);
+        TrackedXAxis = new AxisWrapper(xAxis);
     }
 
     public void AddY(Axis yAxis)
@@ -29,7 +29,7 @@ internal class AxesTracker
 
     public void PanRelativeX(double relativeOffset)
     {
-        XAxis.Source.PanRelative(relativeOffset);
+        XAxis.PanRelative(relativeOffset);
     }
 
     public void PanRelative(double relativeOffset)
@@ -42,7 +42,7 @@ internal class AxesTracker
 
     public void ZoomAtRelativeX(double factor, double relativePosition)
     {
-        XAxis.Source.ZoomAtRelative(factor, relativePosition);
+        XAxis.ZoomAtRelative(factor, relativePosition);
         isDirty = true;
     }
 

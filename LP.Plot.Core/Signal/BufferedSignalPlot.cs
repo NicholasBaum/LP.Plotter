@@ -5,19 +5,19 @@ using System.Diagnostics;
 
 namespace LP.Plot.Core.Signal;
 
-public class BufferedSignalPlot : IRenderable
+public class BufferedSignalPlot : IRenderable, ISignalPlot
 {
-    private List<ISignal> data = new();
-    public readonly Axis XAxis = new();
-    internal AxesTracker Axes;
+    IAxes ISignalPlot.Axes => Axes;
 
+    private List<ISignal> data = new();
+    private readonly Axis XAxis = new();
+    private AxesTracker Axes { get; }
     private ISignal Ref_Signal => data.First();
     private Axis Ref_YAxis => Ref_Signal.YAxis!;
     private Span Ref_YRange_Max => Ref_Signal.YRange;
     private Span XRange_Max;
 
     private SKPath path = new SKPath();
-
 
 
     public BufferedSignalPlot(ISignal data) : this(new List<ISignal>() { data }) { }

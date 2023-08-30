@@ -4,8 +4,62 @@ using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-public class SignalPlot : IRenderable
+public interface IAxes
 {
+    public Axis XAxis { get; }
+    public IEnumerable<Axis> YAxes { get; }
+    public void PanRelativeX(double relativeOffset);
+    public void PanRelative(double relativeOffset);
+    public void ZoomAtRelativeX(double factor, double relativePosition);
+    public void ZoomAtRelative(double factor, double relativePosition);
+}
+
+public interface ISignalPlot : IRenderable
+{
+    public IAxes Axes { get; }
+}
+
+public class AxesCollection : IAxes
+{
+    public Axis XAxis { get; }
+    public IEnumerable<Axis> YAxes { get; }
+
+    public AxesCollection(Axis xAxis, IEnumerable<Axis> yAxes)
+    {
+        XAxis = xAxis;
+        YAxes = yAxes.ToList();
+    }
+
+    public void PanRelativeX(double relativeOffset)
+    {
+        XAxis.PanRelative(relativeOffset);
+    }
+
+    public void PanRelative(double relativeOffset)
+    {
+        foreach (var axis in YAxes)
+        {
+            axis.PanRelative(relativeOffset);
+        }
+    }
+
+    public void ZoomAtRelativeX(double factor, double relativePosition)
+    {
+        XAxis.ZoomAtRelative(factor, relativePosition);
+    }
+
+    public void ZoomAtRelative(double factor, double relativePosition)
+    {
+        foreach (var axis in YAxes)
+        {
+            axis.ZoomAtRelative(factor, relativePosition);
+        }
+    }
+}
+
+public class SignalPlot : IRenderable, ISignalPlot
+{
+    public IAxes Axes { get; }
     private List<ISignal> data = new();
     public Axis XAxis = new();
     public Axis DefaultYAxis = new();
