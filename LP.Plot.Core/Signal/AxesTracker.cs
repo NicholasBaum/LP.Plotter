@@ -5,58 +5,52 @@ public class AxesTracker : IAxes
     public Axis XAxis => XAxisTracked.Source;
     public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source).Distinct();
 
-    private AxisWrapper XAxisTracked { get; }
-    private List<AxisWrapper> YAxesTracked { get; } = new List<AxisWrapper>();
+    private AxisTracker XAxisTracked { get; }
+    private List<AxisTracker> YAxesTracked { get; } = new List<AxisTracker>();
+    private bool wasZoomed = false;
 
     public AxesTracker(Axis xAxis, IEnumerable<Axis> yAxes)
     {
-        XAxisTracked = new AxisWrapper(xAxis);
-        YAxesTracked = yAxes.Select(x => new AxisWrapper(x)).ToList();
+        XAxisTracked = new AxisTracker(xAxis);
+        YAxesTracked = yAxes.Select(x => new AxisTracker(x)).ToList();
     }
 
-    public void PanRelativeX(double relativeOffset)
+    public bool ShouldRerender() => wasZoomed;
+
+    public void Reset() => wasZoomed = false;
+
+    public void PanRelativeX(double offset)
     {
-        XAxis.PanRelative(relativeOffset);
+        XAxis.PanRelative(offset);
     }
 
-    public void PanRelative(double relativeOffset)
-    {
-        foreach (var axis in YAxes)
-        {
-            axis.PanRelative(relativeOffset);
-        }
-    }
-
-    public void ZoomAtRelativeX(double factor, double relativePosition)
-    {
-        XAxis.ZoomAtRelative(factor, relativePosition);
-        isDirty = true;
-    }
-
-    public void ZoomAtRelative(double factor, double relativePosition)
+    public void PanRelative(double offset)
     {
         foreach (var axis in YAxes)
         {
-            axis.ZoomAtRelative(factor, relativePosition);
+            axis.PanRelative(offset);
         }
-        isDirty = true;
     }
 
-    private bool isDirty = false;
-    public bool IsDirty()
+    public void ZoomAtRelativeX(double factor, double position)
     {
-        return isDirty;
+        XAxis.ZoomAtRelative(factor, position);
+        wasZoomed = true;
     }
 
-    public void Reset()
+    public void ZoomAtRelative(double factor, double position)
     {
-        isDirty = false;
+        foreach (var axis in YAxes)
+        {
+            axis.ZoomAtRelative(factor, position);
+        }
+        wasZoomed = true;
     }
 
-    private class AxisWrapper
+    private class AxisTracker
     {
         public Axis Source { get; }
-        public AxisWrapper(Axis axis)
+        public AxisTracker(Axis axis)
         {
             Source = axis;
         }

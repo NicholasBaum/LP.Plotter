@@ -11,29 +11,29 @@ public class AxesCollection : IAxes
         YAxes = yAxes.ToList();
     }
 
-    public void PanRelativeX(double relativeOffset)
+    public virtual void PanRelativeX(double offset)
     {
-        XAxis.PanRelative(relativeOffset);
+        XAxis.PanRelative(offset);
     }
 
-    public void PanRelative(double relativeOffset)
+    public virtual void PanRelative(double offset)
     {
         foreach (var axis in YAxes)
         {
-            axis.PanRelative(relativeOffset);
+            axis.PanRelative(offset);
         }
     }
 
-    public void ZoomAtRelativeX(double factor, double relativePosition)
+    public virtual void ZoomAtRelativeX(double factor, double position)
     {
-        XAxis.ZoomAtRelative(factor, relativePosition);
+        XAxis.ZoomAtRelative(factor, position);
     }
 
-    public void ZoomAtRelative(double factor, double relativePosition)
+    public virtual void ZoomAtRelative(double factor, double position)
     {
         foreach (var axis in YAxes)
         {
-            axis.ZoomAtRelative(factor, relativePosition);
+            axis.ZoomAtRelative(factor, position);
         }
     }
 }

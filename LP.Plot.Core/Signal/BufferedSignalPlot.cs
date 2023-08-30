@@ -63,12 +63,12 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
     private Buffer buffer = null!;
     private bool AlreadyBuffered(LPSize newClientRectSize)
     {
-        if (Axes.IsDirty())
+        if (Axes.ShouldRerender())
         {
             Debug.WriteLine($"IsDirty");
         }
 
-        return buffer != null && !Axes.IsDirty() && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
+        return buffer != null && !Axes.ShouldRerender() && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
     }
 
     private void RenderFromBuffer(IRenderContext ctx)
