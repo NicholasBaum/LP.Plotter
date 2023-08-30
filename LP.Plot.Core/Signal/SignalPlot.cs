@@ -7,30 +7,19 @@ namespace LP.Plot.Core.Signal;
 public class SignalPlot : IRenderable, ISignalPlot
 {
     public IAxes Axes { get; }
-    private List<ISignal> data = new();
-    public Axis XAxis = new();
-    public Axis DefaultYAxis = new();
-    private SKPath path = new SKPath();
-    private SKPaint DefaultPaint = SKPaints.White;
-    public IEnumerable<Axis> YAxes => data.Where(x => x.YAxis is not null).Select(x => x.YAxis!);
 
-    public SignalPlot(ISignal data)
-    {
-        this.data.Add(data);
-        this.XAxis = new Axis(data.XRange);
-        this.DefaultYAxis = new Axis(data.YRange);
-        this.DefaultYAxis.ZoomAtCenter(1.1);
-    }
+    private List<ISignal> data = new();
+    private Axis XAxis = new();
+    private SKPath path = new SKPath();
+
+    public SignalPlot(ISignal data) : this(new[] { data }) { }
 
     public SignalPlot(IEnumerable<ISignal> signals)
     {
         this.data.AddRange(signals);
-        XAxis = new Axis(signals.First().XRange);
-        DefaultYAxis = new Axis(signals.First().YRange);
-        foreach (var s in signals)
-        {
-            s.Paint ??= SKPaints.NextPaint();
-        }
+        Span XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
+        XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
+        Axes = new AxesCollection(XAxis, data.Select(x => x.YAxis));
     }
 
     public void Render(IRenderContext ctx)
@@ -39,37 +28,9 @@ public class SignalPlot : IRenderable, ISignalPlot
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
         ctx.Canvas.Clear(SKColors.Black);
-        if (AlreadyBuffered())
-        {
-            RenderFromBuffer(ctx);
-        }
-        else
-        {
-            RenderToBuffer(ctx);
-        }
+        foreach (ISignal signal in data)
+            RenderSignal(signal, signal.YAxis, signal.Paint, ctx.Canvas, ctx.ClientRect.Size);
         ctx.Canvas.Restore();
-    }
-
-    private bool AlreadyBuffered()
-    {
-        return false;
-    }
-
-    private void RenderFromBuffer(IRenderContext ctx)
-    {
-
-    }
-
-    private void RenderToBuffer(IRenderContext ctx)
-    {
-        foreach (ISignal signal in data)
-            RenderSignal(signal, signal.YAxis ?? DefaultYAxis, signal.Paint ?? DefaultPaint, ctx.Canvas, ctx.ClientRect.Size);
-    }
-
-    private void RenderAllSignal(IRenderContext ctx)
-    {
-        foreach (ISignal signal in data)
-            RenderSignal(signal, signal.YAxis ?? DefaultYAxis, signal.Paint ?? DefaultPaint, ctx.Canvas, ctx.ClientRect.Size);
     }
 
     private void RenderSignal(ISignal data, Axis yAxis, SKPaint paint, SKCanvas canvas, LPSize imageSize)
