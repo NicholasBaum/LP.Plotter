@@ -15,7 +15,11 @@ public class Axis : IRenderable
     public Axis() { }
     public Axis(double min, double max) => (Min, Max) = (min, max);
     public Axis(Span range) => (Min, Max) = (range.Min, range.Max);
-    public Span Range => new Span(Min, Max);
+    public Span Range
+    {
+        get => new Span(Min, Max);
+        set => (Min, Max) = (value.Min, value.Max);
+    }
     public double Min { get; set; } = float.MaxValue;
     public double Max { get; set; } = float.MinValue;
     public double Length => Max - Min;
@@ -104,7 +108,7 @@ public class Axis : IRenderable
             canvas.DrawLine(rect.Width - h, ptick, rect.Width, ptick, SKPaints.White);
             var label = $"{tick:0000}";
             Font.MeasureText(label, ref textRect);
-            canvas.DrawText(label, rect.Width - h - 5 - textRect.Width, ptick + textRect.Height/2, Font);
+            canvas.DrawText(label, rect.Width - h - 5 - textRect.Width, ptick + textRect.Height / 2, Font);
         }
     }
 
