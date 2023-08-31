@@ -83,6 +83,7 @@ public class WpfPlot
         {
             var pos = e.GetPosition(skiaEl);
             plot.ZoomRect(pos.X, pos.Y);
+            skiaEl.InvalidateVisual();
         }
     }
 
