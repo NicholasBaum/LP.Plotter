@@ -28,7 +28,7 @@ public partial class Plot : IRenderable
         layout.Render(ctx);
         DrawZoomRect(ctx);
         Debug.WriteLine($"Rendertime {timer.Elapsed.TotalSeconds}");
-        renderInfo.PaintRenderInfo(ctx.Canvas);
+        renderInfo.Render(ctx);
     }
 
     public ISignalPlot AddSignal(ISignal data)

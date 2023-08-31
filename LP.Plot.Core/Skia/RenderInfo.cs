@@ -1,9 +1,10 @@
-﻿using SkiaSharp;
+﻿using LP.Plot.Core.Primitives;
+using SkiaSharp;
 using System.Diagnostics;
 
 namespace LP.Plot.Core.Skia;
 
-public class RenderInfo
+public class RenderInfo : IRenderable
 {
     Stopwatch sw = new Stopwatch();
     private int frameCount = 0;
@@ -31,8 +32,13 @@ public class RenderInfo
         frameCount = 0;
     }
 
-    public void PaintRenderInfo(SKCanvas canvas)
+    public void Render(IRenderContext ctx)
     {
+        var canvas = ctx.Canvas;
+        var rect = new LPRect(ctx.Width - 140, 0, ctx.Width, 70);
+        canvas.Save();
+        canvas.ClipRect(rect.ToSkia());
+        canvas.Translate(rect.Left, rect.Top);
         canvas.DrawRect(0, 0, 140, 70, black);
 
         var text = $"Frames {frameCount++}";
@@ -45,5 +51,6 @@ public class RenderInfo
 
         text = $"FTime {((double)sw.Elapsed.TotalMilliseconds / frameCount):00000}ms";
         canvas.DrawText(text, 0, 4.5f * bounds.Height, white);
+        canvas.Restore();
     }
 }
