@@ -28,7 +28,7 @@ public class WpfPlot
         control.MouseWheel += OnMouseWheel;
         this.control = control;
         this.skiaEl = skiaEl;
-        plot.Invalidate = skiaEl.InvalidateVisual;
+        plot.Changed += (_, _) => skiaEl.InvalidateVisual();
     }
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)

@@ -17,6 +17,9 @@ public partial class Plot : IRenderable
     private RenderInfo renderInfo = new();
     private Stopwatch timer = new();
 
+    public event EventHandler<EventArgs>? Changed;
+    public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
+
     protected Plot() { }
 
     public void Render(IRenderContext ctx)
