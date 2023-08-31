@@ -17,18 +17,18 @@ public class ChannelDataSet
         var channels = new List<(string Name, double[] YValues)>();
 
         for (var j = 0; j < headers.Length - 1; j++)
-            channels.Add(new(headers[j], new double[lines.Length]));
+            channels.Add(new(headers[j], new double[lines.Length - 1]));
 
         for (var i = 1; i < lines.Length; i++)
         {
             var values = lines[i].Split(',');
             var splits = values[0].Split(":"); // e.g. 112:52
-            var time = float.Parse(splits[0]) + float.Parse(splits[1]) / 100;
-            channels.First().YValues[i] = time;
+            var time = double.Parse(splits[0]) + double.Parse(splits[1]) / 100;
+            channels.First().YValues[i - 1] = time;
 
             for (var j = 1; j < values.Length - 1; j++)
             {
-                channels[j].YValues[i] = float.Parse(values[j], NumberStyles.Float, CultureInfo.InvariantCulture);
+                channels[j].YValues[i - 1] = double.Parse(values[j], NumberStyles.Float, CultureInfo.InvariantCulture);
             }
         }
         return channels.Select(x => new ChannelData(x.Name, x.YValues.ToArray())).ToList();
