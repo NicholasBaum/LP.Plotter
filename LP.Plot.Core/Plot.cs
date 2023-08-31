@@ -28,6 +28,7 @@ public partial class Plot : IRenderable
         layout.Render(ctx);
         DrawZoomRect(ctx);
         Debug.WriteLine($"Rendertime {timer.Elapsed.TotalSeconds}");
+        Console.WriteLine($"Rendertime {timer.Elapsed.TotalSeconds}");
         renderInfo.Render(ctx);
     }
 
