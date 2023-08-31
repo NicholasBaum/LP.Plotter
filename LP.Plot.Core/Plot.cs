@@ -1,28 +1,34 @@
 ﻿using LP.Plot.Core.Layout;
 using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
-using LP.Plot.Skia;
+using LP.Plot.Core.Skia;
 using SkiaSharp;
+using System.Diagnostics;
 
 namespace LP.Plot.Core;
 
-public class Plot : IRenderable
+public partial class Plot : IRenderable
 {
     private ISignalPlot signalPlot = null!;
     private Docker layout = null!;
     private int leftAxisWidth = 75;
     private int bottomAxisHeight = 75;
     private LPSize canvasSize;
+    private RenderInfo renderInfo = new();
+    private Stopwatch timer = new();
 
     protected Plot() { }
 
     public void Render(IRenderContext ctx)
     {
+        timer.Restart();
         canvasSize = ctx.Size;
         ctx.Canvas.Clear(SKColors.Black);
         layout.SetRect(LPRect.Create(ctx.Size));
         layout.Render(ctx);
         DrawZoomRect(ctx);
+        Debug.WriteLine($"Rendertime {timer.Elapsed.TotalSeconds}");
+        renderInfo.PaintRenderInfo(ctx.Canvas);
     }
 
     public ISignalPlot AddSignal(ISignal data)
