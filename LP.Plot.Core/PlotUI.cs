@@ -90,7 +90,7 @@ public partial class Plot
 
     public void OnMouseWheel(LPMouseWheelEventArgs e)
     {
-        var factor = Math.Sign(e.Delta) > 0 ? 0.9 : 1.1;
+        var factor = e.Delta > 0 ? 0.9 : 1.1;
         var xPos = e.X / canvasSize.Width;
         var yPos = 1 - e.Y / canvasSize.Height;
         ZoomAtRelative(factor, xPos, yPos);

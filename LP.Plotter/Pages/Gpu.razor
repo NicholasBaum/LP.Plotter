@@ -37,58 +37,50 @@
 @code {
     SKGLView skiaEl = null!;
     ElementReference containerDiv;
-    Plot plot = null!;
-    RenderInfo renderInfo = new();
+    Plot plot;
 
     protected override async void OnInitialized()
     {
         base.OnInitialized();
         var data = await dataService.LoadSignal_L();
         plot = Plot.CreateSignal(data);
+        plot.Invalidate = skiaEl.Invalidate;
+        containerDiv.ev
     }
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
-        var size = e.Info.Size;
-        var canvas = e.Surface.Canvas;
-        this.plot.Render(new SkiaRenderContext(canvas, size.Width, size.Height));
-        renderInfo.PaintRenderInfo(canvas);
+        this.plot?.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Size.Width, e.Info.Size.Height));
     }
 
-    private bool isPanning = false;
-    private (double X, double Y) lastMousePos = new();
     private void OnMouseDown(MouseEventArgs e)
     {
-        isPanning = true;
-        renderInfo.RestartMeasuring();
-        lastMousePos = (X: e.ClientX, Y: e.ClientY);
+        plot?.OnMouseDown(Create(e));
     }
 
-    private async Task OnMouseMove(MouseEventArgs e)
+    private void OnMouseMove(MouseEventArgs e)
     {
-        if (!isPanning) return;
-        var newMousePos = (X: e.ClientX, Y: e.ClientY);
-        double deltaX = newMousePos.X - lastMousePos.X;
-        double deltaY = newMousePos.Y - lastMousePos.Y;
-        var clientRect = await containerDiv.MudGetBoundingClientRectAsync();
-        var panx = -deltaX / clientRect.AbsoluteRight;
-        var pany = deltaY / clientRect.AbsoluteBottom;
-        plot.PanRelative(panx, pany);
-        lastMousePos = newMousePos;
-        skiaEl.Invalidate();
+        plot?.OnMouseMove(Create(e));
     }
+
     private void OnMouseUp(MouseEventArgs e)
     {
-        isPanning = false;
+        plot?.OnMouseUp(Create(e));
     }
 
-    private async Task OnMouseWheel(WheelEventArgs e)
+    private void OnMouseWheel(WheelEventArgs e)
     {
-        var factor = Math.Sign(e.DeltaY) < 0 ? 0.9 : 1.1;
-        var clientRect = await containerDiv.MudGetBoundingClientRectAsync();
-        var xPos = e.ClientX / clientRect.AbsoluteRight;
-        var yPos = 1 - e.ClientY / clientRect.AbsoluteBottom;
-        plot.ZoomAtRelative(factor, xPos, yPos);
-        skiaEl.Invalidate();
+        plot?.OnMouseWheel(new(e.OffsetX, e.OffsetY, -e.DeltaY));
+    }
+
+    private LPMouseButtonEventArgs Create(MouseEventArgs e)
+    {
+        LPButton button = e.Buttons switch
+        {
+            1 => LPButton.Left,
+            2 => LPButton.Right,
+            _ => LPButton.None,
+        };
+        return new LPMouseButtonEventArgs(e.OffsetX, e.OffsetY, button);
     }
 }

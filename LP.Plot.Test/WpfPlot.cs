@@ -57,6 +57,12 @@ public class WpfPlot
         plot.OnMouseUp(Create(e));
     }
 
+    private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        var pos = e.GetPosition(skiaEl);
+        plot.OnMouseWheel(new(pos.X, pos.Y, e.Delta));
+    }
+
     private LPMouseButtonEventArgs Create(MouseEventArgs e)
     {
         var pos = e.GetPosition(skiaEl);
@@ -66,11 +72,5 @@ public class WpfPlot
         else if (e.RightButton == MouseButtonState.Pressed)
             button = LPButton.Right;
         return new LPMouseButtonEventArgs(pos.X, pos.Y, button);
-    }
-
-    private void OnMouseWheel(object sender, MouseWheelEventArgs e)
-    {
-        var pos = e.GetPosition(skiaEl);
-        plot.OnMouseWheel(new(pos.X, pos.Y, e.Delta));
     }
 }
