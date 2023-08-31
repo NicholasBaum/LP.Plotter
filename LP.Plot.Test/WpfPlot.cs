@@ -43,16 +43,32 @@ public class WpfPlot
         Debug.WriteLine($"Rendertime {frameTimer.Elapsed.TotalSeconds}");
     }
 
+    private bool isPanning = false;
+    private bool isZooming = false;
+
     private void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
-        renderInfo.RestartMeasuring();
-        lastMousePos = e.GetPosition(control);
-        control.CaptureMouse(); // Capture mouse events to track movement outside the control
+        if (!isZooming && e.LeftButton == MouseButtonState.Pressed)
+        {
+            isPanning = true;
+            renderInfo.RestartMeasuring();
+            lastMousePos = e.GetPosition(control);
+            control.CaptureMouse(); // Capture mouse events to track movement outside the control
+        }
+        if (!isPanning && e.RightButton == MouseButtonState.Pressed)
+        {
+            isZooming = true;
+            var pos = e.GetPosition(skiaEl);
+            plot.ZoomRect(pos.X, pos.Y);
+            skiaEl.InvalidateVisual();
+            control.CaptureMouse();
+        }
     }
 
     private void OnMouseMove(object sender, MouseEventArgs e)
     {
-        if (control.IsMouseCaptured)
+        if (!control.IsMouseCaptured) return;
+        if (isPanning)
         {
             Point newMousePos = e.GetPosition(control);
             double deltaX = newMousePos.X - lastMousePos.X;
@@ -63,13 +79,22 @@ public class WpfPlot
             skiaEl.InvalidateVisual();
             lastMousePos = newMousePos;
         }
+        else if (isZooming)
+        {
+            var pos = e.GetPosition(skiaEl);
+            plot.ZoomRect(pos.X, pos.Y);
+        }
     }
 
     private void OnMouseUp(object sender, MouseButtonEventArgs e)
     {
         if (control.IsMouseCaptured)
             control.ReleaseMouseCapture();
-        var diff = lastMousePos - e.GetPosition(control);
+        isPanning = false;
+        if (isZooming)
+            plot.EndZoomRect();
+        isZooming = false;
+
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)

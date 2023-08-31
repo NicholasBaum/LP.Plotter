@@ -2,6 +2,7 @@
 using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
 using SkiaSharp;
+using System.Diagnostics;
 
 namespace LP.Plot.Core;
 
@@ -63,5 +64,29 @@ public class Plot : IRenderable
         var h = canvasSize.Height;
         y = (h * y - bottomAxisHeight) / (h - bottomAxisHeight);
         signalPlot.Axes.ZoomAtRelative(factor, y);
+    }
+
+    private Span? currentXZoomSpan = null;
+
+    public void ZoomRect(double x, double y)
+    {
+        var tx = new LPTransform(signalPlot.Axes.XAxis.Range, leftAxisWidth, canvasSize.Width);
+        x = tx.Inverse(x);
+
+        if (currentXZoomSpan == null)
+        {
+            currentXZoomSpan = new(x, x);
+        }
+        else
+        {
+            currentXZoomSpan = new(currentXZoomSpan.Value.Min, x);
+            Debug.WriteLine(currentXZoomSpan);
+        }
+    }
+
+    public void EndZoomRect()
+    {
+        Debug.WriteLine(currentXZoomSpan);
+        currentXZoomSpan = null;
     }
 }

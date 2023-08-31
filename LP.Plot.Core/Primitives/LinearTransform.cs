@@ -37,6 +37,7 @@ public class LPTransform
         this.my = (x1 - x0) / (y1 - y0);
     }
 
+    public LPTransform(Span p0, double y0, double y1) : this(p0.Min, p0.Max, y0, y1) { }
     public LPTransform(Span p0, Span p1) : this(p0.Min, p0.Max, p1.Min, p1.Max) { }
 
     public double Transform(double x)
