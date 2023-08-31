@@ -30,12 +30,15 @@
             @onmousedown="OnMouseDown"
             @onmousemove="OnMouseMove"
             @onmouseup="OnMouseUp"
-            @onmousewheel="OnMouseWheel" />
+            @onmousewheel="OnMouseWheel" oncontextmenu="return false" />
 
         </div>
     </div>
 </div>
-
+@*
+    oncontextmenu="return false" prevents the context menu
+    no @ signs means it acutal js code other solutions didn't work
+ *@
 @code {
     SKGLView skiaEl = null!;
     ElementReference containerDiv;
