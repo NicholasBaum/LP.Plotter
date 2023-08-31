@@ -1,0 +1,76 @@
+﻿@using System.Globalization;
+@using LP.Plot.Core;
+@using LP.Plotter.Utilities;
+@using MudBlazor.Utilities;
+
+@inject IDialogService dialogService;
+
+@code {
+#pragma warning disable CS8618
+
+    [CascadingParameter]
+    public LP.Plot.Core.Plot Model { get; set; }
+
+    [Parameter, EditorRequired]
+    public SignalVM Channel { get; set; }
+#pragma warning restore CS8618
+
+    private bool ShowColorPicker = false;
+
+    private void VisibilityToggled(bool toggled)
+    {
+        Channel.IsVisible = !Channel.IsVisible;
+        Model.Invalidate();
+    }
+
+    private async Task EditChannelClick(SignalVM channel)
+    {
+        var parameters = new DialogParameters<LPEditChannelDialog> { { x => x.Channel, Channel } }; // dictionary intiliazer, that calls a fitting Add method overload
+        var dialog = await dialogService.ShowAsync<LPEditChannelDialog>($"Edit {Channel.Name}", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            Model.Invalidate();
+    }
+
+    public MudColor CurrentColor
+    {
+        get
+        {
+            return Channel.Color.ToMudColor();
+        }
+        set
+        {
+            Channel.Color = value.ToSKColor();
+            Model.Invalidate();
+        }
+    }
+}
+
+<div style="display:flex; flex-direction: row; justify-content: space-between; align-items: center; user-select: none;">
+    <div style="display:flex; flex-direction: row; justify-content: start; align-items: center">
+        <a style="margin-right:10px; width: 15px; height: 15px; background-color:@(CurrentColor.Value); cursor: pointer;" @onclick="(() => { ShowColorPicker = true; })"></a>
+        <MudPopover Open=@ShowColorPicker>
+            <div class="d-flex flex-column">
+                <MudColorPicker PickerVariant="PickerVariant.Static"
+                                DisableAlpha="true"
+                                DisableModeSwitch="false"
+                                DisableToolbar="false"
+                                @bind-Value="@CurrentColor"></MudColorPicker>
+            </div>
+        </MudPopover>
+        <MudOverlay @bind-Visible="@ShowColorPicker" AutoClose="true"></MudOverlay>
+        <MudToggleIconButton Toggled="@Channel.IsVisible"
+                             ToggledChanged="VisibilityToggled"
+                             Size="Size.Small"
+                             ToggledSize="Size.Small"
+                             Icon="@Icons.Material.Outlined.RemoveRedEye" Color="@Color.Surface"
+                             ToggledIcon="@Icons.Material.Filled.RemoveRedEye" ToggledColor="@Color.Primary"
+                             Style="margin-right:10px" />
+        <MudText Typo="Typo.body2">@Channel.Name</MudText>
+    </div>
+    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                   Size="Size.Small"
+                   Color="Color.Primary"
+                   OnClick="@(_=>EditChannelClick(Channel))" />
+</div>

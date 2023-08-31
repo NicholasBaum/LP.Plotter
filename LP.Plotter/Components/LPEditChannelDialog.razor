@@ -1,0 +1,55 @@
+﻿@using LP.Plot.Core;
+<MudDialog Style="width: 400px">
+    <DialogContent>
+        <MudText>@Channel.Name</MudText>
+@*         <MudTextField Value="@config.Key" Label="Axis Key" ReadOnly="true" />
+ *@        <MudNumericField HideSpinButtons="true" @bind-Value="config.Minimum" Label="Min"></MudNumericField>
+        <MudNumericField HideSpinButtons="true" @bind-Value="config.Maximum" Label="Max"></MudNumericField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirm">Confirm</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+#pragma warning disable CS8618
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter, EditorRequired]
+    public SignalVM Channel { get; set; }
+
+    private AxisConfig config;
+#pragma warning restore CS8618
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        config = new AxisConfig()
+            {
+                Minimum = Channel.YAxis.Min,
+                Maximum = Channel.YAxis.Max,
+            };
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void Confirm()
+    {
+        Channel.YAxis.Min = config.Minimum;
+        Channel.YAxis.Max = config.Maximum;
+        MudDialog.Close(DialogResult.Ok(Channel));
+    }
+
+    class AxisConfig
+    {
+        public string? Key { get; set; }
+        public double Minimum { get; set; }
+        public double Maximum { get; set; }
+    }
+}

@@ -6,33 +6,33 @@
 @inject DataService dataService;
 
 <div style="display:flex;flex-direction:row;height:100%;">
-    @if (plot != null)
+    @if (appService.Plot != null)
     {
-        <LPPlotView Plot="@plot" ></LPPlotView>
+        <LPPlotView Plot="@(appService.Plot)"></LPPlotView>
+    }
+    else
+    {
+        <h4>Loading...</h4>
     }
     <div style="position: relative; display: flex; flex-direction: column;">
         <MudPaper Elevation="25" Style="margin-bottom:5px">
             <PlotterMenu Model="@(appService.CurrentPlot)"></PlotterMenu>
 
         </MudPaper>
-        <ChannelMenu Model="@(appService.CurrentPlot)"
-                     Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
-        </ChannelMenu>
+        <LPChannelMenu Model="@(appService.Plot)"
+                       Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
+        </LPChannelMenu>
     </div>
 </div>
 
 @code {
-    LP.Plot.Core.Plot? plot;
-    bool isLoading = false;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
         var t = Task.Run(async () =>
         {
             var data = await dataService.LoadSignal_M();
-            plot = LP.Plot.Core.Plot.CreateSignal(data);            
-            isLoading = false;
+            appService.Plot = LP.Plot.Core.Plot.CreateSignal(data);
             StateHasChanged();
         });
     }

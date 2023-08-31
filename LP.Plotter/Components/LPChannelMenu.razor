@@ -1,0 +1,98 @@
+﻿@using System.Collections.Specialized;
+@using System.Globalization;
+@using LP.Plot.Core;
+
+@implements IDisposable;
+
+@inject IDialogService dialogService;
+
+<CascadingValue Value="@Model">
+    <MudPaper Style="@Style">
+        @if (Model?.Sets != null)
+        {
+            @foreach (var s in Model.Sets)
+            {
+                <div>
+                    <div style="display:flex; justify-content: space-between; align-items: center; user-select: none;">
+                        <MudText Typo="Typo.h6">@s.Name</MudText>
+                        <div>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Size="Size.Small"
+                                           Color="Color.Error"
+                                           OnClick="@(_=>RemoveSet(s))" />
+
+                            <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                           Size="Size.Small"
+                                           Color="Color.Primary"
+                                           OnClick="@(_=>SelectChannelsClick(s))" />
+                        </div>
+                    </div>
+                    <ul>
+                        @foreach (var c in s.Channels)
+                        {
+                            <li>
+                                <LPChannelMenuItem Channel="c"></LPChannelMenuItem>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    </MudPaper>
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public string? Style { get; set; }
+    [Parameter, EditorRequired]
+    public LP.Plot.Core.Plot? Model { get; set; }
+
+    private LP.Plot.Core.Plot? lastModel;
+
+    private async Task SelectChannelsClick(SignalSet set)
+    {
+        var parameters = new DialogParameters<LPSelectChannelsDialog> { { x => x.DataContext, set } };
+        var dialog = await dialogService.ShowAsync<LPSelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
+        var result = await dialog.Result;
+        Model?.Invalidate();
+    }
+
+    private async Task RemoveSet(SignalSet set)
+    {
+        bool? result = await dialogService.ShowMessageBox(
+         "Warning",
+         "Remove Set?",
+         yesText: "Remove", cancelText: "Cancel");
+
+        if (result == true)
+            Model?.Remove(set);
+    }
+
+    private void Redraw(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (lastModel != Model)
+        {
+            if (lastModel is not null)
+            {
+                lastModel.Changed -= Redraw;
+                lastModel = null;
+            }
+            if (Model is not null)
+            {
+                Model.Changed += Redraw;
+                lastModel = Model;
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Model is not null)
+            Model.Changed -= Redraw;
+    }
+}

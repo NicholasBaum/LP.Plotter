@@ -41,16 +41,18 @@
         {
             if (lastDataModel is not null)
             {
-                lastDataModel.Invalidate = () => { };
+                lastDataModel.Changed -= OnChange;
                 lastDataModel = null;
             }
             if (Plot is not null)
             {
-                this.Plot.Invalidate = () => this.skiaEl.Invalidate();
+                this.Plot.Changed += OnChange;
                 lastDataModel = Plot;
             }
         }
     }
+
+    private void OnChange(object? sender, EventArgs e) => this.skiaEl.Invalidate();
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
