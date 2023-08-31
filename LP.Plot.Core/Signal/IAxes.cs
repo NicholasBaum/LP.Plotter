@@ -1,11 +1,14 @@
-﻿namespace LP.Plot.Core.Signal;
+﻿using LP.Plot.Core.Primitives;
+
+namespace LP.Plot.Core.Signal;
 
 public interface IAxes
 {
-    public Axis XAxis { get; }
-    public IEnumerable<Axis> YAxes { get; }
-    public void PanRelativeX(double offset);
-    public void PanRelative(double offset);
-    public void ZoomAtRelativeX(double factor, double position);
-    public void ZoomAtRelative(double factor, double position);
+    Axis XAxis { get; }
+    IEnumerable<Axis> YAxes { get; }
+    void PanRelativeX(double offset);
+    void PanRelative(double offset);
+    void ZoomAtRelativeX(double factor, double position);
+    void ZoomAtRelative(double factor, double position);
+    void ZoomX(Span value);
 }

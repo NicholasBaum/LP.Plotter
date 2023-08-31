@@ -1,4 +1,6 @@
-﻿namespace LP.Plot.Core.Signal;
+﻿using LP.Plot.Core.Primitives;
+
+namespace LP.Plot.Core.Signal;
 
 public class AxesTracker : IAxes
 {
@@ -48,6 +50,12 @@ public class AxesTracker : IAxes
         {
             axis.ZoomAtRelative(factor, position);
         }
+        wasZoomed = true;
+    }
+
+    public void ZoomX(Span newRange)
+    {
+        XAxis.Range = newRange;
         wasZoomed = true;
     }
 

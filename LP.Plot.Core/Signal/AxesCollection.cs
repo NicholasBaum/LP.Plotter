@@ -1,4 +1,6 @@
-﻿namespace LP.Plot.Core.Signal;
+﻿using LP.Plot.Core.Primitives;
+
+namespace LP.Plot.Core.Signal;
 
 public class AxesCollection : IAxes
 {
@@ -37,5 +39,10 @@ public class AxesCollection : IAxes
         {
             axis.ZoomAtRelative(factor, position);
         }
+    }
+
+    public void ZoomX(Span newRange)
+    {
+        XAxis.Range = newRange;
     }
 }

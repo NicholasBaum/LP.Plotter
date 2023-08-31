@@ -80,13 +80,13 @@ public class Plot : IRenderable
         else
         {
             currentXZoomSpan = new(currentXZoomSpan.Value.Min, x);
-            Debug.WriteLine(currentXZoomSpan);
         }
     }
 
     public void EndZoomRect()
     {
-        Debug.WriteLine(currentXZoomSpan);
+        if (currentXZoomSpan != null)
+            signalPlot.Axes.ZoomX(currentXZoomSpan.Value);
         currentXZoomSpan = null;
     }
 }

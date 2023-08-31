@@ -92,7 +92,10 @@ public class WpfPlot
             control.ReleaseMouseCapture();
         isPanning = false;
         if (isZooming)
+        {
             plot.EndZoomRect();
+            skiaEl.InvalidateVisual();
+        }
         isZooming = false;
 
     }
