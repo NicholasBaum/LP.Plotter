@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace LP.Plot.Core;
+﻿namespace LP.Plot.Core;
 
 public enum LPButton
 {
@@ -41,6 +39,7 @@ public partial class Plot
     private bool isZooming = false;
     private (double X, double Y) lastMousePos;
 
+    //TODO: this is a terrible implementation, just use events :-D
     public Action Invalidate { get; set; } = () => { };
 
     public void OnMouseDown(LPMouseButtonEventArgs e)

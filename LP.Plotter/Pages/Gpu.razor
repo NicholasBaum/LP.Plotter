@@ -1,95 +1,39 @@
 ﻿@page "/gpu"
-@using LP.Plot.Core.Data;
-@using LP.Plot.Core.Skia;
-@using SkiaSharp
-@using SkiaSharp.Views.Blazor
-@using LP.Plot.Core;
 
+@using LP.Plot.Core.Data;
+
+@inject AppService appService;
 @inject DataService dataService;
 
-<style>
-    .canvas-container {
-        line-height: 1;
+<div style="display:flex;flex-direction:row;height:100%;">
+    @if (plot != null)
+    {
+        <LPPlotView Plot="@plot" ></LPPlotView>
     }
+    <div style="position: relative; display: flex; flex-direction: column;">
+        <MudPaper Elevation="25" Style="margin-bottom:5px">
+            <PlotterMenu Model="@(appService.CurrentPlot)"></PlotterMenu>
 
-        .canvas-container canvas {
-            width: 100%;
-            height: 100%;
-        }
-</style>
-
-@if (isLoading)
-{
-    <h1>Loading... GPU (WebGL) Canvas</h1>
-}
-<div @ref="containerDiv" class="container" style="border: red 2px solid">
-    <div class="row">
-        <div class="col border rounded p-2 canvas-container">
-
-            <SKGLView @ref="skiaEl" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="false"
-            @onmousedown="OnMouseDown"
-            @onmousemove="OnMouseMove"
-            @onmouseup="OnMouseUp"
-            @onmousewheel="OnMouseWheel" oncontextmenu="return false" />
-
-        </div>
+        </MudPaper>
+        <ChannelMenu Model="@(appService.CurrentPlot)"
+                     Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
+        </ChannelMenu>
     </div>
 </div>
-@*
-    oncontextmenu="return false" prevents the context menu
-    no @ signs means it acutal js code other solutions didn't work
- *@
+
 @code {
-    SKGLView skiaEl = null!;
-    ElementReference containerDiv;
-    Plot? plot;
-    bool isLoading = true;
+    LP.Plot.Core.Plot? plot;
+    bool isLoading = false;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         var t = Task.Run(async () =>
         {
-            var data = await dataService.LoadSignal_L();
-            plot = Plot.CreateSignal(data);
-            plot.Invalidate = skiaEl.Invalidate;
+            var data = await dataService.LoadSignal_M();
+            plot = LP.Plot.Core.Plot.CreateSignal(data);            
             isLoading = false;
+            StateHasChanged();
         });
-    }
-
-    private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
-    {
-        this.plot?.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Size.Width, e.Info.Size.Height));
-    }
-
-    private void OnMouseDown(MouseEventArgs e)
-    {
-        plot?.OnMouseDown(Create(e));
-    }
-
-    private void OnMouseMove(MouseEventArgs e)
-    {
-        plot?.OnMouseMove(Create(e));
-    }
-
-    private void OnMouseUp(MouseEventArgs e)
-    {
-        plot?.OnMouseUp(Create(e));
-    }
-
-    private void OnMouseWheel(WheelEventArgs e)
-    {
-        plot?.OnMouseWheel(new(e.OffsetX, e.OffsetY, -e.DeltaY));
-    }
-
-    private LPMouseButtonEventArgs Create(MouseEventArgs e)
-    {
-        LPButton button = e.Buttons switch
-        {
-            1 => LPButton.Left,
-            2 => LPButton.Right,
-            _ => LPButton.None,
-        };
-        return new LPMouseButtonEventArgs(e.OffsetX, e.OffsetY, button);
     }
 }

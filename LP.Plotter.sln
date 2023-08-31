@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottTestv4", "ScottTestv4\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plot.Core", "LP.Plot.Core\LP.Plot.Core.csproj", "{C04E3DBB-A1B4-4F45-811F-8EE1C001EB9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LP.Plot.Benchmark", "LP.Plot.Benchmark\LP.Plot.Benchmark.csproj", "{4AA9AB02-4052-499E-B18B-0EF2FCA1C1CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plot.Benchmark", "LP.Plot.Benchmark\LP.Plot.Benchmark.csproj", "{4AA9AB02-4052-499E-B18B-0EF2FCA1C1CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

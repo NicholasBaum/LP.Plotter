@@ -1,0 +1,90 @@
+﻿@using LP.Plot.Core.Data;
+@using LP.Plot.Core.Skia;
+@using SkiaSharp
+@using SkiaSharp.Views.Blazor
+@using LP.Plot.Core;
+
+<style>
+    .canvas-container {
+        line-height: 1;
+        display: flex;
+        flex: 1
+    }
+
+        .canvas-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+</style>
+
+<div @onmouseup="OnMouseUp" class="canvas-container">
+    <SKGLView @ref="skiaEl" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" EnableRenderLoop="false"
+    @onmousedown="OnMouseDown"
+    @onmousemove="OnMouseMove"
+    @onmousewheel="OnMouseWheel" oncontextmenu="return false" />
+</div>
+@*
+    oncontextmenu="return false" prevents the context menu
+    no @ signs means it acutal js code other solutions didn't work
+ *@
+@code {
+    [Parameter]
+    public string Style { get; set; } = "";
+    SKGLView skiaEl = null!;
+    [Parameter, EditorRequired]
+    public Plot Plot { get; set; } = null!;
+    private Plot? lastDataModel;
+
+    protected override void OnParametersSet()
+    {
+        if (lastDataModel != Plot)
+        {
+            if (lastDataModel is not null)
+            {
+                lastDataModel.Invalidate = () => { };
+                lastDataModel = null;
+            }
+            if (Plot is not null)
+            {
+                this.Plot.Invalidate = () => this.skiaEl.Invalidate();
+                lastDataModel = Plot;
+            }
+        }
+    }
+
+    private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
+    {
+        this.Plot?.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Size.Width, e.Info.Size.Height));
+    }
+
+    private void OnMouseDown(MouseEventArgs e)
+    {
+        Plot?.OnMouseDown(Create(e));
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        Plot?.OnMouseMove(Create(e));
+    }
+
+    private void OnMouseUp(MouseEventArgs e)
+    {
+        Plot?.OnMouseUp(Create(e));
+    }
+
+    private void OnMouseWheel(WheelEventArgs e)
+    {
+        Plot?.OnMouseWheel(new(e.OffsetX, e.OffsetY, -e.DeltaY));
+    }
+
+    private LPMouseButtonEventArgs Create(MouseEventArgs e)
+    {
+        LPButton button = e.Buttons switch
+        {
+            1 => LPButton.Left,
+            2 => LPButton.Right,
+            _ => LPButton.None,
+        };
+        return new LPMouseButtonEventArgs(e.OffsetX, e.OffsetY, button);
+    }
+}
