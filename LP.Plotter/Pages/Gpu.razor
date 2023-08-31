@@ -18,8 +18,10 @@
         }
 </style>
 
-<h1>GPU (WebGL) Canvas</h1>
-
+@if (isLoading)
+{
+    <h1>Loading... GPU (WebGL) Canvas</h1>
+}
 <div @ref="containerDiv" class="container" style="border: red 2px solid">
     <div class="row">
         <div class="col border rounded p-2 canvas-container">
@@ -37,15 +39,19 @@
 @code {
     SKGLView skiaEl = null!;
     ElementReference containerDiv;
-    Plot plot;
+    Plot? plot;
+    bool isLoading = true;
 
-    protected override async void OnInitialized()
+    protected override void OnInitialized()
     {
         base.OnInitialized();
-        var data = await dataService.LoadSignal_L();
-        plot = Plot.CreateSignal(data);
-        plot.Invalidate = skiaEl.Invalidate;
-        containerDiv.ev
+        var t = Task.Run(async () =>
+        {
+            var data = await dataService.LoadSignal_L();
+            plot = Plot.CreateSignal(data);
+            plot.Invalidate = skiaEl.Invalidate;
+            isLoading = false;
+        });
     }
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
