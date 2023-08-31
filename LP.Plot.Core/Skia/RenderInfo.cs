@@ -10,7 +10,7 @@ public class RenderInfo
 
     private readonly SKPaint black = new()
     {
-        Color = SKColors.Black,
+        Color = new SKColor(50, 50, 50, 128),
         IsAntialias = true,
         Style = SKPaintStyle.Fill,
         TextAlign = SKTextAlign.Left,
