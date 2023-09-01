@@ -4,10 +4,13 @@ using System.Diagnostics;
 
 namespace LP.Plot.Core.Skia;
 
-public class RenderInfo : IRenderable
+public class RenderInfo : IRenderable, IDisposable
 {
-    Stopwatch sw = new Stopwatch();
-    private int frameCount = 0;
+    Stopwatch timer = Stopwatch.StartNew();
+    // working with ticks doesn't wrok in blazor wasm as far as i can tell
+    List<TimeSpan> frameTimes = new(1000);
+    TimeSpan lastTime;
+    int timeWindwow = 60;
 
     private readonly SKPaint black = new()
     {
@@ -26,10 +29,17 @@ public class RenderInfo : IRenderable
         TextSize = 18,
     };
 
-    public void RestartMeasuring()
+    public IDisposable Measure()
     {
-        sw.Restart();
-        frameCount = 0;
+        lastTime = timer.Elapsed;
+        return this;
+    }
+
+    public void Dispose()
+    {
+        frameTimes.Add(timer.Elapsed - lastTime);
+        if (frameTimes.Count > frameTimes.Capacity)
+            frameTimes.Clear();
     }
 
     public void Render(IRenderContext ctx)
@@ -41,16 +51,19 @@ public class RenderInfo : IRenderable
         canvas.Translate(rect.Left, rect.Top);
         canvas.DrawRect(0, 0, 140, 70, black);
 
-        var text = $"Frames {frameCount++}";
+        var text = $"FTime {frameTimes.Last().TotalMilliseconds:0000}ms";
         SKRect bounds = new();
         white.MeasureText(text, ref bounds);
         canvas.DrawText(text, 0, 1.5f * bounds.Height, white);
 
-        text = $"Fps {(frameCount / (double)sw.Elapsed.TotalSeconds):0.00}";
+        var time = frameTimes.TakeLast(timeWindwow).Aggregate((s, x) => s + x);
+        text = $"FAvg {(time / timeWindwow).TotalMilliseconds:0000}ms";
         canvas.DrawText(text, 0, 3f * bounds.Height, white);
 
-        text = $"FTime {((double)sw.Elapsed.TotalMilliseconds / frameCount):00000}ms";
+        var fps = time.TotalMilliseconds == 0 ? double.NaN : (timeWindwow / time.TotalSeconds);
+        text = $"Fps {fps:0.00}";
         canvas.DrawText(text, 0, 4.5f * bounds.Height, white);
+
         canvas.Restore();
     }
 }

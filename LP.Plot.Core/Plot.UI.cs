@@ -44,7 +44,6 @@ public partial class Plot
         lastMousePos = (e.X, e.Y);
         if (!isZooming && e.PressedButton == LPButton.Left)
         {
-            renderInfo.RestartMeasuring();
             isPanning = true;
         }
         if (!isPanning && e.PressedButton == LPButton.Right)

@@ -25,14 +25,14 @@ public partial class Plot : IRenderable
 
     public void Render(IRenderContext ctx)
     {
-        timer.Restart();
-        canvasSize = ctx.Size;
-        ctx.Canvas.Clear(SKColors.Black);
-        layout.SetRect(LPRect.Create(ctx.Size));
-        layout.Render(ctx);
-        DrawZoomRect(ctx);
-        Debug.WriteLine($"Rendertime {timer.Elapsed.TotalSeconds}");
-        Console.WriteLine($"Rendertime {timer.Elapsed.TotalSeconds}");
+        using (var m = renderInfo.Measure())
+        {
+            canvasSize = ctx.Size;
+            ctx.Canvas.Clear(SKColors.Black);
+            layout.SetRect(LPRect.Create(ctx.Size));
+            layout.Render(ctx);
+            DrawZoomRect(ctx);
+        }
         renderInfo.Render(ctx);
     }
 
