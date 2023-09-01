@@ -17,3 +17,8 @@ public interface ISignal
     bool IsVisible { get; set; }
     string Name { get; set; }
 }
+
+public interface IReactiveSignal : ISignal
+{
+    event EventHandler<EventArgs>? SignalChanged;
+}

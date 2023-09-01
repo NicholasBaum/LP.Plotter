@@ -8,6 +8,8 @@ namespace LP.Plot.Core.Signal;
 public class BufferedSignalPlot : IRenderable, ISignalPlot
 {
     IAxes ISignalPlot.Axes => Axes;
+    public void RerenderOnNextFrame() => forceRerender = true;
+    private bool forceRerender;
 
     private List<ISignal> data = new();
     private Axis XAxis = new();
@@ -56,6 +58,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
             RenderToBuffer(ctx);
             RenderFromBuffer(ctx);
             Axes.Reset();
+            forceRerender = false;
         }
         ctx.Canvas.Restore();
     }
@@ -65,8 +68,13 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
     private bool AlreadyBuffered(LPSize newClientRectSize)
     {
         if (Axes.ShouldRerender())
-            Debug.WriteLine($"IsDirty");
-        return buffer != null && !Axes.ShouldRerender() && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
+            Debug.WriteLine($"Rerender (Axes Changed)");
+        if (forceRerender)
+            Debug.WriteLine($"Rerender (Forced)");
+        return buffer != null
+            && !Axes.ShouldRerender()
+            && !forceRerender
+            && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
     }
 
     private void RenderFromBuffer(IRenderContext ctx)
@@ -81,7 +89,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         System.Diagnostics.Debug.WriteLine("ReRendering");
 
         buffer?.Dispose();
-
+        var visibles = data.Where(x => x.IsVisible).ToList();
         var rect = ctx.ClientRect;
         // pixels per unit
         var xDensity = rect.Width / XAxis.Length;
@@ -92,7 +100,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         var width_new = (int)(xRange_new.Length * xDensity);
         // the necessary height to completly draw all signals with the original density/zoom factor
         double max_scale = 1;
-        foreach (var s in data)
+        foreach (var s in visibles)
         {
             var range_new = s.YRange;
             var yrange = s.YAxis!.Range;
@@ -112,7 +120,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         var surface_B = SKSurface.Create(new SKImageInfo(size_new.Width, size_new.Height));
         var canvas_B = surface_B.Canvas;
 
-        foreach (var s in data)
+        foreach (var s in visibles)
         {
             Span b_YAxisRange = s.YAxis!.Range.ScaleAtCenter(max_scale);
             SignalRenderer.FillDecimatedPath(s.YValues, s.XRange, xRange_new, b_YAxisRange, size_new, path);

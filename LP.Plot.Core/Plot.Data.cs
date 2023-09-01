@@ -32,18 +32,16 @@ public class SignalVM
     }
     public SKColor Color
     {
-        get
-        {
-            return source.Paint.Color;
-        }
+        get => source.Paint.Color;
         set
         {
-            if (source.Paint.Color != value)
+            source.Paint = new SKPaint()
             {
-                Console.WriteLine(value);
-
-                source.Paint.Color = value;
-            }
+                Color = value,
+                StrokeWidth = source.Paint.StrokeWidth,
+                IsAntialias = source.Paint.IsAntialias,
+                Style = source.Paint.Style
+            };
         }
     }
 }
