@@ -7,9 +7,10 @@ public class AxesTracker : IAxes
     public Axis XAxis => XAxisTracked.Source;
     public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source);
 
-    private AxisTracker XAxisTracked { get; }
-    private List<AxisTracker> YAxesTracked { get; } = new List<AxisTracker>();
+    private AxisTracker XAxisTracked;
+    private List<AxisTracker> YAxesTracked = new List<AxisTracker>();
     private bool wasZoomed = false;
+    private bool wasReset = false;
 
     public AxesTracker(Axis xAxis, IEnumerable<Axis> yAxes)
     {
@@ -21,9 +22,20 @@ public class AxesTracker : IAxes
             .ToList();
     }
 
-    public bool ShouldRerender() => wasZoomed;
+    public void Reset(Axis xAxis, IEnumerable<Axis> yAxes)
+    {
+        XAxisTracked = new AxisTracker(xAxis);
+        YAxesTracked = yAxes
+            .Distinct()
+            .Where(x => x != XAxis)
+            .Select(x => new AxisTracker(x))
+            .ToList();
+        wasReset = true;
+    }
 
-    public void Reset() => wasZoomed = false;
+    public bool ShouldRerender() => wasZoomed || wasReset;
+
+    public void Reset() => wasZoomed = wasReset = false;
 
     public void PanRelativeX(double offset)
     {

@@ -11,10 +11,10 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
     public void RerenderOnNextFrame() => forceRerender = true;
     private bool forceRerender;
 
-    private List<ISignal> data = new();
+    private List<ISignal> signals = new();
     private Axis XAxis = new();
     private AxesTracker Axes { get; }
-    private ISignal Ref_Signal => data.First();
+    private ISignal Ref_Signal => signals.First();
     private Axis Ref_YAxis => Ref_Signal.YAxis!;
     private Span Ref_YRange_Max => Ref_Signal.YRange;
     private Span XRange_Max;
@@ -26,21 +26,16 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
 
     public BufferedSignalPlot(IEnumerable<ISignal> signals)
     {
-        this.data.AddRange(signals);
+        this.signals.AddRange(signals);
         XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
-        List<Axis> yAxes = new();
-        foreach (var s in signals)
-        {
-            s.Paint ??= SKPaints.NextPaint();
-            if (s.YAxis == null)
-            {
-                s.YAxis = new Axis(s.YRange);
-                s.YAxis.ZoomAtCenter(1.1);
-            }
-            yAxes.Add(s.YAxis);
-        }
-        Axes = new(XAxis, yAxes);
+        Axes = new(XAxis, signals.Select(x => x.YAxis));
+    }
+
+    public void Remove(ISignal signal)
+    {
+        signals.Remove(signal);
+        Axes.Reset(XAxis, signals.Select(x => x.YAxis));
     }
 
     public void Render(IRenderContext ctx)
@@ -49,6 +44,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
         ctx.Canvas.Clear(SKColors.Black);
+        if (!signals.Any()) return;
         if (AlreadyBuffered(ctx.ClientRect.Size))
         {
             RenderFromBuffer(ctx);
@@ -89,7 +85,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         System.Diagnostics.Debug.WriteLine("ReRendering");
 
         buffer?.Dispose();
-        var visibles = data.Where(x => x.IsVisible).ToList();
+        var visibles = signals.Where(x => x.IsVisible).ToList();
         var rect = ctx.ClientRect;
         // pixels per unit
         var xDensity = rect.Width / XAxis.Length;
@@ -138,10 +134,6 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
 
     private static Span CalcSupport(Span range, Span dataRange)
         => new Span(range.Min <= dataRange.Min ? double.MinValue : range.Min, dataRange.Max <= range.Max ? double.MaxValue : range.Max);
-
-
-
-
 
 
 

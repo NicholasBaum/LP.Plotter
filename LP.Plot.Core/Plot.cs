@@ -42,7 +42,7 @@ public partial class Plot : IRenderable
     public static Plot CreateSignal(IEnumerable<ISignal> data)
     {
         var plot = new Plot();
-        plot.signalPlot = new BufferedSignalPlot(data);
+        plot.signalPlot = new SignalPlot(data);
         plot.Sets.Add(new SignalSet()
         {
             Channels = data.Select(x =>

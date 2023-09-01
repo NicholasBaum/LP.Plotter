@@ -11,36 +11,36 @@ public interface IData
 
 public class SignalVM
 {
-    private ISignal source;
+    public readonly ISignal Source;
 
     public SignalVM(ISignal source)
     {
-        this.source = source;
+        this.Source = source;
     }
 
     public string Name
     {
-        get => source.Name;
-        set => source.Name = value;
+        get => Source.Name;
+        set => Source.Name = value;
     }
     public bool Selected { get; set; }
-    public Axis YAxis => source.YAxis;
+    public Axis YAxis => Source.YAxis;
     public bool IsVisible
     {
-        get => source.IsVisible;
-        set => source.IsVisible = value;
+        get => Source.IsVisible;
+        set => Source.IsVisible = value;
     }
     public SKColor Color
     {
-        get => source.Paint.Color;
+        get => Source.Paint.Color;
         set
         {
-            source.Paint = new SKPaint()
+            Source.Paint = new SKPaint()
             {
                 Color = value,
-                StrokeWidth = source.Paint.StrokeWidth,
-                IsAntialias = source.Paint.IsAntialias,
-                Style = source.Paint.Style
+                StrokeWidth = Source.Paint.StrokeWidth,
+                IsAntialias = Source.Paint.IsAntialias,
+                Style = Source.Paint.Style
             };
         }
     }
@@ -57,5 +57,12 @@ public partial class Plot : IData
 {
     public List<SignalSet> Sets { get; set; } = new();
 
-    public void Remove(SignalSet set) => Sets.Remove(set);
+    public void Remove(SignalSet set)
+    {
+        Sets.Remove(set);
+        foreach (var s in set.Channels)
+            signalPlot.Remove(s.Source);
+        (this.signalPlot as BufferedSignalPlot)?.RerenderOnNextFrame();
+        this.Invalidate();
+    }
 }
