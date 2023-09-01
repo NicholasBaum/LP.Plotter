@@ -10,7 +10,7 @@ public class RenderInfo : IRenderable, IDisposable
     // working with ticks doesn't wrok in blazor wasm as far as i can tell
     List<TimeSpan> frameTimes = new(1000);
     TimeSpan lastTime;
-    int timeWindwow = 60;
+    int windwoSize = 60;
 
     private readonly SKPaint black = new()
     {
@@ -56,11 +56,11 @@ public class RenderInfo : IRenderable, IDisposable
         white.MeasureText(text, ref bounds);
         canvas.DrawText(text, 0, 1.5f * bounds.Height, white);
 
-        var time = frameTimes.TakeLast(timeWindwow).Aggregate((s, x) => s + x);
-        text = $"FAvg {(time / timeWindwow).TotalMilliseconds:0000}ms";
+        var time = frameTimes.TakeLast(windwoSize).Aggregate((s, x) => s + x);
+        text = $"FAvg {(time / windwoSize).TotalMilliseconds:0000}ms";
         canvas.DrawText(text, 0, 3f * bounds.Height, white);
 
-        var fps = time.TotalMilliseconds == 0 ? double.NaN : (timeWindwow / time.TotalSeconds);
+        var fps = time.TotalMilliseconds == 0 ? double.NaN : (windwoSize / time.TotalSeconds);
         text = $"Fps {fps:0.00}";
         canvas.DrawText(text, 0, 4.5f * bounds.Height, white);
 
