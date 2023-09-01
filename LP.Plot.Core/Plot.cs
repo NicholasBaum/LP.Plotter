@@ -35,22 +35,17 @@ public partial class Plot : IRenderable
         renderInfo.Render(ctx);
     }
 
-    public ISignalPlot AddSignal(ISignal data)
-        => AddSignal(new List<ISignal>() { data });
-
-    public ISignalPlot AddSignal(IEnumerable<ISignal> data)
-    {
-        this.signalPlot = new BufferedSignalPlot(data);
-        return this.signalPlot;
-    }
-
     public static Plot CreateSignal(ISignal data)
         => CreateSignal(new List<ISignal>() { data });
 
     public static Plot CreateSignal(IEnumerable<ISignal> data)
     {
         var plot = new Plot();
-        plot.AddSignal(data);
+        plot.signalPlot = new BufferedSignalPlot(data);
+        plot.Sets.Add(new SignalSet()
+        {
+            Channels = data.Select(x => new SignalVM(x)).ToList()
+        });
         plot.layout = Docker.CreateDefault(plot.signalPlot.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalPlot.Axes.XAxis, plot.bottomAxisHeight, plot.signalPlot!);
         return plot;
     }

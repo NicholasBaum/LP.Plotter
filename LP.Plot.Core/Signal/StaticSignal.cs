@@ -12,19 +12,22 @@ public class StaticSignal : ISignal
     public Span XRange { get; }
     public Axis YAxis { get; set; }
     public SKPaint Paint { get; set; }
+    public string Name { get; set; }
+    public bool IsVisible { get; set; }
 
-    public StaticSignal(double[] yValues, Span xRange, Axis yAxis, SKPaint paint)
+    public StaticSignal(double[] yValues, Span xRange, Axis yAxis, SKPaint paint, string name)
     {
         YValues = yValues;
         XRange = xRange;
         YRange = new Span(yValues.Min(), yValues.Max());
         Period = XRange.Length / yValues.Length;
         Paint = paint;
+        Name = name;
         YAxis = yAxis;
     }
 
-    public static ISignal Create(double[] yValues, Span xRange)
+    public static ISignal Create(double[] yValues, Span xRange, string name)
     {
-        return new StaticSignal(yValues, xRange, new Axis(new Span(yValues.Min(), yValues.Max()).ScaleAtCenter(1.1)), SKPaints.NextPaint());
+        return new StaticSignal(yValues, xRange, new Axis(new Span(yValues.Min(), yValues.Max()).ScaleAtCenter(1.1)), SKPaints.NextPaint(), name);
     }
 }

@@ -14,4 +14,6 @@ public interface ISignal
     Axis YAxis { get; set; }
     SKPaint Paint { get; set; }
     double[] YValues { get; }
+    bool IsVisible { get; set; }
+    string Name { get; set; }
 }

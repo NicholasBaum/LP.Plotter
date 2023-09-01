@@ -13,7 +13,7 @@ public class Helper
         var timeRange = new Span(time.YValues.First(), time.YValues.Last());
 
         // speed channel
-        signals.Add(StaticSignal.Create(data.SpeedChannel.YValues, timeRange));
+        signals.Add(StaticSignal.Create(data.SpeedChannel.YValues, timeRange, data.Name));
 
         // temps
         Axis TempAxis = new();
@@ -21,7 +21,7 @@ public class Helper
             .Where(x => x.Name.Contains("TT"))
             .Select(x =>
             {
-                var s = new StaticSignal(x.YValues, timeRange, TempAxis, SKPaints.NextPaint());
+                var s = new StaticSignal(x.YValues, timeRange, TempAxis, SKPaints.NextPaint(), data.Name);
                 TempAxis.Range = TempAxis.Range.GetBounding(s.YRange);
                 return s;
             });
