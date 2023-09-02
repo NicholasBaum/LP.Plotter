@@ -3,11 +3,10 @@ using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-public class SignalPlot : IRenderable, ISignalPlot
+public class SignalPlot : SignalPlotBase
 {
-    public IAxes Axes { get; }
-    public Axis XAxis { get; }
-    public IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
+    public override Axis XAxis { get; }
+    public override IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
 
     private List<ISignal> signals = new();
     private SKPath path = new SKPath();
@@ -19,15 +18,14 @@ public class SignalPlot : IRenderable, ISignalPlot
         this.signals.AddRange(signals);
         Span XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
-        Axes = new AxesCollection(this);
     }
 
-    public void Remove(ISignal signal)
+    public override void Remove(ISignal signal)
     {
         signals.Remove(signal);
     }
 
-    public void Render(IRenderContext ctx)
+    public override void Render(IRenderContext ctx)
     {
         ctx.Canvas.Save();
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());

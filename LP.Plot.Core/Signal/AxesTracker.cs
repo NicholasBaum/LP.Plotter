@@ -3,7 +3,7 @@ using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-internal class SignalsTracker : IAxes
+internal class SignalsTracker
 {
     public Axis XAxis { get; }
     public IEnumerable<Axis> YAxes => trackedAxes.Select(x => x.Source).Where(x => x != XAxis);

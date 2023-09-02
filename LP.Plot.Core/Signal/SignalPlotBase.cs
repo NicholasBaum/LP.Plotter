@@ -2,18 +2,11 @@
 
 namespace LP.Plot.Core.Signal;
 
-public class AxesCollection : IAxes
+public abstract class SignalPlotBase : ISignalPlot
 {
-    private readonly ISignalPlot plot;
+    public abstract Axis XAxis { get; }
 
-    public Axis XAxis => plot.XAxis;
-    private List<Axis> yAxes => plot.YAxes.Distinct().Where(x => x != XAxis).ToList();
-    public IEnumerable<Axis> YAxes => yAxes;
-
-    public AxesCollection(ISignalPlot plot)
-    {
-        this.plot = plot;
-    }
+    public abstract IReadOnlyList<Axis> YAxes { get; }
 
     public virtual void PanRelativeX(double offset)
     {
@@ -22,7 +15,7 @@ public class AxesCollection : IAxes
 
     public virtual void PanRelative(double offset)
     {
-        foreach (var axis in yAxes)
+        foreach (var axis in YAxes)
         {
             axis.PanRelative(offset);
         }
@@ -35,7 +28,7 @@ public class AxesCollection : IAxes
 
     public virtual void ZoomAtRelative(double factor, double position)
     {
-        foreach (var axis in yAxes)
+        foreach (var axis in YAxes)
         {
             axis.ZoomAtRelative(factor, position);
         }
@@ -45,4 +38,7 @@ public class AxesCollection : IAxes
     {
         XAxis.Range = newRange;
     }
+
+    public abstract void Remove(ISignal signal);
+    public abstract void Render(IRenderContext ctx);
 }

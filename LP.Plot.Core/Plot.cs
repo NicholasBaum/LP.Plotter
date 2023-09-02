@@ -47,7 +47,7 @@ public partial class Plot : IRenderable
         {
             Channels = data.Select(x => new SignalVM(x)).ToList()
         });
-        plot.layout = Docker.CreateDefault(plot.signalPlot.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalPlot.Axes.XAxis, plot.bottomAxisHeight, plot.signalPlot!);
+        plot.layout = Docker.CreateDefault(plot.signalPlot.YAxes.First(), plot.leftAxisWidth, plot.signalPlot.XAxis, plot.bottomAxisHeight, plot.signalPlot!);
         return plot;
     }
 
@@ -58,8 +58,8 @@ public partial class Plot : IRenderable
         x *= (float)canvasSize.Width / (canvasSize.Width - leftAxisWidth);
         y *= (float)canvasSize.Height / (canvasSize.Height - bottomAxisHeight);
 
-        signalPlot.Axes.PanRelativeX(x);
-        signalPlot.Axes.PanRelative(y);
+        signalPlot.PanRelativeX(x);
+        signalPlot.PanRelative(y);
     }
 
     public void ZoomAtRelative(double factor, double x, double y)
@@ -67,17 +67,17 @@ public partial class Plot : IRenderable
         if (signalPlot is null || canvasSize.IsEmpty) return;
         var w = canvasSize.Width;
         x = (w * x - leftAxisWidth) / (w - leftAxisWidth);
-        signalPlot.Axes.ZoomAtRelativeX(factor, x);
+        signalPlot.ZoomAtRelativeX(factor, x);
         var h = canvasSize.Height;
         y = (h * y - bottomAxisHeight) / (h - bottomAxisHeight);
-        signalPlot.Axes.ZoomAtRelative(factor, y);
+        signalPlot.ZoomAtRelative(factor, y);
     }
 
     private Span? currentZoom = null;
     private Span pixelZoom = new();
     public void ZoomRect(double x, double y)
     {
-        var tx = new LPTransform(signalPlot.Axes.XAxis.Range, leftAxisWidth, canvasSize.Width);
+        var tx = new LPTransform(signalPlot.XAxis.Range, leftAxisWidth, canvasSize.Width);
         var xx = tx.Inverse(x);
 
         if (currentZoom == null)
@@ -97,7 +97,7 @@ public partial class Plot : IRenderable
         if (currentZoom != null && Math.Abs(pixelZoom.Length) > 0.1)
         {
             var z = currentZoom.Value.Length > 0 ? currentZoom.Value : new Span(currentZoom.Value.Max, currentZoom.Value.Min);
-            signalPlot.Axes.ZoomX(z);
+            signalPlot.ZoomX(z);
         }
         currentZoom = null;
     }
