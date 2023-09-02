@@ -5,13 +5,6 @@ using SkiaSharp;
 
 namespace LP.Plot.Core;
 
-public class AxisChangedEventArgs
-{
-    public bool WasPanned { get; init; }
-}
-
-public delegate void AxisChangedEventHandler(Axis sender, AxisChangedEventArgs args);
-
 public enum AxisPosition
 {
     Left, Top, Right, Bottom
@@ -19,36 +12,24 @@ public enum AxisPosition
 
 public class Axis : IRenderable
 {
-    public event AxisChangedEventHandler? AxisChanged;
-
     public Axis() { }
     public Axis(double min, double max) => (Min, Max) = (min, max);
     public Axis(Span range) => (Min, Max) = (range.Min, range.Max);
     public Span Range
     {
         get => new Span(Min, Max);
-        set
-        {
-            (min, max) = (value.Min, value.Max);
-            AxisChanged?.Invoke(this, new AxisChangedEventArgs());
-        }
+        set => (min, max) = (value.Min, value.Max);
     }
     public double Min
     {
-        get => min; set
-        {
-            min = value;
-            AxisChanged?.Invoke(this, new AxisChangedEventArgs());
-        }
+        get => min;
+        set => min = value;
     }
     private double min = float.MaxValue;
     public double Max
     {
-        get => max; set
-        {
-            AxisChanged?.Invoke(this, new AxisChangedEventArgs());
-            max = value;
-        }
+        get => max;
+        set => max = value;
     }
     private double max = float.MinValue;
     public double Length => Max - Min;
@@ -60,7 +41,6 @@ public class Axis : IRenderable
     {
         Min += offset;
         Max += offset;
-        AxisChanged?.Invoke(this, new AxisChangedEventArgs() { WasPanned = true });
     }
 
     public void ZoomAt(double factor, double position)
@@ -77,7 +57,6 @@ public class Axis : IRenderable
         var offset = Length * relativOffset;
         Min += offset;
         Max += offset;
-        AxisChanged?.Invoke(this, new AxisChangedEventArgs() { WasPanned = true });
     }
 
     public void ZoomAtRelative(double factor, double relativePosition)

@@ -1,5 +1,4 @@
-﻿using LP.Plot.Core.Primitives;
-using SkiaSharp;
+﻿using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
@@ -23,20 +22,18 @@ internal class SignalsTracker
             .ToList();
     }
 
-    public void Remove(ISignal signal) => trackedSignals.RemoveAll(x => x.signal == signal);
+    public void Remove(ISignal signal)
+        => trackedSignals.RemoveAll(x => x.signal == signal);
 
-    public bool HasChanged
-    {
-        get
-        {
-            return trackedSignals.Any(x => x.HasChanged) || trackedAxes.Any(x => x.HasChanged());
-        }
-    }
+    public bool HasChanged()
+        => trackedSignals.Any(x => x.HasChanged()) || trackedAxes.Any(x => x.HasChanged());
 
     public void Cache()
     {
         trackedSignals.ForEach(x => x.Cache());
+        trackedAxes.ForEach(x => x.Cache());
     }
+
 
     /// <summary>
     /// Signal Wrapper
@@ -54,7 +51,7 @@ internal class SignalsTracker
             this.lastVisibility = signal.IsVisible;
         }
 
-        public bool HasChanged
+        public bool HasChanged()
             => lastPaint != signal.Paint || lastVisibility != signal.IsVisible;
 
         public void Cache()
@@ -78,13 +75,16 @@ internal class SignalsTracker
         }
 
         public bool HasChanged()
-        {
-            return Source.Length != length;
-        }
+            => !FloatEquals(Source.Length, length, 10e-6);
 
         public void Cache()
+            => length = Source.Length;
+
+        static bool FloatEquals(double x, double y, double tolerance)
         {
-            length = Source.Length;
+            var diff = Math.Abs(x - y);
+            return diff <= tolerance ||
+                   diff <= Math.Max(Math.Abs(x), Math.Abs(y)) * tolerance;
         }
     }
 }

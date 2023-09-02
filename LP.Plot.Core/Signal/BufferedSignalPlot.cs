@@ -57,13 +57,14 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
     }
 
     private Buffer buffer = null!;
-
+    private long frameCount = 0;
     private bool AlreadyBuffered(LPSize newClientRectSize)
     {
-        if (signalsTracker.HasChanged)
-            Debug.WriteLine($"Rerender (signals or axes changed)");
+        var tmp = signalsTracker.HasChanged();
+        if (tmp)
+            Debug.WriteLine($"Rerender: Signals/Axes changed ({frameCount++})");
         return buffer != null
-            && !signalsTracker.HasChanged
+            && !tmp
             && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
     }
 
@@ -76,8 +77,6 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
 
     private void RenderToBuffer(IRenderContext ctx, int widthLimit = 3000, int heightLimit = 3000)
     {
-        System.Diagnostics.Debug.WriteLine("ReRendering");
-
         buffer?.Dispose();
         var visibles = signals.Where(x => x.IsVisible).ToList();
         var rect = ctx.ClientRect;
@@ -124,7 +123,6 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
         var yRange_virtual = CalcSupport(yRange, Ref_YRange_Max);
         var yD2p = new LPTransform(yRange.Min, yRange.Max, size_new.Height, 0);
         buffer = new Buffer(rect.Size, surface_B, xRange_virtual, yRange_virtual, xD2p, yD2p);
-        Debug.WriteLine(size_new);
     }
 
     private static Span CalcSupport(Span range, Span dataRange)
