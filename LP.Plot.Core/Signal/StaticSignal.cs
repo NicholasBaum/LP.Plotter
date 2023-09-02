@@ -26,7 +26,7 @@ public class StaticSignal : ISignal
         YAxis = yAxis;
     }
 
-    public static ISignal Create(double[] yValues, Span xRange, string name)
+    public static StaticSignal Create(double[] yValues, Span xRange, string name)
     {
         return new StaticSignal(yValues, xRange, new Axis(new Span(yValues.Min(), yValues.Max()).ScaleAtCenter(1.1)), SKPaints.NextPaint(), name);
     }

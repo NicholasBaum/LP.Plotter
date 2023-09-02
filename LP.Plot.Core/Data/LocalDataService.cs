@@ -5,13 +5,13 @@ namespace LP.Plot.Core.Data;
 
 public class LocalDataService
 {
-    public ISignal LoadSignal_S() => CreateSignals(LoadTestLap()).First();
+    public StaticSignal LoadSignal_S() => CreateSignals(LoadTestLap()).First();
 
-    public List<ISignal> LoadSignal_M() => CreateSignals(LoadTestLap());
+    public List<StaticSignal> LoadSignal_M() => CreateSignals(LoadTestLap());
 
-    public List<ISignal> LoadSignal_L() => CreateSignals(LoadTestRun());
+    public List<StaticSignal> LoadSignal_L() => CreateSignals(LoadTestRun());
 
-    public List<ISignal> LoadSignal_XL() => CreateSignals(LoadTestSession());
+    public List<StaticSignal> LoadSignal_XL() => CreateSignals(LoadTestSession());
 
     public ChannelDataSet LoadTestLap()
     {

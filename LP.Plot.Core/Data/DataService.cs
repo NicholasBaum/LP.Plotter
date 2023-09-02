@@ -12,13 +12,13 @@ public class DataService
         this.httpClient = httpClient;
     }
 
-    public async Task<ISignal> LoadSignal_S() => CreateSignals(await LoadTestLap()).First();
+    public async Task<StaticSignal> LoadSignal_S() => CreateSignals(await LoadTestLap()).First();
 
-    public async Task<List<ISignal>> LoadSignal_M() => CreateSignals(await LoadTestLap());
+    public async Task<List<StaticSignal>> LoadSignal_M() => CreateSignals(await LoadTestLap());
 
-    public async Task<List<ISignal>> LoadSignal_L() => CreateSignals(await LoadTestRun());
+    public async Task<List<StaticSignal>> LoadSignal_L() => CreateSignals(await LoadTestRun());
 
-    public async Task<List<ISignal>> LoadSignal_XL() => CreateSignals(await LoadTestSession());
+    public async Task<List<StaticSignal>> LoadSignal_XL() => CreateSignals(await LoadTestSession());
 
     public async Task<ChannelDataSet> LoadTestLap()
     {
