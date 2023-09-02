@@ -4,10 +4,10 @@ using System.Diagnostics;
 
 namespace LP.Plot.Core.Signal;
 
-public class BufferedSignalPlot : SignalPlotBase
+public class BufferedSignalPlot : ISignalPlot, IRenderable
 {
-    public override IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
-    public override Axis XAxis { get; }
+    public IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
+    public Axis XAxis { get; }
 
     private List<ISignal> signals = new();
     private SignalsTracker signalsTracker;
@@ -30,13 +30,13 @@ public class BufferedSignalPlot : SignalPlotBase
         signalsTracker = new SignalsTracker(signals, XAxis);
     }
 
-    public override void Remove(ISignal signal)
+    public void Remove(ISignal signal)
     {
         signals.Remove(signal);
         signalsTracker.Remove(signal);
     }
 
-    public override void Render(IRenderContext ctx)
+    public void Render(IRenderContext ctx)
     {
         ctx.Canvas.Save();
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());

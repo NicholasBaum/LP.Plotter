@@ -16,7 +16,6 @@ public partial class Plot : IRenderable
     private int bottomAxisHeight = 75;
     private LPSize canvasSize;
     private RenderInfo renderInfo = new();
-    private Stopwatch timer = new();
 
     public event EventHandler<EventArgs>? Changed;
     public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
