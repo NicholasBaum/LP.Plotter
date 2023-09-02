@@ -6,9 +6,10 @@ namespace LP.Plot.Core.Signal;
 public class SignalPlot : IRenderable, ISignalPlot
 {
     public IAxes Axes { get; }
+    public Axis XAxis { get; }
+    public IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
 
     private List<ISignal> signals = new();
-    private Axis XAxis = new();
     private SKPath path = new SKPath();
 
     public SignalPlot(ISignal data) : this(new[] { data }) { }
@@ -18,13 +19,12 @@ public class SignalPlot : IRenderable, ISignalPlot
         this.signals.AddRange(signals);
         Span XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
-        Axes = new AxesCollection(XAxis, this.signals.Select(x => x.YAxis));
+        Axes = new AxesCollection(this);
     }
 
     public void Remove(ISignal signal)
     {
         signals.Remove(signal);
-        Axes.Reset(XAxis, signals.Select(x => x.YAxis));
     }
 
     public void Render(IRenderContext ctx)

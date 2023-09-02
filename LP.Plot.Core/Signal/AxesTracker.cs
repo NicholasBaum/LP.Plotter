@@ -1,8 +1,9 @@
 ﻿using LP.Plot.Core.Primitives;
+using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-public class AxesTracker : IAxes
+internal class SignalsTracker : IAxes
 {
     public Axis XAxis => XAxisTracked.Source;
     public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source);
@@ -11,31 +12,34 @@ public class AxesTracker : IAxes
     private List<AxisTracker> YAxesTracked = new List<AxisTracker>();
     private bool wasZoomed = false;
     private bool wasReset = false;
+    private List<SignalTracker> signals;
 
-    public AxesTracker(Axis xAxis, IEnumerable<Axis> yAxes)
+    public SignalsTracker(IEnumerable<ISignal> signals, Axis xAxis)
     {
+        this.signals = signals.Select(x => new SignalTracker(x)).ToList();
         XAxisTracked = new AxisTracker(xAxis);
-        YAxesTracked = yAxes
+        YAxesTracked = signals
+            .Select(x => x.YAxis)
             .Distinct()
             .Where(x => x != XAxis)
             .Select(x => new AxisTracker(x))
             .ToList();
     }
 
-    public void Reset(Axis xAxis, IEnumerable<Axis> yAxes)
+    public void Remove(ISignal signal) => signals.RemoveAll(x => x.signal == signal);
+    public bool HasChanged
     {
-        XAxisTracked = new AxisTracker(xAxis);
-        YAxesTracked = yAxes
-            .Distinct()
-            .Where(x => x != XAxis)
-            .Select(x => new AxisTracker(x))
-            .ToList();
-        wasReset = true;
+        get
+        {
+            return wasReset || wasZoomed || signals.Any(x => x.HasChanged);
+        }
     }
 
-    public bool ShouldRerender() => wasZoomed || wasReset;
-
-    public void Reset() => wasZoomed = wasReset = false;
+    public void Cache()
+    {
+        signals.ForEach(x => x.Cache());
+        wasZoomed = wasReset = false;
+    }
 
     public void PanRelativeX(double offset)
     {
@@ -71,6 +75,35 @@ public class AxesTracker : IAxes
         wasZoomed = true;
     }
 
+    /// <summary>
+    /// Signal Wrapper
+    /// </summary>
+    private class SignalTracker
+    {
+        public readonly ISignal signal;
+        private SKPaint lastPaint;
+        private bool lastVisibility;
+
+        public SignalTracker(ISignal signal)
+        {
+            this.signal = signal;
+            this.lastPaint = signal.Paint;
+            this.lastVisibility = signal.IsVisible;
+        }
+
+        public bool HasChanged
+            => lastPaint != signal.Paint || lastVisibility != signal.IsVisible;
+
+        public void Cache()
+        {
+            this.lastPaint = signal.Paint;
+            this.lastVisibility = signal.IsVisible;
+        }
+    }
+
+    /// <summary>
+    /// Axis Wrapper
+    /// </summary>
     private class AxisTracker
     {
         public Axis Source { get; }

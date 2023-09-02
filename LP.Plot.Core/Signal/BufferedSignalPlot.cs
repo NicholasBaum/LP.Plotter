@@ -1,54 +1,18 @@
 ﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Skia;
 using SkiaSharp;
 using System.Diagnostics;
 
 namespace LP.Plot.Core.Signal;
 
-internal class SignalsTracker
-{
-    List<SignalTracker> signals;
-
-    public SignalsTracker(IEnumerable<ISignal> signals)
-    {
-        this.signals = signals.Select(x => new SignalTracker(x)).ToList();
-    }
-    public void Remove(ISignal signal) => signals.RemoveAll(x => x.signal == signal);
-    public bool HasChanged => signals.Any(x => x.HasChanged);
-    public void Cache() => signals.ForEach(x => x.Cache());
-
-    private class SignalTracker
-    {
-        public readonly ISignal signal;
-        private SKPaint lastPaint;
-        private bool lastVisibility;
-
-        public SignalTracker(ISignal signal)
-        {
-            this.signal = signal;
-            this.lastPaint = signal.Paint;
-            this.lastVisibility = signal.IsVisible;
-        }
-
-        public bool HasChanged
-            => lastPaint != signal.Paint || lastVisibility != signal.IsVisible;
-
-        public void Cache()
-        {
-            this.lastPaint = signal.Paint;
-            this.lastVisibility = signal.IsVisible;
-        }
-    }
-}
-
 public class BufferedSignalPlot : IRenderable, ISignalPlot
 {
-    IAxes ISignalPlot.Axes => Axes;
+    public IAxes Axes => signalsTracker;
+    public IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
+    public Axis XAxis { get; }
 
     private List<ISignal> signals = new();
     private SignalsTracker signalsTracker;
-    private Axis XAxis = new();
-    private AxesTracker Axes { get; }
+
     private ISignal Ref_Signal => signals.First();
     private Axis Ref_YAxis => Ref_Signal.YAxis!;
     private Span Ref_YRange_Max => Ref_Signal.YRange;
@@ -64,15 +28,13 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         this.signals.AddRange(signals);
         XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
-        Axes = new(XAxis, signals.Select(x => x.YAxis));
-        signalsTracker = new SignalsTracker(signals);
+        signalsTracker = new SignalsTracker(signals, XAxis);
     }
 
     public void Remove(ISignal signal)
     {
         signals.Remove(signal);
         signalsTracker.Remove(signal);
-        Axes.Reset(XAxis, signals.Select(x => x.YAxis));
     }
 
     public void Render(IRenderContext ctx)
@@ -90,7 +52,6 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         {
             RenderToBuffer(ctx);
             RenderFromBuffer(ctx);
-            Axes.Reset();
             signalsTracker.Cache();
         }
         ctx.Canvas.Restore();
@@ -100,12 +61,9 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
 
     private bool AlreadyBuffered(LPSize newClientRectSize)
     {
-        if (Axes.ShouldRerender())
-            Debug.WriteLine($"Rerender (Axes Changed)");
         if (signalsTracker.HasChanged)
-            Debug.WriteLine($"Rerender (signals changed)");
+            Debug.WriteLine($"Rerender (signals or axes changed)");
         return buffer != null
-            && !Axes.ShouldRerender()
             && !signalsTracker.HasChanged
             && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
     }

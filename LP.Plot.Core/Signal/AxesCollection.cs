@@ -4,22 +4,15 @@ namespace LP.Plot.Core.Signal;
 
 public class AxesCollection : IAxes
 {
-    public Axis XAxis { get; private set; }
-    private HashSet<Axis> yAxes { get; }
+    private readonly ISignalPlot plot;
+
+    public Axis XAxis => plot.XAxis;
+    private List<Axis> yAxes => plot.YAxes.Distinct().Where(x => x != XAxis).ToList();
     public IEnumerable<Axis> YAxes => yAxes;
 
-    public AxesCollection(Axis xAxis, IEnumerable<Axis> yAxes)
+    public AxesCollection(ISignalPlot plot)
     {
-        XAxis = xAxis;
-        this.yAxes = new HashSet<Axis>(yAxes.Where(x => x != xAxis));
-    }
-
-    public void Reset(Axis xAxis, IEnumerable<Axis> yAxes)
-    {
-        XAxis = xAxis;
-        this.yAxes.Clear();
-        foreach (var axis in yAxes.Where(x => x != xAxis))
-            this.yAxes.Add(axis);
+        this.plot = plot;
     }
 
     public virtual void PanRelativeX(double offset)
