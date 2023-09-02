@@ -9,8 +9,6 @@ internal class SignalsTracker
     public IEnumerable<Axis> YAxes => trackedAxes.Select(x => x.Source).Where(x => x != XAxis);
 
     private readonly List<AxisTracker> trackedAxes;
-    private bool wasZoomed = false;
-    private bool wasReset = false;
     private readonly List<SignalTracker> trackedSignals;
 
     public SignalsTracker(IEnumerable<ISignal> signals, Axis xAxis)
@@ -26,55 +24,18 @@ internal class SignalsTracker
     }
 
     public void Remove(ISignal signal) => trackedSignals.RemoveAll(x => x.signal == signal);
+
     public bool HasChanged
     {
         get
         {
-            return wasReset
-                || wasZoomed
-                || trackedSignals.Any(x => x.HasChanged)
-                || trackedAxes.Any(x => x.HasChanged);
+            return trackedSignals.Any(x => x.HasChanged) || trackedAxes.Any(x => x.HasChanged());
         }
     }
 
     public void Cache()
     {
         trackedSignals.ForEach(x => x.Cache());
-        wasZoomed = wasReset = false;
-    }
-
-    public void PanRelativeX(double offset)
-    {
-        XAxis.PanRelative(offset);
-    }
-
-    public void PanRelative(double offset)
-    {
-        foreach (var axis in YAxes)
-        {
-            axis.PanRelative(offset);
-        }
-    }
-
-    public void ZoomAtRelativeX(double factor, double position)
-    {
-        XAxis.ZoomAtRelative(factor, position);
-        wasZoomed = true;
-    }
-
-    public void ZoomAtRelative(double factor, double position)
-    {
-        foreach (var axis in YAxes)
-        {
-            axis.ZoomAtRelative(factor, position);
-        }
-        wasZoomed = true;
-    }
-
-    public void ZoomX(Span newRange)
-    {
-        XAxis.Range = newRange;
-        wasZoomed = true;
     }
 
     /// <summary>
@@ -109,16 +70,21 @@ internal class SignalsTracker
     private class AxisTracker
     {
         public Axis Source { get; }
-        public bool HasChanged { get; private set; }
+        private double length = 0;
+
         public AxisTracker(Axis axis)
         {
             Source = axis;
-            axis.AxisChanged += (_, e) => { HasChanged = !e.WasPanned; };
+        }
+
+        public bool HasChanged()
+        {
+            return Source.Length != length;
         }
 
         public void Cache()
         {
-            HasChanged = false;
+            length = Source.Length;
         }
     }
 }
