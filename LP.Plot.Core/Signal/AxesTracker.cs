@@ -5,39 +5,41 @@ namespace LP.Plot.Core.Signal;
 
 internal class SignalsTracker : IAxes
 {
-    public Axis XAxis => XAxisTracked.Source;
-    public IEnumerable<Axis> YAxes => YAxesTracked.Select(x => x.Source);
+    public Axis XAxis { get; }
+    public IEnumerable<Axis> YAxes => trackedAxes.Select(x => x.Source).Where(x => x != XAxis);
 
-    private AxisTracker XAxisTracked;
-    private List<AxisTracker> YAxesTracked = new List<AxisTracker>();
+    private readonly List<AxisTracker> trackedAxes;
     private bool wasZoomed = false;
     private bool wasReset = false;
-    private List<SignalTracker> signals;
+    private readonly List<SignalTracker> trackedSignals;
 
     public SignalsTracker(IEnumerable<ISignal> signals, Axis xAxis)
     {
-        this.signals = signals.Select(x => new SignalTracker(x)).ToList();
-        XAxisTracked = new AxisTracker(xAxis);
-        YAxesTracked = signals
+        this.trackedSignals = signals.Select(x => new SignalTracker(x)).ToList();
+        this.XAxis = xAxis;
+        trackedAxes = signals
             .Select(x => x.YAxis)
+            .Append(xAxis)
             .Distinct()
-            .Where(x => x != XAxis)
             .Select(x => new AxisTracker(x))
             .ToList();
     }
 
-    public void Remove(ISignal signal) => signals.RemoveAll(x => x.signal == signal);
+    public void Remove(ISignal signal) => trackedSignals.RemoveAll(x => x.signal == signal);
     public bool HasChanged
     {
         get
         {
-            return wasReset || wasZoomed || signals.Any(x => x.HasChanged);
+            return wasReset
+                || wasZoomed
+                || trackedSignals.Any(x => x.HasChanged)
+                || trackedAxes.Any(x => x.HasChanged);
         }
     }
 
     public void Cache()
     {
-        signals.ForEach(x => x.Cache());
+        trackedSignals.ForEach(x => x.Cache());
         wasZoomed = wasReset = false;
     }
 
@@ -107,9 +109,16 @@ internal class SignalsTracker : IAxes
     private class AxisTracker
     {
         public Axis Source { get; }
+        public bool HasChanged { get; private set; }
         public AxisTracker(Axis axis)
         {
             Source = axis;
+            axis.AxisChanged += (_, e) => { HasChanged = !e.WasPanned; };
+        }
+
+        public void Cache()
+        {
+            HasChanged = false;
         }
     }
 }
