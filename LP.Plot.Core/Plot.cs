@@ -45,16 +45,7 @@ public partial class Plot : IRenderable
         plot.signalPlot = new BufferedSignalPlot(data);
         plot.Sets.Add(new SignalSet()
         {
-            Channels = data.Select(x =>
-            {
-                if (x is IReactiveSignal r)
-                    r.SignalChanged += (_, _) =>
-                    {
-                        (plot.signalPlot as BufferedSignalPlot)?.RerenderOnNextFrame();
-                        plot.Invalidate();
-                    };
-                return new SignalVM(x);
-            }).ToList()
+            Channels = data.Select(x => new SignalVM(x)).ToList()
         });
         plot.layout = Docker.CreateDefault(plot.signalPlot.Axes.YAxes.First(), plot.leftAxisWidth, plot.signalPlot.Axes.XAxis, plot.bottomAxisHeight, plot.signalPlot!);
         return plot;

@@ -62,7 +62,6 @@ public partial class Plot : IData
         Sets.Remove(set);
         foreach (var s in set.Channels)
             signalPlot.Remove(s.Source);
-        (this.signalPlot as BufferedSignalPlot)?.RerenderOnNextFrame();
         this.Invalidate();
     }
 }

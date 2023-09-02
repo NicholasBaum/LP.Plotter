@@ -5,13 +5,48 @@ using System.Diagnostics;
 
 namespace LP.Plot.Core.Signal;
 
+internal class SignalsTracker
+{
+    List<SignalTracker> signals;
+
+    public SignalsTracker(IEnumerable<ISignal> signals)
+    {
+        this.signals = signals.Select(x => new SignalTracker(x)).ToList();
+    }
+    public void Remove(ISignal signal) => signals.RemoveAll(x => x.signal == signal);
+    public bool HasChanged => signals.Any(x => x.HasChanged);
+    public void Cache() => signals.ForEach(x => x.Cache());
+
+    private class SignalTracker
+    {
+        public readonly ISignal signal;
+        private SKPaint lastPaint;
+        private bool lastVisibility;
+
+        public SignalTracker(ISignal signal)
+        {
+            this.signal = signal;
+            this.lastPaint = signal.Paint;
+            this.lastVisibility = signal.IsVisible;
+        }
+
+        public bool HasChanged
+            => lastPaint != signal.Paint || lastVisibility != signal.IsVisible;
+
+        public void Cache()
+        {
+            this.lastPaint = signal.Paint;
+            this.lastVisibility = signal.IsVisible;
+        }
+    }
+}
+
 public class BufferedSignalPlot : IRenderable, ISignalPlot
 {
     IAxes ISignalPlot.Axes => Axes;
-    public void RerenderOnNextFrame() => forceRerender = true;
-    private bool forceRerender;
 
     private List<ISignal> signals = new();
+    private SignalsTracker signalsTracker;
     private Axis XAxis = new();
     private AxesTracker Axes { get; }
     private ISignal Ref_Signal => signals.First();
@@ -30,11 +65,13 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
         Axes = new(XAxis, signals.Select(x => x.YAxis));
+        signalsTracker = new SignalsTracker(signals);
     }
 
     public void Remove(ISignal signal)
     {
         signals.Remove(signal);
+        signalsTracker.Remove(signal);
         Axes.Reset(XAxis, signals.Select(x => x.YAxis));
     }
 
@@ -54,7 +91,7 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
             RenderToBuffer(ctx);
             RenderFromBuffer(ctx);
             Axes.Reset();
-            forceRerender = false;
+            signalsTracker.Cache();
         }
         ctx.Canvas.Restore();
     }
@@ -65,11 +102,11 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
     {
         if (Axes.ShouldRerender())
             Debug.WriteLine($"Rerender (Axes Changed)");
-        if (forceRerender)
-            Debug.WriteLine($"Rerender (Forced)");
+        if (signalsTracker.HasChanged)
+            Debug.WriteLine($"Rerender (signals changed)");
         return buffer != null
             && !Axes.ShouldRerender()
-            && !forceRerender
+            && !signalsTracker.HasChanged
             && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
     }
 
@@ -96,7 +133,8 @@ public class BufferedSignalPlot : IRenderable, ISignalPlot
         var width_new = (int)(xRange_new.Length * xDensity);
         // the necessary height to completly draw all signals with the original density/zoom factor
         double max_scale = 1;
-        foreach (var s in visibles)
+        // iterating signals here instead of visibles because rendering inaccuracies can appear of yrange arent exactly the same
+        foreach (var s in signals)
         {
             var range_new = s.YRange;
             var yrange = s.YAxis!.Range;

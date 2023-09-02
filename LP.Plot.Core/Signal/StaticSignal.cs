@@ -4,7 +4,7 @@ using SkiaSharp;
 
 namespace LP.Plot.Core.Signal;
 
-public class StaticSignal : IReactiveSignal
+public class StaticSignal : ISignal
 {
     public string Name { get; set; }
     public double[] YValues { get; }
@@ -12,30 +12,8 @@ public class StaticSignal : IReactiveSignal
     public Span YRange { get; }
     public Span XRange { get; }
     public Axis YAxis { get; set; }
-    public SKPaint Paint
-    {
-        get => paint;
-        set
-        {
-            paint = value;
-            SignalChanged?.Invoke(this, EventArgs.Empty);
-        }
-    }
-    private SKPaint paint;
-
-    public bool IsVisible
-    {
-        get => isVisible;
-        set
-        {
-            isVisible = value;
-            SignalChanged?.Invoke(this, EventArgs.Empty);
-        }
-    }
-    private bool isVisible = true;
-
-
-    public event EventHandler<EventArgs>? SignalChanged;
+    public SKPaint Paint { get; set; }
+    public bool IsVisible { get; set; } = true;
 
     public StaticSignal(double[] yValues, Span xRange, Axis yAxis, SKPaint paint, string name)
     {
@@ -43,7 +21,7 @@ public class StaticSignal : IReactiveSignal
         XRange = xRange;
         YRange = new Span(yValues.Min(), yValues.Max());
         Period = XRange.Length / yValues.Length;
-        this.paint = paint;
+        Paint = paint;
         Name = name;
         YAxis = yAxis;
     }
