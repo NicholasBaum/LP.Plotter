@@ -116,7 +116,7 @@ public class Axis : IRenderable
         {
             var ptick = (float)t.Transform(tick);
             canvas.DrawLine(rect.Width - h, ptick, rect.Width, ptick, SKPaints.White);
-            var label = $"{tick:0000}";
+            var label = $"{tick:####}";
             Font.MeasureText(label, ref textRect);
             canvas.DrawText(label, rect.Width - h - 5 - textRect.Width, ptick + textRect.Height / 2, Font);
         }
@@ -141,7 +141,7 @@ public class Axis : IRenderable
         {
             var ptick = (float)t.Transform(tick);
             canvas.DrawLine(ptick, 0, ptick, h, SKPaints.White);
-            var label = $"{tick:0000}";
+            var label = $"{tick:####}";
             Font.MeasureText(label, ref textRect);
             canvas.DrawText(label, ptick - textRect.Width / 2, h + 5 + textRect.Height, Font);
         }

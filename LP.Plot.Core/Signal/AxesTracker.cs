@@ -5,18 +5,19 @@ namespace LP.Plot.Core.Signal;
 internal class SignalsTracker
 {
     public Axis XAxis { get; }
-    public IEnumerable<Axis> YAxes => trackedAxes.Select(x => x.Source).Where(x => x != XAxis);
+    public IEnumerable<Axis> YAxes => trackedYAxes.Select(x => x.Source).Where(x => x != XAxis);
 
-    private readonly List<AxisTracker> trackedAxes;
+    private readonly AxisTracker trackedXAxis;
+    private readonly List<AxisTracker> trackedYAxes;
     private readonly List<SignalTracker> trackedSignals;
 
     public SignalsTracker(IEnumerable<ISignal> signals, Axis xAxis)
     {
         this.trackedSignals = signals.Select(x => new SignalTracker(x)).ToList();
         this.XAxis = xAxis;
-        trackedAxes = signals
+        this.trackedXAxis = new(xAxis);
+        trackedYAxes = signals
             .Select(x => x.YAxis)
-            .Append(xAxis)
             .Distinct()
             .Select(x => new AxisTracker(x))
             .ToList();
@@ -26,19 +27,21 @@ internal class SignalsTracker
         => trackedSignals.RemoveAll(x => x.signal == signal);
 
     public bool NeedsRerender()
-        => trackedSignals.Any(x => x.HasChanged()) || trackedAxes.Any(x => x.HasZoomed()) || HasUnproportionalPan();
+        => trackedSignals.Any(x => x.HasChanged()) || trackedXAxis.HasZoomed()
+        || trackedYAxes.Any(x => x.HasZoomed()) || HasUnproportionalPan();
 
     private bool HasUnproportionalPan()
     {
-        if (trackedAxes.Count == 0) return false;
-        var tmp = trackedAxes.First().RelativePanAmountIfNotZoomed();
-        return trackedAxes.Skip(1).Any(x => !FloatEquals(x.RelativePanAmountIfNotZoomed(), tmp, 10e-10));
+        if (trackedYAxes.Count == 0) return false;
+        var tmp = trackedYAxes.First().RelativePanAmountIfNotZoomed();
+        return trackedYAxes.Skip(1).Any(x => !FloatEquals(x.RelativePanAmountIfNotZoomed(), tmp, 10e-10));
     }
 
     public void Cache()
     {
         trackedSignals.ForEach(x => x.Cache());
-        trackedAxes.ForEach(x => x.Cache());
+        trackedXAxis.Cache();
+        trackedYAxes.ForEach(x => x.Cache());
     }
 
 

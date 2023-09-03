@@ -12,20 +12,22 @@ public class RenderInfo : IRenderable, IDisposable
     TimeSpan lastTime;
     int windwoSize = 60;
 
-    private readonly SKPaint black = new()
-    {
-        Color = new SKColor(50, 50, 50, 128),
-        IsAntialias = true,
-        Style = SKPaintStyle.Fill,
-        TextAlign = SKTextAlign.Left,
-    };
-
+    private readonly SKColor bgColor = new SKColor(50, 50, 50, 128);
     private readonly SKPaint white = new()
     {
         Color = SKColors.White,
         IsAntialias = true,
         Style = SKPaintStyle.Fill,
         TextAlign = SKTextAlign.Left,
+        TextSize = 18,
+    };
+
+    private readonly SKPaint whiteRA = new()
+    {
+        Color = SKColors.White,
+        IsAntialias = true,
+        Style = SKPaintStyle.Fill,
+        TextAlign = SKTextAlign.Right,
         TextSize = 18,
     };
 
@@ -42,27 +44,30 @@ public class RenderInfo : IRenderable, IDisposable
             frameTimes.Clear();
     }
 
+    private int width = 120;
     public void Render(IRenderContext ctx)
     {
         var canvas = ctx.Canvas;
-        var rect = new LPRect(ctx.Width - 140, 0, ctx.Width, 70);
+        var rect = new LPRect(ctx.Width - width, 0, ctx.Width, 70);
         canvas.Save();
         canvas.ClipRect(rect.ToSkia());
         canvas.Translate(rect.Left, rect.Top);
-        canvas.DrawRect(0, 0, 140, 70, black);
+        //canvas.DrawRect(0, 0, 140, 70, black);
+        canvas.Clear(bgColor);
 
-        var text = $"FTime {frameTimes.Last().TotalMilliseconds:0000}ms";
+        var text = $"FTime";
         SKRect bounds = new();
         white.MeasureText(text, ref bounds);
-        canvas.DrawText(text, 0, 1.5f * bounds.Height, white);
+        canvas.DrawText("FTime", 0, 1.5f * bounds.Height, white);
+        canvas.DrawText($"{frameTimes.Last().TotalMilliseconds:####}ms", width, 1.5f * bounds.Height, whiteRA);
 
         var time = frameTimes.TakeLast(windwoSize).Aggregate((s, x) => s + x);
-        text = $"FAvg {(time / windwoSize).TotalMilliseconds:0000}ms";
-        canvas.DrawText(text, 0, 3f * bounds.Height, white);
+        canvas.DrawText("FAvg", 0, 3f * bounds.Height, white);
+        canvas.DrawText($"{(time / windwoSize).TotalMilliseconds:####}ms", width, 3f * bounds.Height, whiteRA);
 
         var fps = time.TotalMilliseconds == 0 ? double.NaN : (windwoSize / time.TotalSeconds);
-        text = $"Fps {fps:0.00}";
-        canvas.DrawText(text, 0, 4.5f * bounds.Height, white);
+        canvas.DrawText("Fps", 0, 4.5f * bounds.Height, white);
+        canvas.DrawText($"{fps:0}", width, 4.5f * bounds.Height, whiteRA);
 
         canvas.Restore();
     }
