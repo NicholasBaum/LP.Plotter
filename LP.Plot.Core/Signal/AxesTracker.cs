@@ -25,8 +25,15 @@ internal class SignalsTracker
     public void Remove(ISignal signal)
         => trackedSignals.RemoveAll(x => x.signal == signal);
 
-    public bool HasChanged()
-        => trackedSignals.Any(x => x.HasChanged()) || trackedAxes.Any(x => x.HasChanged());
+    public bool NeedsRerender()
+        => trackedSignals.Any(x => x.HasChanged()) || trackedAxes.Any(x => x.HasZoomed()) || HasUnproportionalPan();
+
+    private bool HasUnproportionalPan()
+    {
+        if (trackedAxes.Count == 0) return false;
+        var tmp = trackedAxes.First().RelativePanAmountIfNotZoomed();
+        return trackedAxes.Skip(1).Any(x => !FloatEquals(x.RelativePanAmountIfNotZoomed(), tmp, 10e-10));
+    }
 
     public void Cache()
     {
@@ -67,24 +74,32 @@ internal class SignalsTracker
     private class AxisTracker
     {
         public Axis Source { get; }
-        private double length = 0;
+        private double lastLength = 0;
+        private double lastMin = 0;
 
         public AxisTracker(Axis axis)
         {
             Source = axis;
         }
 
-        public bool HasChanged()
-            => !FloatEquals(Source.Length, length, 10e-6);
+        public bool HasZoomed()
+            => !FloatEquals(Source.Length, lastLength, 10e-6);
+
+        // if the axis was actually zoomed this doesn't reuturn the correct pan amount
+        public double RelativePanAmountIfNotZoomed()
+            => (lastMin - Source.Min) / lastLength;
 
         public void Cache()
-            => length = Source.Length;
-
-        static bool FloatEquals(double x, double y, double tolerance)
         {
-            var diff = Math.Abs(x - y);
-            return diff <= tolerance ||
-                   diff <= Math.Max(Math.Abs(x), Math.Abs(y)) * tolerance;
+            lastLength = Source.Length;
+            lastMin = Source.Min;
         }
+    }
+
+    private static bool FloatEquals(double x, double y, double tolerance)
+    {
+        var diff = Math.Abs(x - y);
+        return diff <= tolerance ||
+               diff <= Math.Max(Math.Abs(x), Math.Abs(y)) * tolerance;
     }
 }

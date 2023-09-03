@@ -60,9 +60,13 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
     private long frameCount = 0;
     private bool AlreadyBuffered(LPSize newClientRectSize)
     {
-        var tmp = signalsTracker.HasChanged();
+        var tmp = signalsTracker.NeedsRerender();
         if (tmp)
-            Debug.WriteLine($"Rerender: Signals/Axes changed ({frameCount++})");
+        {
+            var str = $"Rerender: Signals/Axes changed ({frameCount++})";
+            Debug.WriteLine(str);
+            Console.WriteLine(str);
+        }
         return buffer != null
             && !tmp
             && buffer.IsSupported(newClientRectSize, XAxis.Range, Ref_YAxis.Range);
