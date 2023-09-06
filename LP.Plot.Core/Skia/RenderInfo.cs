@@ -12,7 +12,14 @@ public class RenderInfo : IRenderable, IDisposable
     TimeSpan lastTime;
     int windwoSize = 60;
 
-    private readonly SKColor bgColor = new SKColor(50, 50, 50, 128);
+    private readonly SKPaint bgPaint = new()
+    {
+        Color = new SKColor(50, 50, 50, 128),
+        IsAntialias = true,
+        Style = SKPaintStyle.Fill,
+        TextAlign = SKTextAlign.Left,
+        TextSize = 18,
+    };
     private readonly SKPaint white = new()
     {
         Color = SKColors.White,
@@ -52,8 +59,9 @@ public class RenderInfo : IRenderable, IDisposable
         canvas.Save();
         canvas.ClipRect(rect.ToSkia());
         canvas.Translate(rect.Left, rect.Top);
-        //canvas.DrawRect(0, 0, 140, 70, black);
-        canvas.Clear(bgColor);
+        canvas.DrawRect(0, 0, width, 70, bgPaint);
+        //canvas.Clear(bgColor);
+
 
         var text = $"FTime";
         SKRect bounds = new();
