@@ -13,19 +13,22 @@ public class Helper
         var timeRange = new Span(time.YValues.First(), time.YValues.Last());
 
         // speed channel
-        signals.Add(StaticSignal.Create(data.SpeedChannel.YValues, timeRange, data.Name));
+        Axis speedAxis = new() { Title = "Speed" };
+        StaticSignal speed = new(data.SpeedChannel.YValues, timeRange, speedAxis, SKPaints.NextPaint(), data.Name);
+        signals.Add(speed);
+        speedAxis.Range = speed.YRange;
 
         // temps
-        Axis TempAxis = new();
+        Axis tempAxis = new() { Title = "Temp" };
         var tempChannels = data.Channels
             .Where(x => x.Name.Contains("TT"))
             .Select(x =>
             {
-                var s = new StaticSignal(x.YValues, timeRange, TempAxis, SKPaints.NextPaint(), data.Name);
-                TempAxis.Range = TempAxis.Range.GetBounding(s.YRange);
+                var s = new StaticSignal(x.YValues, timeRange, tempAxis, SKPaints.NextPaint(), data.Name);
+                tempAxis.Range = tempAxis.Range.GetBounding(s.YRange);
                 return s;
             });
-        TempAxis.ZoomAtCenter(1.1f);
+        tempAxis.ZoomAtCenter(1.1f);
         signals.AddRange(tempChannels);
 
         return signals;
