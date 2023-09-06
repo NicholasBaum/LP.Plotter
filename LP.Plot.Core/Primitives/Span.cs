@@ -14,8 +14,12 @@ public readonly struct Span
     }
 
     public double Mid => (Min + Max) / 2;
+
     public bool Contains(Span other)
         => Min <= other.Min && other.Max <= Max;
+
+    public bool Contains(double x)
+        => Min <= x && x <= Max;
 
     public override string ToString()
     {
