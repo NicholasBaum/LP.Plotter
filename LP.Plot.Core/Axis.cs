@@ -96,6 +96,12 @@ public class Axis : IRenderable
             case AxisPosition.Bottom:
                 DrawBottomAxis(ctx);
                 break;
+            case AxisPosition.Right:
+                DrawRightAxis(ctx);
+                break;
+            case AxisPosition.Top:
+                DrawTopAxis(ctx);
+                break;
         }
 
         ctx.Canvas.Restore();
@@ -109,7 +115,7 @@ public class Axis : IRenderable
         canvas.DrawLine(rect.Width - 1.0f, 0f, rect.Width - 1.0f, rect.Height, SKPaints.White);
 
         Title = "Speed";
-        canvas.DrawTextRotated270(Title, 5, rect.Height / 2, Font);
+        canvas.DrawTextRotated270LeftCenter(Title, 5, rect.Height / 2, Font);
 
         var ticks = GetTickValues();
         var t = new LPTransform(Min, Max, rect.Height, 0);
@@ -125,6 +131,58 @@ public class Axis : IRenderable
         {
             var ptick = (float)t.Transform(tick);
             canvas.DrawLine(rect.Width - minorH, ptick, rect.Width, ptick, SKPaints.White);
+        }
+    }
+
+    public void DrawTopAxis(IRenderContext ctx)
+    {
+        var rect = ctx.ClientRect;
+        var canvas = ctx.Canvas;
+        ctx.Canvas.Clear(SKColors.Black);
+        ctx.Canvas.DrawLine(0, rect.Height - 1.0f, rect.Width, rect.Height - 1.0f, SKPaints.White);
+        Title = "Time";
+        canvas.DrawTextCenterTop(Title, rect.Width / 2, 5, Font);
+
+        var ticks = GetTickValues();
+        var t = new LPTransform(Min, Max, 0, rect.Width);
+        foreach (var tick in ticks.MajorTicks)
+        {
+            var ptick = (float)t.Transform(tick);
+            canvas.DrawLine(ptick, rect.Height - majorH, ptick, rect.Height, SKPaints.White);
+            canvas.DrawTextCenterBottom(tick.ToString(labelFormat), ptick, rect.Height - labelOffset, Font);
+        }
+
+        foreach (var tick in ticks.MinorTicks)
+        {
+            var ptick = (float)t.Transform(tick);
+            canvas.DrawLine(ptick, rect.Height - minorH, ptick, rect.Height, SKPaints.White);
+        }
+    }
+
+    public void DrawRightAxis(IRenderContext ctx)
+    {
+        var rect = ctx.ClientRect;
+        var canvas = ctx.Canvas;
+        canvas.Clear(SKColors.Black);
+        canvas.DrawLine(1.0f, 0f, 1.0f, rect.Height, SKPaints.White);
+
+        Title = "Temp";
+        canvas.DrawTextRotated270RightCenter(Title, rect.Width, rect.Height / 2, Font);
+
+        var ticks = GetTickValues();
+        var t = new LPTransform(Min, Max, rect.Height, 0);
+
+        foreach (var tick in ticks.MajorTicks)
+        {
+            var ptick = (float)t.Transform(tick);
+            canvas.DrawLine(0, ptick, majorH, ptick, SKPaints.White);
+            canvas.DrawTextLeftCenter(tick.ToString(labelFormat), labelOffset, ptick, Font);
+        }
+
+        foreach (var tick in ticks.MinorTicks)
+        {
+            var ptick = (float)t.Transform(tick);
+            canvas.DrawLine(0, ptick, minorH, ptick, SKPaints.White);
         }
     }
 
