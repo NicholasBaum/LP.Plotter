@@ -3,13 +3,15 @@ using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
 using LP.Plot.Core.Skia;
 using SkiaSharp;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LP.Plot.Core;
 
 public partial class Plot : IRenderable
 {
+    public event EventHandler<EventArgs>? Changed;
+    public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
+
     private ISignalPlot signalPlot = null!;
     private Docker layout = null!;
     private int leftAxisWidth = 75;
@@ -17,10 +19,18 @@ public partial class Plot : IRenderable
     private LPSize canvasSize;
     private RenderInfo renderInfo = new();
 
-    public event EventHandler<EventArgs>? Changed;
-    public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
+    public Plot(ISignal signal, string xAxisTitle = "") : this(new[] { signal }, xAxisTitle) { }
 
-    protected Plot() { }
+    public Plot(IEnumerable<ISignal> signals, string xAxisTitle = "")
+    {
+        signalPlot = new BufferedSignalPlot(signals);
+        signalPlot.XAxis.Title = xAxisTitle;
+        Sets.Add(new SignalSet()
+        {
+            Channels = signals.Select(x => new SignalVM(x)).ToList()
+        });
+        layout = Docker.CreateDefault(signalPlot.YAxes.First(), leftAxisWidth, signalPlot.XAxis, bottomAxisHeight, signalPlot!);
+    }
 
     public void Render(IRenderContext ctx)
     {
@@ -33,21 +43,6 @@ public partial class Plot : IRenderable
             DrawZoomRect(ctx);
         }
         renderInfo.Render(ctx);
-    }
-
-    public static Plot CreateSignal(ISignal data)
-        => CreateSignal(new List<ISignal>() { data });
-
-    public static Plot CreateSignal(IEnumerable<ISignal> data)
-    {
-        var plot = new Plot();
-        plot.signalPlot = new BufferedSignalPlot(data);
-        plot.Sets.Add(new SignalSet()
-        {
-            Channels = data.Select(x => new SignalVM(x)).ToList()
-        });
-        plot.layout = Docker.CreateDefault(plot.signalPlot.YAxes.First(), plot.leftAxisWidth, plot.signalPlot.XAxis, plot.bottomAxisHeight, plot.signalPlot!);
-        return plot;
     }
 
     public void PanRelative(double x, double y)

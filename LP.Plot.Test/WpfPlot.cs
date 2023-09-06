@@ -19,7 +19,7 @@ public class WpfPlot
 
     public WpfPlot(IEnumerable<ISignal> data, Control control, SKElement skiaEl)
     {
-        plot = Core.Plot.CreateSignal(data);
+        plot = new(data, "Time");
 
         skiaEl.PaintSurface += OnPaintSurface;
         control.MouseDown += OnMouseDown;

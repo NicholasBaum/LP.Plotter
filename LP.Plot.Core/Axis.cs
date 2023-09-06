@@ -191,7 +191,7 @@ public class Axis : IRenderable
         var canvas = ctx.Canvas;
         ctx.Canvas.Clear(SKColors.Black);
         ctx.Canvas.DrawLine(0, 0.5f, rect.Width, 0.5f, SKPaints.White);
-        Title = "Time";
+        
         canvas.DrawTextCenterBottom(Title, rect.Width / 2, rect.Height - 5, Font);
 
         var ticks = GetTickValues();

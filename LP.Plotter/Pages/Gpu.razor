@@ -32,7 +32,7 @@
         var t = Task.Run(async () =>
         {
             var data = await dataService.LoadSignal_M();
-            appService.Plot = LP.Plot.Core.Plot.CreateSignal(data);
+            appService.Plot = new(data, "Time");
             StateHasChanged();
         });
     }
