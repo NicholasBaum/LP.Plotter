@@ -8,18 +8,18 @@ using System.Windows.Input;
 
 namespace LP.Plot.Test;
 
-public class WpfPlot
+public class WpfPlotView
 {
     private Control control;
     private SKElement skiaEl;
-    private Core.Plot plot;
+    public readonly Core.Plot Plot;
 
-    public WpfPlot(ISignal data, Control control, SKElement skiaEl)
+    public WpfPlotView(ISignal data, Control control, SKElement skiaEl)
         : this(new List<ISignal> { data }, control, skiaEl) { }
 
-    public WpfPlot(IEnumerable<ISignal> data, Control control, SKElement skiaEl)
+    public WpfPlotView(IEnumerable<ISignal> data, Control control, SKElement skiaEl)
     {
-        plot = new(data, "Time");
+        Plot = new(data, "Time");
 
         skiaEl.PaintSurface += OnPaintSurface;
         control.MouseDown += OnMouseDown;
@@ -28,25 +28,25 @@ public class WpfPlot
         control.MouseWheel += OnMouseWheel;
         this.control = control;
         this.skiaEl = skiaEl;
-        plot.Changed += (_, _) => skiaEl.InvalidateVisual();
+        Plot.Changed += (_, _) => skiaEl.InvalidateVisual();
     }
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
     {
-        plot.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
+        Plot.Render(new SkiaRenderContext(e.Surface.Canvas, e.Info.Width, e.Info.Height));
     }
 
     private void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
             control.CaptureMouse();
-        plot.OnMouseDown(Create(e));
+        Plot.OnMouseDown(Create(e));
     }
 
     private void OnMouseMove(object sender, MouseEventArgs e)
     {
         if (!control.IsMouseCaptured) return;
-        plot.OnMouseMove(Create(e));
+        Plot.OnMouseMove(Create(e));
         control.CaptureMouse();
     }
 
@@ -54,13 +54,13 @@ public class WpfPlot
     {
         if (control.IsMouseCaptured)
             control.ReleaseMouseCapture();
-        plot.OnMouseUp(Create(e));
+        Plot.OnMouseUp(Create(e));
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
     {
         var pos = e.GetPosition(skiaEl);
-        plot.OnMouseWheel(new(pos.X, pos.Y, e.Delta));
+        Plot.OnMouseWheel(new(pos.X, pos.Y, e.Delta));
     }
 
     private LPMouseButtonEventArgs Create(MouseEventArgs e)

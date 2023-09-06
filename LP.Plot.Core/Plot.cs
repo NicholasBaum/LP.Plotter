@@ -3,7 +3,6 @@ using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
 using LP.Plot.Core.Skia;
 using SkiaSharp;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LP.Plot.Core;
 
@@ -15,6 +14,8 @@ public partial class Plot : IRenderable
     private ISignalPlot signalPlot = null!;
     private Docker layout = null!;
     private int leftAxisWidth = 75;
+    private int topAxisHeight = 75;
+    private int rightAxisWidth = 75;
     private int bottomAxisHeight = 75;
     private LPSize canvasSize;
     private RenderInfo renderInfo = new();
@@ -29,7 +30,27 @@ public partial class Plot : IRenderable
         {
             Channels = signals.Select(x => new SignalVM(x)).ToList()
         });
-        layout = Docker.CreateDefault(signalPlot.YAxes.First(), leftAxisWidth, signalPlot.XAxis, bottomAxisHeight, signalPlot!);
+
+        layout = new Docker();
+        layout.Left = new Cell() { Parent = layout, Content = signalPlot.YAxes.First(), DesiredSize = new LPSize(leftAxisWidth, 0) };
+        layout.Bottom = new Cell() { Parent = layout, Content = signalPlot.XAxis, DesiredSize = new LPSize(0, bottomAxisHeight) };
+        layout.Center = new Cell() { Parent = layout, Content = signalPlot };
+    }
+
+    public void SetLeftAxis(Axis axis)
+    {
+        if ((this.layout.Right as Cell)?.Content == axis)
+            throw new InvalidOperationException("Axis object is already used on the right side.");
+        axis.Position = AxisPosition.Left;
+        this.layout.Left = new Cell() { Parent = layout, Content = axis, DesiredSize = new LPSize(leftAxisWidth, 0) };
+    }
+
+    public void SetRightAxis(Axis axis)
+    {
+        if ((this.layout.Left as Cell)?.Content == axis)
+            throw new InvalidOperationException("Axis object is already used on the left side.");
+        axis.Position = AxisPosition.Right;
+        this.layout.Right = new Cell() { Parent = layout, Content = axis, DesiredSize = new LPSize(leftAxisWidth, 0) };
     }
 
     public void Render(IRenderContext ctx)

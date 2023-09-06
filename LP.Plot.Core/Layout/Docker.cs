@@ -13,8 +13,6 @@ public class Docker : IControl, IRenderable
     public LPSize DesiredSize { get; set; }
     public LPRect Rect { get; private set; }
 
-    private Docker() { }
-
     public void Render(IRenderContext ctx)
     {
         Left?.Render(ctx);
@@ -92,15 +90,6 @@ public class Docker : IControl, IRenderable
         Top?.SetRect(LPRect.Create(lw, 0, cw, th));
         Bottom?.SetRect(LPRect.Create(lw, th + ch, cw, bh));
         Center?.SetRect(LPRect.Create(lw, th, cw, ch));
-    }
-
-    public static Docker CreateDefault(IRenderable left, int width, IRenderable bottom, int height, IRenderable center)
-    {
-        var grid = new Docker();
-        grid.Left = new Cell() { Parent = grid, Content = left, DesiredSize = new LPSize(width, 0) };
-        grid.Bottom = new Cell() { Parent = grid, Content = bottom, DesiredSize = new LPSize(0, height) };
-        grid.Center = new Cell() { Parent = grid, Content = center };
-        return grid;
     }
 }
 

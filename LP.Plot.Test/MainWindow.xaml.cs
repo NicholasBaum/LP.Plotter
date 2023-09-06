@@ -8,14 +8,15 @@ namespace LP.Plot.Test
     /// </summary>
     public partial class MainWindow : Window
     {
-        private WpfPlot signal;
+        private WpfPlotView plotView;
 
         public MainWindow()
         {
             InitializeComponent();
 
             var data = new LocalDataService().LoadSignal_L();
-            this.signal = new WpfPlot(data, this, skiaEl);
+            this.plotView = new WpfPlotView(data, this, skiaEl);
+            this.plotView.Plot.SetRightAxis(data[1].YAxis);
         }
     }
 }
