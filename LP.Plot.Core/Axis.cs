@@ -41,7 +41,8 @@ public class Axis : IRenderable
 
     private float majorH = 10;
     private float minorH = 5;
-    private LPSize Size { get; set; }
+    private float labelOffset = 17;
+    private LPSize size;
     private string labelFormat = "g6";
 
     public void Pan(double offset)
@@ -82,7 +83,7 @@ public class Axis : IRenderable
 
     public void Render(IRenderContext ctx)
     {
-        this.Size = ctx.ClientRect.Size;
+        this.size = ctx.ClientRect.Size;
         ctx.Canvas.Save();
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
@@ -124,9 +125,7 @@ public class Axis : IRenderable
         {
             var ptick = (float)t.Transform(tick);
             canvas.DrawLine(rect.Width - majorH, ptick, rect.Width, ptick, SKPaints.White);
-            var label = tick.ToString(labelFormat);
-            Font.MeasureText(label, ref textRect);
-            canvas.DrawText(label, rect.Width - majorH - 5 - textRect.Width, ptick + textRect.Height / 2, Font);
+            canvas.DrawTextRightCenter(tick.ToString(labelFormat), rect.Width - labelOffset, ptick, Font);
         }
 
         foreach (var tick in ticks.MinorTicks)
@@ -136,7 +135,7 @@ public class Axis : IRenderable
         }
     }
 
-  
+
 
     public void DrawBottomAxis(IRenderContext ctx)
     {
@@ -156,9 +155,7 @@ public class Axis : IRenderable
         {
             var ptick = (float)t.Transform(tick);
             canvas.DrawLine(ptick, 0, ptick, majorH, SKPaints.White);
-            var label = tick.ToString(labelFormat);
-            Font.MeasureText(label, ref textRect);
-            canvas.DrawText(label, ptick - textRect.Width / 2, majorH + 5 + textRect.Height, Font);
+            canvas.DrawTextCenterTop(tick.ToString(labelFormat), ptick, labelOffset, Font);
         }
 
         foreach (var tick in ticks.MinorTicks)
@@ -170,7 +167,7 @@ public class Axis : IRenderable
 
     private (double[] MajorTicks, double[] MinorTicks) GetTickValues()
     {
-        var step = AxisUtilities.GetIntervallSizes(IsHorizontal ? Size.Width : Size.Height, this.Range.Length);
+        var step = AxisUtilities.GetIntervallSizes(IsHorizontal ? size.Width : size.Height, this.Range.Length);
         var majorTicks = AxisUtilities.CreateTickValues(Min, Max, step.MajorStep);
         var minorTicks = AxisUtilities.CreateTickValues(Min, Max, step.MinorStep);
         minorTicks = AxisUtilities.FilterRedundantMinorTicks(majorTicks, minorTicks);
