@@ -2,17 +2,37 @@
 
 namespace LP.Plot.Core.Primitives;
 
-public struct LPRect : IEquatable<LPRect>
+public record struct LPRect : IEquatable<LPRect>
 {
-
     public static readonly LPRect Empty;
 
+    public int Left
+    {
+        get => left;
+        set => left = value;
+    }
+
+    public int Top
+    {
+        get => top;
+        set => top = value;
+    }
+
+    public int Right
+    {
+        get => right;
+        set => right = value;
+    }
+
+    public int Bottom
+    {
+        get => bottom;
+        set => bottom = value;
+    }
+
     private int left;
-
     private int top;
-
     private int right;
-
     private int bottom;
 
     public readonly int MidX => left + Width / 2;
@@ -25,66 +45,9 @@ public struct LPRect : IEquatable<LPRect>
 
     public readonly bool IsEmpty => Width == 0 || Height == 0;
 
-    public LPSize Size
-    {
-        readonly get
-        {
-            return new LPSize(Width, Height);
-        }
-        set
-        {
-            right = left + value.Width;
-            bottom = top + value.Height;
-        }
-    }
+    public LPSize Size => new LPSize(Width, Height);
 
-    public int Left
-    {
-        readonly get
-        {
-            return left;
-        }
-        set
-        {
-            left = value;
-        }
-    }
 
-    public int Top
-    {
-        readonly get
-        {
-            return top;
-        }
-        set
-        {
-            top = value;
-        }
-    }
-
-    public int Right
-    {
-        readonly get
-        {
-            return right;
-        }
-        set
-        {
-            right = value;
-        }
-    }
-
-    public int Bottom
-    {
-        readonly get
-        {
-            return bottom;
-        }
-        set
-        {
-            bottom = value;
-        }
-    }
 
     public LPRect(int left, int top, int right, int bottom)
     {
@@ -215,47 +178,6 @@ public struct LPRect : IEquatable<LPRect>
     public static LPRect Create(int x, int y, int width, int height)
     {
         return new LPRect(x, y, x + width, y + height);
-    }
-
-    public readonly bool Equals(LPRect obj)
-    {
-        if (left == obj.left && top == obj.top && right == obj.right)
-        {
-            return bottom == obj.bottom;
-        }
-
-        return false;
-    }
-
-    public override readonly bool Equals(object? obj)
-    {
-        if (obj is LPRect)
-        {
-            LPRect obj2 = (LPRect)obj;
-            return Equals(obj2);
-        }
-
-        return false;
-    }
-
-    public static bool operator ==(LPRect left, LPRect right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(LPRect left, LPRect right)
-    {
-        return !left.Equals(right);
-    }
-
-    public override readonly int GetHashCode()
-    {
-        HashCode hashCode = default(HashCode);
-        hashCode.Add(left);
-        hashCode.Add(top);
-        hashCode.Add(right);
-        hashCode.Add(bottom);
-        return hashCode.ToHashCode();
     }
 
     internal SkiaSharp.SKRect ToSkia()

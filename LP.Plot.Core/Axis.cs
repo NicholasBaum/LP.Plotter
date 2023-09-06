@@ -83,38 +83,30 @@ public class Axis : IRenderable
     public void Render(IRenderContext ctx)
     {
         ctx.Canvas.Save();
-        ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
-
         switch (Position)
         {
             case AxisPosition.Left:
-                DrawLeftAxis(ctx);
+                DrawLeftAxis(ctx.Canvas, ctx.ClientRect);
                 break;
             case AxisPosition.Bottom:
-                DrawBottomAxis(ctx);
+                DrawBottomAxis(ctx.Canvas, ctx.ClientRect);
                 break;
             case AxisPosition.Right:
-                DrawRightAxis(ctx);
+                DrawRightAxis(ctx.Canvas, ctx.ClientRect);
                 break;
             case AxisPosition.Top:
-                DrawTopAxis(ctx);
+                DrawTopAxis(ctx.Canvas, ctx.ClientRect);
                 break;
         }
-
         ctx.Canvas.Restore();
     }
 
-    public void DrawLeftAxis(IRenderContext ctx)
+    private void DrawLeftAxis(SKCanvas canvas, LPRect rect)
     {
-        var rect = ctx.ClientRect;
-        var canvas = ctx.Canvas;
-        canvas.Clear(SKColors.Black);
         canvas.DrawLine(rect.Width - 1.0f, 0f, rect.Width - 1.0f, rect.Height, SKPaints.White);
-
         canvas.DrawTextRotated270LeftCenter(Title, 5, rect.Height / 2, Font);
-
-        var ticks = GetTickValues(ctx.ClientRect.Height);
+        var ticks = GetTickValues(rect.Height);
         var t = new LPTransform(Min, Max, rect.Height, 0);
 
         foreach (var tick in ticks.MajorTicks)
@@ -131,17 +123,13 @@ public class Axis : IRenderable
         }
     }
 
-    public void DrawTopAxis(IRenderContext ctx)
+    private void DrawTopAxis(SKCanvas canvas, LPRect rect)
     {
-        var rect = ctx.ClientRect;
-        var canvas = ctx.Canvas;
-        ctx.Canvas.Clear(SKColors.Black);
-        ctx.Canvas.DrawLine(0, rect.Height - 1.0f, rect.Width, rect.Height - 1.0f, SKPaints.White);
-
+        canvas.DrawLine(0, rect.Height - 1.0f, rect.Width, rect.Height - 1.0f, SKPaints.White);
         canvas.DrawTextCenterTop(Title, rect.Width / 2, 5, Font);
-
-        var ticks = GetTickValues(ctx.ClientRect.Width);
+        var ticks = GetTickValues(rect.Width);
         var t = new LPTransform(Min, Max, 0, rect.Width);
+
         foreach (var tick in ticks.MajorTicks)
         {
             var ptick = (float)t.Transform(tick);
@@ -156,16 +144,11 @@ public class Axis : IRenderable
         }
     }
 
-    public void DrawRightAxis(IRenderContext ctx)
+    private void DrawRightAxis(SKCanvas canvas, LPRect rect)
     {
-        var rect = ctx.ClientRect;
-        var canvas = ctx.Canvas;
-        canvas.Clear(SKColors.Black);
         canvas.DrawLine(1.0f, 0f, 1.0f, rect.Height, SKPaints.White);
-
         canvas.DrawTextRotated270RightCenter(Title, rect.Width, rect.Height / 2, Font);
-
-        var ticks = GetTickValues(ctx.ClientRect.Height);
+        var ticks = GetTickValues(rect.Height);
         var t = new LPTransform(Min, Max, rect.Height, 0);
 
         foreach (var tick in ticks.MajorTicks)
@@ -183,17 +166,13 @@ public class Axis : IRenderable
     }
 
 
-    public void DrawBottomAxis(IRenderContext ctx)
+    private void DrawBottomAxis(SKCanvas canvas, LPRect rect)
     {
-        var rect = ctx.ClientRect;
-        var canvas = ctx.Canvas;
-        ctx.Canvas.Clear(SKColors.Black);
-        ctx.Canvas.DrawLine(0, 0.5f, rect.Width, 0.5f, SKPaints.White);
-
+        canvas.DrawLine(0, 0.5f, rect.Width, 0.5f, SKPaints.White);
         canvas.DrawTextCenterBottom(Title, rect.Width / 2, rect.Height - 5, Font);
-
-        var ticks = GetTickValues(ctx.ClientRect.Width);
+        var ticks = GetTickValues(rect.Width);
         var t = new LPTransform(Min, Max, 0, rect.Width);
+
         foreach (var tick in ticks.MajorTicks)
         {
             var ptick = (float)t.Transform(tick);
