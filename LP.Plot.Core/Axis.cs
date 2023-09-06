@@ -1,5 +1,6 @@
 ﻿using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Skia;
+using LP.Plot.Core.Ticks;
 using LP.Plot.Skia;
 using SkiaSharp;
 
@@ -36,6 +37,12 @@ public class Axis : IRenderable
     public AxisPosition Position { get; set; } = AxisPosition.Left;
     public string Title { get; set; } = string.Empty;
     public SKPaint Font { get; set; } = SKFonts.White;
+    public bool IsHorizontal => Position == AxisPosition.Top || Position == AxisPosition.Bottom;
+
+    private float majorH = 10;
+    private float minorH = 5;
+    private LPSize Size { get; set; }
+    private string labelFormat = "g6";
 
     public void Pan(double offset)
     {
@@ -75,6 +82,7 @@ public class Axis : IRenderable
 
     public void Render(IRenderContext ctx)
     {
+        this.Size = ctx.ClientRect.Size;
         ctx.Canvas.Save();
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
@@ -111,16 +119,24 @@ public class Axis : IRenderable
 
         var ticks = GetTickValues();
         var t = new LPTransform(Min, Max, rect.Height, 0);
-        var h = 10;
-        foreach (var tick in ticks)
+
+        foreach (var tick in ticks.MajorTicks)
         {
             var ptick = (float)t.Transform(tick);
-            canvas.DrawLine(rect.Width - h, ptick, rect.Width, ptick, SKPaints.White);
-            var label = $"{tick:####}";
+            canvas.DrawLine(rect.Width - majorH, ptick, rect.Width, ptick, SKPaints.White);
+            var label = tick.ToString(labelFormat);
             Font.MeasureText(label, ref textRect);
-            canvas.DrawText(label, rect.Width - h - 5 - textRect.Width, ptick + textRect.Height / 2, Font);
+            canvas.DrawText(label, rect.Width - majorH - 5 - textRect.Width, ptick + textRect.Height / 2, Font);
+        }
+
+        foreach (var tick in ticks.MinorTicks)
+        {
+            var ptick = (float)t.Transform(tick);
+            canvas.DrawLine(rect.Width - minorH, ptick, rect.Width, ptick, SKPaints.White);
         }
     }
+
+  
 
     public void DrawBottomAxis(IRenderContext ctx)
     {
@@ -136,33 +152,30 @@ public class Axis : IRenderable
 
         var ticks = GetTickValues();
         var t = new LPTransform(Min, Max, 0, rect.Width);
-        var h = 10;
-        foreach (var tick in ticks)
+        foreach (var tick in ticks.MajorTicks)
         {
             var ptick = (float)t.Transform(tick);
-            canvas.DrawLine(ptick, 0, ptick, h, SKPaints.White);
-            var label = $"{tick:####}";
+            canvas.DrawLine(ptick, 0, ptick, majorH, SKPaints.White);
+            var label = tick.ToString(labelFormat);
             Font.MeasureText(label, ref textRect);
-            canvas.DrawText(label, ptick - textRect.Width / 2, h + 5 + textRect.Height, Font);
+            canvas.DrawText(label, ptick - textRect.Width / 2, majorH + 5 + textRect.Height, Font);
+        }
+
+        foreach (var tick in ticks.MinorTicks)
+        {
+            var ptick = (float)t.Transform(tick);
+            canvas.DrawLine(ptick, 0, ptick, minorH, SKPaints.White);
         }
     }
 
-    public double[] GetTickValues()
+    private (double[] MajorTicks, double[] MinorTicks) GetTickValues()
     {
-        var tickCount = 10;
-        var gap = Length / tickCount;
-        gap = RoundToNearestPowerOfTen(gap);
-        var i = (int)(Min / gap);
-        var first = i * gap;
-        return Enumerable.Range(0, (int)(Length / gap) + 1).Select(x => first + x * gap).ToArray();
-    }
+        var step = AxisUtilities.GetIntervallSizes(IsHorizontal ? Size.Width : Size.Height, this.Range.Length);
+        var majorTicks = AxisUtilities.CreateTickValues(Min, Max, step.MajorStep);
+        var minorTicks = AxisUtilities.CreateTickValues(Min, Max, step.MinorStep);
+        minorTicks = AxisUtilities.FilterRedundantMinorTicks(majorTicks, minorTicks);
 
-    static double RoundToNearestPowerOfTen(double number)
-    {
-        int exponent = (int)Math.Floor(Math.Log10(number));
-        double baseValue = Math.Pow(10, exponent);
-        double roundedValue = Math.Round(number / baseValue) * baseValue;
-        return roundedValue;
+        return (majorTicks.ToArray(), minorTicks.ToArray());
     }
 
     public override string ToString()
