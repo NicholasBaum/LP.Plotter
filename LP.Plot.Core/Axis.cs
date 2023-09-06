@@ -109,14 +109,7 @@ public class Axis : IRenderable
         canvas.DrawLine(rect.Width - 1.0f, 0f, rect.Width - 1.0f, rect.Height, SKPaints.White);
 
         Title = "Speed";
-        SKRect textRect = new();
-        Font.MeasureText(Title, ref textRect);
-        var rotCenter = new SKPoint(textRect.Height / 2 + 5, (rect.Height - textRect.Width) / 2);
-        var textOrigin = rotCenter - new SKPoint(textRect.Width, 0);
-        canvas.Save();
-        canvas.RotateDegrees(-90, rotCenter.X, rotCenter.Y);
-        canvas.DrawText(Title, textOrigin, Font);
-        canvas.Restore();
+        canvas.DrawTextRotated270(Title, 5, rect.Height / 2, Font);
 
         var ticks = GetTickValues();
         var t = new LPTransform(Min, Max, rect.Height, 0);
@@ -136,18 +129,14 @@ public class Axis : IRenderable
     }
 
 
-
     public void DrawBottomAxis(IRenderContext ctx)
     {
         var rect = ctx.ClientRect;
         var canvas = ctx.Canvas;
         ctx.Canvas.Clear(SKColors.Black);
         ctx.Canvas.DrawLine(0, 0.5f, rect.Width, 0.5f, SKPaints.White);
-
         Title = "Time";
-        SKRect textRect = new();
-        Font.MeasureText(Title, ref textRect);
-        canvas.DrawText(Title, (rect.Width - textRect.Width) / 2, rect.Height - textRect.Height - 5, Font);
+        canvas.DrawTextCenterBottom(Title, rect.Width / 2, rect.Height - 5, Font);
 
         var ticks = GetTickValues();
         var t = new LPTransform(Min, Max, 0, rect.Width);
