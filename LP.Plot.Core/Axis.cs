@@ -42,7 +42,6 @@ public class Axis : IRenderable
     private float majorH = 10;
     private float minorH = 5;
     private float labelOffset = 17;
-    private LPSize size;
     private string labelFormat = "g6";
 
     public void Pan(double offset)
@@ -83,7 +82,6 @@ public class Axis : IRenderable
 
     public void Render(IRenderContext ctx)
     {
-        this.size = ctx.ClientRect.Size;
         ctx.Canvas.Save();
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
@@ -116,7 +114,7 @@ public class Axis : IRenderable
 
         canvas.DrawTextRotated270LeftCenter(Title, 5, rect.Height / 2, Font);
 
-        var ticks = GetTickValues();
+        var ticks = GetTickValues(ctx.ClientRect.Height);
         var t = new LPTransform(Min, Max, rect.Height, 0);
 
         foreach (var tick in ticks.MajorTicks)
@@ -142,7 +140,7 @@ public class Axis : IRenderable
 
         canvas.DrawTextCenterTop(Title, rect.Width / 2, 5, Font);
 
-        var ticks = GetTickValues();
+        var ticks = GetTickValues(ctx.ClientRect.Width);
         var t = new LPTransform(Min, Max, 0, rect.Width);
         foreach (var tick in ticks.MajorTicks)
         {
@@ -167,7 +165,7 @@ public class Axis : IRenderable
 
         canvas.DrawTextRotated270RightCenter(Title, rect.Width, rect.Height / 2, Font);
 
-        var ticks = GetTickValues();
+        var ticks = GetTickValues(ctx.ClientRect.Height);
         var t = new LPTransform(Min, Max, rect.Height, 0);
 
         foreach (var tick in ticks.MajorTicks)
@@ -191,10 +189,10 @@ public class Axis : IRenderable
         var canvas = ctx.Canvas;
         ctx.Canvas.Clear(SKColors.Black);
         ctx.Canvas.DrawLine(0, 0.5f, rect.Width, 0.5f, SKPaints.White);
-        
+
         canvas.DrawTextCenterBottom(Title, rect.Width / 2, rect.Height - 5, Font);
 
-        var ticks = GetTickValues();
+        var ticks = GetTickValues(ctx.ClientRect.Width);
         var t = new LPTransform(Min, Max, 0, rect.Width);
         foreach (var tick in ticks.MajorTicks)
         {
@@ -210,9 +208,9 @@ public class Axis : IRenderable
         }
     }
 
-    private (double[] MajorTicks, double[] MinorTicks) GetTickValues()
+    private (double[] MajorTicks, double[] MinorTicks) GetTickValues(int screenLength)
     {
-        var step = AxisUtilities.GetIntervallSizes(IsHorizontal ? size.Width : size.Height, this.Range.Length);
+        var step = AxisUtilities.GetIntervallSizes(screenLength, this.Range.Length);
         var majorTicks = AxisUtilities.CreateTickValues(Min, Max, step.MajorStep);
         var minorTicks = AxisUtilities.CreateTickValues(Min, Max, step.MinorStep);
         minorTicks = AxisUtilities.FilterRedundantMinorTicks(majorTicks, minorTicks);
