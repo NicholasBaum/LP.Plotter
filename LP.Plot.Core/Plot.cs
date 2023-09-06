@@ -14,7 +14,7 @@ public partial class Plot : IRenderable
     private ISignalPlot signalPlot = null!;
     private Docker layout = null!;
     private int leftAxisWidth = 75;
-    private int topAxisHeight = 75;
+    private int topCellHeight = 20;
     private int rightAxisWidth = 75;
     private int bottomAxisHeight = 75;
     private LPSize canvasSize;
@@ -33,6 +33,7 @@ public partial class Plot : IRenderable
 
         layout = new Docker();
         layout.Left = new Cell() { Parent = layout, Content = signalPlot.YAxes.First(), DesiredSize = new LPSize(leftAxisWidth, 0) };
+        layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
         layout.Bottom = new Cell() { Parent = layout, Content = signalPlot.XAxis, DesiredSize = new LPSize(0, bottomAxisHeight) };
         layout.Center = new Cell() { Parent = layout, Content = signalPlot };
     }
@@ -50,7 +51,7 @@ public partial class Plot : IRenderable
         if ((this.layout.Left as Cell)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the left side.");
         axis.Position = AxisPosition.Right;
-        this.layout.Right = new Cell() { Parent = layout, Content = axis, DesiredSize = new LPSize(leftAxisWidth, 0) };
+        this.layout.Right = new Cell() { Parent = layout, Content = axis, DesiredSize = new LPSize(rightAxisWidth, 0) };
     }
 
     public void Render(IRenderContext ctx)
