@@ -79,4 +79,13 @@ public partial class Plot : IRenderable
     {
         signalPlot.Remove(signal);
     }
+
+    public void ResetAxes()
+    {
+        if (signalPlot.Signals.Any())
+        {
+            var signals = signalPlot.Signals;
+            this.signalPlot.XAxis.Range = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
+        }
+    }
 }
