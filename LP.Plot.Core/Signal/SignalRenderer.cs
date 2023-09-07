@@ -17,7 +17,7 @@ public static class SignalRenderer
     /// <param name="path"></param>
     public static void FillDecimatedPath(double[] yValues, Span xDataRange, Span xAxis, Span yAxis, LPSize size, SKPath path)
     {
-        SKSpaceTransform t = new(size, xAxis, yAxis);
+        SKTransform t = new(size, xAxis, yAxis);
         path.Reset();
 
         // units per sample
@@ -39,7 +39,7 @@ public static class SignalRenderer
             endIndex = Math.Min(yValues.Length, startIndex + (int)(xAxis.Length / dx) + 8);
         }
         var nextPixelLeftBoundary = x + dpx;
-        path.MoveTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[startIndex]));
+        path.MoveTo(t.ToScreenSpaceX(x), t.ToScreenSpaceY(yValues[startIndex]));
 
         // the method uses the start, min, max and end y-value in a pixel
         var start = new Point(x, yValues[startIndex]);
@@ -60,10 +60,10 @@ public static class SignalRenderer
             }
             else if (x + dx > nextPixelLeftBoundary)
             {
-                path.LineTo(t.ToPixelSpaceX(start.X), t.ToPixelSpaceY(start.Y));
-                path.LineTo(t.ToPixelSpaceX(min.X), t.ToPixelSpaceY(min.Y));
-                path.LineTo(t.ToPixelSpaceX(max.X), t.ToPixelSpaceY(max.Y));
-                path.LineTo(t.ToPixelSpaceX(x), t.ToPixelSpaceY(yValues[i]));
+                path.LineTo(t.ToScreenSpaceX(start.X), t.ToScreenSpaceY(start.Y));
+                path.LineTo(t.ToScreenSpaceX(min.X), t.ToScreenSpaceY(min.Y));
+                path.LineTo(t.ToScreenSpaceX(max.X), t.ToScreenSpaceY(max.Y));
+                path.LineTo(t.ToScreenSpaceX(x), t.ToScreenSpaceY(yValues[i]));
                 //var p = t.ToPixelSpaceX(nextPixelLeftBoundary);
                 //path.LineTo(p - 1, t.ToPixelSpaceY(start.Y));
                 //path.LineTo(p - 0.75f, t.ToPixelSpaceY(min.Y));
@@ -107,12 +107,12 @@ public static class SignalRenderer
     {
         var imageWidth = size.Width;
         var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
+        SKTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
         path.Reset();
         var dx = xDataRange.Length / (yValues.Length - 1);
-        path.MoveTo(t.ToPixelSpaceX(xDataRange.Min), t.ToPixelSpaceY(yValues[0]));
+        path.MoveTo(t.ToScreenSpaceX(xDataRange.Min), t.ToScreenSpaceY(yValues[0]));
         for (int i = 1; i < yValues.Length - 1; i++)
-            path.LineTo(t.ToPixelSpaceX(xDataRange.Min + i * dx), t.ToPixelSpaceY(yValues[i]));
+            path.LineTo(t.ToScreenSpaceX(xDataRange.Min + i * dx), t.ToScreenSpaceY(yValues[i]));
     }
 
     // TODO: need to implement and switch to low density rendermode when necessary
@@ -140,7 +140,7 @@ public static class SignalRenderer
     {
         var imageWidth = size.Width;
         var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
+        SKTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
         var bars = new Span[imageWidth];
         var unitsPerPixel = xAxis.Length / imageWidth;
         var dx = xDataRange.Length / (yValues.Length - 1);
@@ -165,7 +165,7 @@ public static class SignalRenderer
                     if (max < y)
                         max = y;
                 }
-                bars[i] = new Span(t.ToPixelSpaceY(min), t.ToPixelSpaceY(max));
+                bars[i] = new Span(t.ToScreenSpaceY(min), t.ToScreenSpaceY(max));
             }
         }
         return bars;
@@ -178,13 +178,13 @@ public static class SignalRenderer
     {
         var imageWidth = size.Width;
         var imageHeight = size.Height;
-        SKSpaceTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
+        SKTransform t = new(imageWidth, imageHeight, xAxis, yAxis);
         path.Reset();
         var unitsPerPixel = xAxis.Length / imageWidth;
         var dx = xDataRange.Length / (yValues.Length - 1);
         var offset = (xDataRange.Min - xAxis.Min) / unitsPerPixel;
         var indexOffset = (int)((xDataRange.Min - xAxis.Min) / unitsPerPixel);
-        path.MoveTo(t.ToPixelSpaceX(xDataRange.Min), t.ToPixelSpaceY(yValues[0]));
+        path.MoveTo(t.ToScreenSpaceX(xDataRange.Min), t.ToScreenSpaceY(yValues[0]));
         for (var i = 0; i < imageWidth - 1 - indexOffset; i++)
         {
             var xLeft = i * unitsPerPixel;
@@ -195,11 +195,11 @@ public static class SignalRenderer
             var max = float.MinValue;
             if (rightIndex >= yValues.Length)
                 break;
-            var start = t.ToPixelSpaceY(yValues[leftIndex]);
-            var end = t.ToPixelSpaceY(yValues[rightIndex]);
+            var start = t.ToScreenSpaceY(yValues[leftIndex]);
+            var end = t.ToScreenSpaceY(yValues[rightIndex]);
             for (int j = leftIndex + 1; j < rightIndex - 1; j++)
             {
-                var y = t.ToPixelSpaceY(yValues[j]);
+                var y = t.ToScreenSpaceY(yValues[j]);
                 if (min > y)
                     min = y;
                 if (max < y)
