@@ -23,7 +23,10 @@ public class PlotVM
         this.Plot.Add(signals);
         this.sets.Add(new SignalSet(signals, setName));
         if (this.sets.Count == 1)
+        {
             Plot.ResetAxes();
+            Plot.SetDefaultYAxes();
+        }
         DataChanged?.Invoke(this, EventArgs.Empty);
         Plot.Invalidate();
     }

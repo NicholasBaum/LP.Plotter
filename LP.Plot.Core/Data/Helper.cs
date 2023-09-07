@@ -19,7 +19,7 @@ public class Helper
         speedAxis.Range = speed.YRange;
 
         // temps
-        Axis tempAxis = new() { Title = "Temp" };
+        Axis tempAxis = new() { Title = "Temp", Position = AxisPosition.Right };
         var tempChannels = data.Channels
             .Where(x => x.Name.Contains("TT"))
             .Select(x =>

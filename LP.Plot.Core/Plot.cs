@@ -9,10 +9,10 @@ namespace LP.Plot.Core;
 public partial class Plot : IRenderable
 {
     private ISignalPlot signalPlot = null!;
-    private DockerControl layout = null!;
-    private int leftAxisWidth = 75;
+    private DockerControl layout = new();
+    private int leftAxisWidth = 80;
     private int topCellHeight = 20;
-    private int rightAxisWidth = 75;
+    private int rightAxisWidth = 80;
     private int bottomAxisHeight = 75;
     private LPSize canvasSize;
     private RenderInfo renderInfo = new();
@@ -23,16 +23,20 @@ public partial class Plot : IRenderable
     {
         signalPlot = new BufferedSignalPlot(signals);
         signalPlot.XAxis.Title = xAxisTitle;
+        SetDefaultYAxes();
+        layout.Bottom = new AxisControl(signalPlot.XAxis, this) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
+        layout.Center = new SignalPlotControl(signalPlot, this) { Parent = layout };
+    }
+
+    public void SetDefaultYAxes()
+    {
         var leftAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Left).FirstOrDefault();
         var rightAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Right).FirstOrDefault();
-        layout = new DockerControl();
         if (leftAxis is not null)
             layout.Left = new AxisControl(leftAxis, this) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
         if (rightAxis is not null)
             layout.Right = new AxisControl(rightAxis, this) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
-        layout.Bottom = new AxisControl(signalPlot.XAxis, this) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
-        layout.Center = new SignalPlotControl(signalPlot, this) { Parent = layout };
     }
 
     public void Render(IRenderContext ctx)
