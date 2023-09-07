@@ -1,15 +1,39 @@
 ﻿@page "/"
-@using LP.Plotter.Services;
+
+@using LP.Plot.Core.Data;
+
 @inject AppService appService;
+@inject DataService dataService;
 
 <div style="display:flex;flex-direction:row;height:100%;">
-    <ChannelPlotter Model="@(appService.CurrentPlot)" Style="display:flex; flex:1"></ChannelPlotter>
+    @if (appService.CurrentModel != null)
+    {
+        <LPPlotView Plot="@(appService.CurrentModel.Plot)"></LPPlotView>
+    }
+    else
+    {
+        <h4>Loading...</h4>
+    }
     <div style="position: relative; display: flex; flex-direction: column;">
         <MudPaper Elevation="25" Style="margin-bottom:5px">
             <PlotterMenu Model="@(appService.CurrentPlot)"></PlotterMenu>
+
         </MudPaper>
-        <ChannelMenu Model="@(appService.CurrentPlot)"
-                     Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
-        </ChannelMenu>
+        <LPChannelMenu Model="@(appService.CurrentModel)"
+                       Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
+        </LPChannelMenu>
     </div>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        var t = Task.Run(async () =>
+        {
+            var data = await dataService.LoadSignal_M();
+            appService.CurrentModel.Add(data, "Test Data");
+            StateHasChanged();
+        });
+    }
+}
