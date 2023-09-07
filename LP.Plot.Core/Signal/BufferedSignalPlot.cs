@@ -51,7 +51,11 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
         ctx.Canvas.ClipRect(ctx.ClientRect.ToSkia());
         ctx.Canvas.Translate(ctx.ClientRect.Left, ctx.ClientRect.Top);
         ctx.Canvas.Clear(SKColors.Black);
-        if (!signals.Any()) return;
+        if (!signals.Any())
+        {
+            buffer = null;
+            return;
+        }
         if (AlreadyBuffered(ctx.ClientRect.Size))
         {
             RenderFromBuffer(ctx);
@@ -65,7 +69,7 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
         ctx.Canvas.Restore();
     }
 
-    private Buffer buffer = null!;
+    private Buffer? buffer;
     private long frameCount = 0;
     private bool AlreadyBuffered(LPSize newClientRectSize)
     {
@@ -83,7 +87,7 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
 
     private void RenderFromBuffer(IRenderContext ctx)
     {
-        var xOffset = buffer.XD2p.Transform(XAxis.Min);
+        var xOffset = buffer!.XD2p.Transform(XAxis.Min);
         var yOffset = buffer.YD2p.Transform(Ref_YAxis.Max);
         ctx.Canvas.DrawSurface(buffer.Surface, (float)-xOffset, (float)-yOffset);
     }

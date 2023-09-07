@@ -17,12 +17,13 @@ public partial class Plot : IRenderable
     private LPSize canvasSize;
     private RenderInfo renderInfo = new();
 
-    public Plot(ISignal signal, string xAxisTitle = "") : this(new[] { signal }, xAxisTitle) { }
-
-    public Plot(IEnumerable<ISignal> signals, string xAxisTitle = "")
+    public Plot() : this(new ISignal[0], "") { }
+    public Plot(string xAxisTitle) : this(new ISignal[0], xAxisTitle) { }
+    public Plot(ISignal signal, string xAxisTitle) : this(new[] { signal }, xAxisTitle) { }
+    public Plot(IEnumerable<ISignal> signals, string xAxisTitle)
     {
         signalPlot = new BufferedSignalPlot(signals);
-        signalPlot.XAxis.Title = xAxisTitle;
+        signalPlot.XAxis.Title = xAxisTitle ?? "";
         SetDefaultYAxes();
         layout.Bottom = new AxisControl(signalPlot.XAxis, this) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
         layout.Center = new SignalPlotControl(signalPlot, this) { Parent = layout };

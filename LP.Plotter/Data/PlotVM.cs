@@ -7,15 +7,13 @@ public class PlotVM
 {
     public event EventHandler<EventArgs>? DataChanged;
     public Plot.Core.Plot Plot;
-    private readonly string xAxisTitle;
 
     public IReadOnlyList<SignalSet> Sets => sets;
     private List<SignalSet> sets = new List<SignalSet>();
 
     public PlotVM(string xAxisTitle)
     {
-        this.Plot = new(new ISignal[0], xAxisTitle);
-        this.xAxisTitle = xAxisTitle;
+        this.Plot = new(xAxisTitle);
     }
 
     public void Add(IEnumerable<ISignal> signals, string setName)

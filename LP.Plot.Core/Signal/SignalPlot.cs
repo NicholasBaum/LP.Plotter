@@ -10,14 +10,14 @@ public class SignalPlot : ISignalPlot, IRenderable
     public IReadOnlyList<ISignal> Signals => signals;
 
     private List<ISignal> signals = new();
-    private SKPath path = new SKPath();
+    private SKPath path = new();
 
     public SignalPlot(ISignal data) : this(new[] { data }) { }
 
     public SignalPlot(IEnumerable<ISignal> signals)
     {
         this.signals.AddRange(signals);
-        Span XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
+        Span XRange_Max = signals.Any() ? new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max)) : new(0, 1);
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
     }
 
