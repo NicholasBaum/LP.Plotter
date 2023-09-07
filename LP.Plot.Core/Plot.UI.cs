@@ -92,7 +92,7 @@ public partial class Plot
     private Span pixelZoom = new();
     private void UpdateZoomRect(double x, double y)
     {
-        var tx = new LPTransform(signalPlot.XAxis.Range, leftAxisWidth, canvasSize.Width);
+        var tx = new LinarTransform(signalPlot.XAxis.Range, leftAxisWidth, canvasSize.Width);
         var xx = tx.Inverse(x);
 
         if (currentZoom == null)

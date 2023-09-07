@@ -107,7 +107,7 @@ public class Axis : IRenderable
         canvas.DrawLine(rect.Width - 1, 0, rect.Width - 1, rect.Height, SKPaints.White);
         canvas.DrawTextRotated270LeftCenter(Title, 5, rect.Height / 2, Font);
         var ticks = GetTickValues(rect.Height);
-        var t = new LPTransform(Min, Max, rect.Height, 0);
+        var t = new LinarTransform(Min, Max, rect.Height, 0);
 
         foreach (var tick in ticks.MajorTicks)
         {
@@ -128,7 +128,7 @@ public class Axis : IRenderable
         canvas.DrawLine(-2, rect.Height - 1, rect.Width + 2, rect.Height - 1, SKPaints.White);
         canvas.DrawTextCenterTop(Title, rect.Width / 2, 5, Font);
         var ticks = GetTickValues(rect.Width);
-        var t = new LPTransform(Min, Max, 0, rect.Width);
+        var t = new LinarTransform(Min, Max, 0, rect.Width);
 
         foreach (var tick in ticks.MajorTicks)
         {
@@ -149,7 +149,7 @@ public class Axis : IRenderable
         canvas.DrawLine(1, 0, 1, rect.Height, SKPaints.White);
         canvas.DrawTextRotated270RightCenter(Title, rect.Width, rect.Height / 2, Font);
         var ticks = GetTickValues(rect.Height);
-        var t = new LPTransform(Min, Max, rect.Height, 0);
+        var t = new LinarTransform(Min, Max, rect.Height, 0);
 
         foreach (var tick in ticks.MajorTicks)
         {
@@ -171,7 +171,7 @@ public class Axis : IRenderable
         canvas.DrawLine(-2, 1, rect.Width + 2, 1, SKPaints.White);
         canvas.DrawTextCenterBottom(Title, rect.Width / 2, rect.Height - 5, Font);
         var ticks = GetTickValues(rect.Width);
-        var t = new LPTransform(Min, Max, 0, rect.Width);
+        var t = new LinarTransform(Min, Max, 0, rect.Width);
 
         foreach (var tick in ticks.MajorTicks)
         {

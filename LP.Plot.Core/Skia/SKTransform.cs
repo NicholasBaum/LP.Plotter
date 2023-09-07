@@ -4,15 +4,15 @@ namespace LP.Plot.Core.Skia;
 
 public class SKSpaceTransform
 {
-    LPTransform xTransform;
-    LPTransform yTransform;
+    LinarTransform xTransform;
+    LinarTransform yTransform;
 
     public SKSpaceTransform(LPSize imageSize, Span xRange, Span yRange) : this(imageSize.Width, imageSize.Height, xRange, yRange) { }
 
     public SKSpaceTransform(int imageWidth, int imageHeight, Span xRange, Span yRange)
     {
-        this.xTransform = new LPTransform(xRange, 0, imageWidth);
-        this.yTransform = new LPTransform(yRange.Max, yRange.Min, 0, imageHeight);// swap min/max because 0 is top in skia canvas
+        this.xTransform = new LinarTransform(xRange, 0, imageWidth);
+        this.yTransform = new LinarTransform(yRange.Max, yRange.Min, 0, imageHeight);// swap min/max because 0 is top in skia canvas
     }
 
     public float ToPixelSpaceX(double x) => (float)xTransform.Transform(x);

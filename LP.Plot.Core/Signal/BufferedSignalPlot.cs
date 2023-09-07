@@ -122,10 +122,10 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
         }
 
         var xRange_virtual = CalcSupport(xRange_new, XRange_Max);
-        var xD2p = new LPTransform(xRange_new, new Span(0, size_new.Width));
+        var xD2p = new LinarTransform(xRange_new, new Span(0, size_new.Width));
         var yRange = Ref_YAxis.Range.ScaleAtCenter(max_scale);
         var yRange_virtual = CalcSupport(yRange, Ref_YRange_Max);
-        var yD2p = new LPTransform(yRange.Min, yRange.Max, size_new.Height, 0);
+        var yD2p = new LinarTransform(yRange.Min, yRange.Max, size_new.Height, 0);
         buffer = new Buffer(rect.Size, surface_B, xRange_virtual, yRange_virtual, xD2p, yD2p);
     }
 
@@ -137,14 +137,14 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
     private class Buffer : IDisposable
     {
         public SKSurface Surface { get; }
-        public LPTransform XD2p { get; }
-        public LPTransform YD2p { get; }
+        public LinarTransform XD2p { get; }
+        public LinarTransform YD2p { get; }
 
         private LPSize ClientRectSize { get; }
         private readonly Span supportedXRange;
         private readonly Span supportedYRange;
 
-        public Buffer(LPSize clientRectSize, SKSurface surface, Span supportedXRange, Span supportedYRange, LPTransform xD2p, LPTransform yD2p)
+        public Buffer(LPSize clientRectSize, SKSurface surface, Span supportedXRange, Span supportedYRange, LinarTransform xD2p, LinarTransform yD2p)
         {
             ClientRectSize = clientRectSize;
             Surface = surface;

@@ -22,8 +22,8 @@ public abstract class ControlBase : IControl
 
     public DPoint Transform(DPoint p)
     {
-        var xt = new LPTransform(Rect.Left, Rect.Right, 0, Rect.Width);
-        var yt = new LPTransform(Rect.Top, Rect.Bottom, 0, Rect.Height);
+        var xt = new LinarTransform(Rect.Left, Rect.Right, 0, Rect.Width);
+        var yt = new LinarTransform(Rect.Top, Rect.Bottom, 0, Rect.Height);
         return new(xt.Transform(p.X), yt.Transform(p.Y));
     }
 
