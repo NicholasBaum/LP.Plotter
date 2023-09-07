@@ -12,7 +12,8 @@ public partial class Plot
     {
         if (GetHitControl(e.Point) is IControl c)
         {
-            if (e.PressedButton == LPButton.Right && (c == layout.Bottom || c == layout.Center))
+            if (e.PressedButton == LPButton.Right
+                && (c == layout.Bottom || c == layout.Center))
             {
                 isZooming = true;
                 UpdateZoomRect(e.X, e.Y);
@@ -26,33 +27,29 @@ public partial class Plot
 
     public void OnMouseMove(LPMouseButtonEventArgs e)
     {
-        if (GetHitControl(e.Point) is IControl c)
+        if (isZooming)
         {
-            if (isZooming)
-            {
-                UpdateZoomRect(e.X, e.Y);
-            }
-            else
-            {
-                c.OnMouseMove(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
-            }
+            UpdateZoomRect(e.X, e.Y);
+            Invalidate();
+        }
+        else if (GetHitControl(e.Point) is IControl c)
+        {
+            c.OnMouseMove(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
             Invalidate();
         }
     }
 
     public void OnMouseUp(LPMouseButtonEventArgs e)
     {
-        if (GetHitControl(e.Point) is IControl c)
+        if (isZooming)
         {
-            if (isZooming)
-            {
-                ApplyZoomRect();
-            }
-            else
-            {
-                c.OnMouseUp(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
-            }
+            ApplyZoomRect();
+            Invalidate();
             isZooming = false;
+        }
+        else if (GetHitControl(e.Point) is IControl c)
+        {
+            c.OnMouseUp(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
             Invalidate();
         }
     }
