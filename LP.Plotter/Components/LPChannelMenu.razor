@@ -1,8 +1,7 @@
 ﻿@using System.Collections.Specialized;
 @using System.Globalization;
 @using LP.Plot.Core;
-
-@implements IDisposable;
+@using LP.Plotter.Data;
 
 @inject IDialogService dialogService;
 
@@ -45,9 +44,7 @@
     [Parameter]
     public string? Style { get; set; }
     [Parameter, EditorRequired]
-    public LP.Plot.Core.Plot? Model { get; set; }
-
-    private LP.Plot.Core.Plot? lastModel;
+    public PlotVM? Model { get; set; }
 
     private async Task SelectChannelsClick(SignalSet set)
     {
@@ -65,34 +62,9 @@
          yesText: "Remove", cancelText: "Cancel");
 
         if (result == true)
-            Model?.Remove(set);
-    }
-
-    private void Redraw(object? sender, EventArgs e)
-    {
-        StateHasChanged();
-    }
-
-    protected override void OnParametersSet()
-    {
-        if (lastModel != Model)
         {
-            if (lastModel is not null)
-            {
-                lastModel.Changed -= Redraw;
-                lastModel = null;
-            }
-            if (Model is not null)
-            {
-                Model.Changed += Redraw;
-                lastModel = Model;
-            }
+            Model?.Remove(set);
+            StateHasChanged();
         }
-    }
-
-    public void Dispose()
-    {
-        if (Model is not null)
-            Model.Changed -= Redraw;
     }
 }

@@ -6,9 +6,9 @@
 @inject DataService dataService;
 
 <div style="display:flex;flex-direction:row;height:100%;">
-    @if (appService.Plot != null)
+    @if (appService.CurrentModel != null)
     {
-        <LPPlotView Plot="@(appService.Plot)"></LPPlotView>
+        <LPPlotView Plot="@(appService.CurrentModel.Plot)"></LPPlotView>
     }
     else
     {
@@ -19,7 +19,7 @@
             <PlotterMenu Model="@(appService.CurrentPlot)"></PlotterMenu>
 
         </MudPaper>
-        <LPChannelMenu Model="@(appService.Plot)"
+        <LPChannelMenu Model="@(appService.CurrentModel)"
                        Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
         </LPChannelMenu>
     </div>
@@ -32,7 +32,7 @@
         var t = Task.Run(async () =>
         {
             var data = await dataService.LoadSignal_M();
-            appService.Plot = new(data, "Time");
+            appService.CurrentModel = new(data, "Time");
             StateHasChanged();
         });
     }

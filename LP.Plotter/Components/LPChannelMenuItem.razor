@@ -1,19 +1,17 @@
 ﻿@using System.Globalization;
 @using LP.Plot.Core;
+@using LP.Plotter.Data;
 @using LP.Plotter.Utilities;
 @using MudBlazor.Utilities;
 
 @inject IDialogService dialogService;
 
 @code {
-#pragma warning disable CS8618
-
     [CascadingParameter]
-    public LP.Plot.Core.Plot Model { get; set; }
+    public PlotVM Model { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public SignalVM Channel { get; set; }
-#pragma warning restore CS8618
+    public SignalVM Channel { get; set; } = null!;
 
     private bool ShowColorPicker = false;
 
