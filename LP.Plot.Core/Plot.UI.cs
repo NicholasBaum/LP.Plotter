@@ -6,6 +6,9 @@ namespace LP.Plot.Core;
 
 public partial class Plot
 {
+    public event EventHandler<EventArgs>? Changed;
+    public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
+
     private bool isZooming = false;
 
     public void OnMouseDown(LPMouseButtonEventArgs e)

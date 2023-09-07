@@ -8,9 +8,6 @@ namespace LP.Plot.Core;
 
 public partial class Plot : IRenderable
 {
-    public event EventHandler<EventArgs>? Changed;
-    public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
-
     private ISignalPlot signalPlot = null!;
     private DockerControl layout = null!;
     private int leftAxisWidth = 75;
@@ -26,16 +23,24 @@ public partial class Plot : IRenderable
     {
         signalPlot = new BufferedSignalPlot(signals);
         signalPlot.XAxis.Title = xAxisTitle;
-        Sets.Add(new SignalSet()
-        {
-            Channels = signals.Select(x => new SignalVM(x)).ToList()
-        });
-
         layout = new DockerControl();
         layout.Left = new AxisControl(signalPlot.YAxes.First()) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
         layout.Bottom = new AxisControl(signalPlot.XAxis) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
         layout.Center = new SignalPlotControl(signalPlot) { Parent = layout };
+    }
+
+    public void Render(IRenderContext ctx)
+    {
+        using (var m = renderInfo.Measure())
+        {
+            canvasSize = ctx.Size;
+            ctx.Canvas.Clear(SKColors.Black);
+            layout.SetRect(LPRect.Create(ctx.Size));
+            layout.Render(ctx);
+            DrawZoomRect(ctx);
+        }
+        renderInfo.Render(ctx);
     }
 
     public void SetLeftAxis(Axis axis)
@@ -54,16 +59,8 @@ public partial class Plot : IRenderable
         this.layout.Right = new AxisControl(axis) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
     }
 
-    public void Render(IRenderContext ctx)
+    public void Remove(ISignal signal)
     {
-        using (var m = renderInfo.Measure())
-        {
-            canvasSize = ctx.Size;
-            ctx.Canvas.Clear(SKColors.Black);
-            layout.SetRect(LPRect.Create(ctx.Size));
-            layout.Render(ctx);
-            DrawZoomRect(ctx);
-        }
-        renderInfo.Render(ctx);
+        signalPlot.Remove(signal);
     }
 }
