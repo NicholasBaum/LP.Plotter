@@ -32,7 +32,7 @@
         var t = Task.Run(async () =>
         {
             var data = await dataService.LoadSignal_M();
-            appService.CurrentModel = new(data, "Time");
+            appService.CurrentModel.Add(data, "Test Data");
             StateHasChanged();
         });
     }
