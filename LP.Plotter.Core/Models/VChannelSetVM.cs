@@ -13,8 +13,11 @@ public class VChannelSetVM
     {
         this.source = source;
 
-        source.SpeedChannel.Selected = true;
-        source.SpeedChannel.YAxisKey = "speed";
+        if (source.SpeedChannel is VChannelVM s)
+        {
+            s.Selected = true;
+            s.YAxisKey = "speed";
+        }
         foreach (var x in source.Channels.Where(x => x.Name.Contains("TTyre")))
         {
             x.Selected = true;

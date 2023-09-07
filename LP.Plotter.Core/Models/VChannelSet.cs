@@ -9,7 +9,7 @@ public class VChannelSet
     public required string Name { get; init; }
     public required CsvInfo Info { get; init; }
     public List<VChannelVM> Channels = new();
-    public VChannelVM SpeedChannel => Channels.First(x => x.Name.Contains("Speed"));
+    public VChannelVM? SpeedChannel => Channels.FirstOrDefault(x => x.Name.Contains("Speed"));
 
     public static List<VChannelVM> ParseCSV(string csvData)
     {
