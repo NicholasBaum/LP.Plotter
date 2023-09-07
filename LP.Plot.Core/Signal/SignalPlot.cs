@@ -7,6 +7,7 @@ public class SignalPlot : ISignalPlot, IRenderable
 {
     public Axis XAxis { get; }
     public IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
+    public IReadOnlyList<ISignal> Signals => signals;
 
     private List<ISignal> signals = new();
     private SKPath path = new SKPath();
@@ -18,6 +19,11 @@ public class SignalPlot : ISignalPlot, IRenderable
         this.signals.AddRange(signals);
         Span XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
+    }
+
+    public void Add(ISignal signal)
+    {
+        signals.Add(signal);
     }
 
     public void Remove(ISignal signal)
