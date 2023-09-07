@@ -18,9 +18,9 @@ public class AppService
         AddToOxyModel(signals, data.Name, data.Info);
     }
 
-    private void AddToOxyModel(List<StaticSignal> signals, string name, LP.Plot.Core.Data.CsvInfo info)
+    private void AddToOxyModel(List<StaticSignal> signals, string name, CsvInfo info)
     {
-        var oxyInfo = new Core.Models.CsvInfo() { FileName = info.FileName, Path = info.Path, Url = info.Url };
+        var oxyInfo = new CsvInfo() { FileName = info.FileName, Path = info.Path, Url = info.Url };
         var channels = signals.Select(x => new VChannelVM(x.Name, x.YValues.Select((y, i) => new DataPoint(i * x.Period, y))));
         var oxy = new VChannelSet() { Name = name, Info = oxyInfo, Channels = channels.ToList() };
         CurrentPlot.Add(oxy);

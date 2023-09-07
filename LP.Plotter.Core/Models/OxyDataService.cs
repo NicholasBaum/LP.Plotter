@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using LP.Plot.Core.Data;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace LP.Plotter.Core.Models;
@@ -61,7 +62,6 @@ public class OxyDataService
             FileName = Path.GetFileName(x.Replace("\\", "/")),
             Path = x,
             Url = "csvdata" + x.Replace("#", "%23"),
-            Channels = null,
         }).ToList();
     }
 
@@ -82,7 +82,6 @@ public class OxyDataService
                 FileName = Path.GetFileName(x["path"].ToString()),
                 Path = x["path"].ToString(),
                 Url = x["url"].ToString(),
-                Channels = null,
             })
             .ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.

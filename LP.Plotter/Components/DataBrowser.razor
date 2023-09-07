@@ -1,6 +1,7 @@
 @using System.Linq;
+@using LP.Plot.Core.Data;
 
-@inject OxyDataService dataService;
+@inject DataService dataService;
 @inject AppService appService;
 
 <MudContainer>
@@ -67,15 +68,15 @@
                 {
                     DisplayName = cars.Key,
                     Items = cars.GroupBy(x => x.Path.Split("\\")[4])
-                                                    .Select(runs => new CsvTreeItem()
-                                                    {
-                                                        DisplayName = runs.Key,
-                                                        Items = runs.Select(lap => new CsvTreeItem()
-                                                        {
-                                                            Source = lap,
-                                                            DisplayName = lap.FileName,
-                                                        }).ToHashSet()
-                                                    }).ToHashSet()
+                                .Select(runs => new CsvTreeItem()
+                                {
+                                    DisplayName = runs.Key,
+                                    Items = runs.Select(lap => new CsvTreeItem()
+                                    {
+                                        Source = lap,
+                                        DisplayName = lap.FileName,
+                                    }).ToHashSet()
+                                }).ToHashSet()
                 }).ToHashSet();
         }
         catch (Exception ex)
@@ -83,11 +84,6 @@
             this.dataError = ex;
         }
         await base.OnInitializedAsync();
-
-        var testItem = items.First()?.Items?.First()?.Items?.First();
-        if (testItem is not null)
-            HandleLapClick(new MouseEventArgs(), testItem);
-
     }
 
     private async void HandleLapClick(MouseEventArgs e, CsvTreeItem item)
@@ -98,7 +94,7 @@
             item.HasLoadError = false;
             var d = await dataService.LoadChannels(item.Source!);
             item.IsLoading = false;
-            appService.CurrentPlot.Add(d);
+            appService.Add(d);
         }
         catch (Exception ex)
         {
@@ -117,7 +113,7 @@
             item.HasLoadError = false;
             var result = await dataService.MergeLaps(item.Items!.Select(x => x.Source!));
             item.IsLoading = false;
-            appService.CurrentPlot.Add(result);
+            appService.Add(result);
 
         }
         catch (Exception ex)

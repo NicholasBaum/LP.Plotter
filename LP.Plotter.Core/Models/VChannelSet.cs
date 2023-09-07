@@ -1,4 +1,5 @@
-﻿using OxyPlot;
+﻿using LP.Plot.Core.Data;
+using OxyPlot;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
