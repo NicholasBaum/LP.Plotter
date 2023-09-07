@@ -35,10 +35,9 @@ public partial class Plot
             UpdateZoomRect(e.X, e.Y);
             Invalidate();
         }
-        else if (GetHitControl(e.Point) is IControl { HasMouseCapture: true } c)
+        else if (GetHitControl(e.Point) is IControl c)
         {
             c.OnMouseMove(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
-            Invalidate();
         }
     }
 
@@ -53,7 +52,6 @@ public partial class Plot
         else if (GetHitControl(e.Point) is IControl c)
         {
             c.OnMouseUp(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
-            Invalidate();
         }
     }
 
@@ -62,7 +60,6 @@ public partial class Plot
         if (GetHitControl(e.Point) is IControl c)
         {
             c.OnMouseWheel(new LPMouseWheelEventArgs(c.Transform(e.X, e.Y), e.Delta));
-            Invalidate();
         }
     }
 

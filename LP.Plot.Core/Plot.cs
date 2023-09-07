@@ -27,12 +27,12 @@ public partial class Plot : IRenderable
         var rightAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Right).FirstOrDefault();
         layout = new DockerControl();
         if (leftAxis is not null)
-            layout.Left = new AxisControl(leftAxis) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
+            layout.Left = new AxisControl(leftAxis, this) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
         if (rightAxis is not null)
-            layout.Right = new AxisControl(rightAxis) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
-        layout.Bottom = new AxisControl(signalPlot.XAxis) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
-        layout.Center = new SignalPlotControl(signalPlot) { Parent = layout };
+            layout.Right = new AxisControl(rightAxis, this) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
+        layout.Bottom = new AxisControl(signalPlot.XAxis, this) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
+        layout.Center = new SignalPlotControl(signalPlot, this) { Parent = layout };
     }
 
     public void Render(IRenderContext ctx)
@@ -53,7 +53,7 @@ public partial class Plot : IRenderable
         if ((this.layout.Right as AxisControl)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the right side.");
         axis.Position = AxisPosition.Left;
-        this.layout.Left = new AxisControl(axis) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
+        this.layout.Left = new AxisControl(axis, this) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
     }
 
     public void SetRightAxis(Axis axis)
@@ -61,7 +61,7 @@ public partial class Plot : IRenderable
         if ((this.layout.Left as AxisControl)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the left side.");
         axis.Position = AxisPosition.Right;
-        this.layout.Right = new AxisControl(axis) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
+        this.layout.Right = new AxisControl(axis, this) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
     }
 
     public void Add(ISignal signal)
