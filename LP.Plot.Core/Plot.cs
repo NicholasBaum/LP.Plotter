@@ -8,7 +8,7 @@ namespace LP.Plot.Core;
 
 public partial class Plot : IRenderable
 {
-    private ISignalPlot signalPlot = null!;
+    private ISignalPlot signalPlot;
     private DockerControl layout = new();
     private int leftAxisWidth = 80;
     private int topCellHeight = 20;
