@@ -23,9 +23,14 @@ public partial class Plot : IRenderable
     {
         signalPlot = new BufferedSignalPlot(signals);
         signalPlot.XAxis.Title = xAxisTitle;
+        var leftAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Left).FirstOrDefault();
+        var rightAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Right).FirstOrDefault();
         layout = new DockerControl();
-        layout.Left = new AxisControl(signalPlot.YAxes.First()) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
+        if (leftAxis is not null)
+            layout.Left = new AxisControl(leftAxis) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
+        if (rightAxis is not null)
+            layout.Right = new AxisControl(rightAxis) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
         layout.Bottom = new AxisControl(signalPlot.XAxis) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
         layout.Center = new SignalPlotControl(signalPlot) { Parent = layout };
     }
@@ -57,6 +62,17 @@ public partial class Plot : IRenderable
             throw new InvalidOperationException("Axis object is already used on the left side.");
         axis.Position = AxisPosition.Right;
         this.layout.Right = new AxisControl(axis) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
+    }
+
+    public void Add(ISignal signal)
+    {
+        signalPlot.Add(signal);
+    }
+
+    public void Add(IEnumerable<ISignal> signals)
+    {
+        foreach (var s in signals)
+            signalPlot.Add(s);
     }
 
     public void Remove(ISignal signal)
