@@ -45,6 +45,7 @@
     public string? Style { get; set; }
     [Parameter, EditorRequired]
     public PlotVM? Model { get; set; }
+    private PlotVM? lastModel;
 
     private async Task SelectChannelsClick(SignalSet set)
     {
@@ -62,9 +63,32 @@
          yesText: "Remove", cancelText: "Cancel");
 
         if (result == true)
-        {
             Model?.Remove(set);
-            StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (lastModel != Model)
+        {
+            if (lastModel is not null)
+            {
+                lastModel.DataChanged -= StateChangedDummy;
+                lastModel = null;
+            }
+            if (Model is not null)
+            {
+                Model.DataChanged += StateChangedDummy;
+                lastModel = Model;
+            }
         }
+    }
+
+    private void StateChangedDummy(object? sender, EventArgs e)
+        => StateHasChanged();
+
+    public void Dispose()
+    {
+        if (Model is not null)
+            Model.DataChanged -= StateChangedDummy;
     }
 }
