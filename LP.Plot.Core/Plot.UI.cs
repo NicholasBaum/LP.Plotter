@@ -35,7 +35,7 @@ public partial class Plot
             UpdateZoomRect(e.X, e.Y);
             Invalidate();
         }
-        else if (GetHitControl(e.Point) is IControl c)
+        else if (GetHitControl(e.Point) is IControl { HasMouseCapture: true } c)
         {
             c.OnMouseMove(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
             Invalidate();

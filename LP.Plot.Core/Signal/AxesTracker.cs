@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System.Diagnostics;
 
 namespace LP.Plot.Core.Signal;
 
@@ -10,6 +11,7 @@ internal class SignalsTracker
     private readonly AxisTracker trackedXAxis;
     private readonly List<AxisTracker> uniqueTrackedYAxes;
     private readonly List<SignalTracker> trackedSignals;
+    private bool signalsAddedOrRemoved;
 
     public SignalsTracker(IEnumerable<ISignal> signals, Axis xAxis)
     {
@@ -27,25 +29,38 @@ internal class SignalsTracker
     {
         this.trackedSignals.Add(new SignalTracker(signal));
         AddUniqueAxis(signal);
+        signalsAddedOrRemoved = true;
     }
 
     private void AddUniqueAxis(ISignal signal)
     {
         var axis = signal.YAxis;
-        if (!uniqueTrackedYAxes.Select(x => x.Source).Contains(axis))
+        if (!uniqueTrackedYAxes.Any(x => x.Source == axis))
             uniqueTrackedYAxes.Add(new AxisTracker(axis));
     }
 
     public void Remove(ISignal signal)
     {
         trackedSignals.RemoveAll(x => x.Signal == signal);
-        if (!YAxes.Contains(signal.YAxis))
+        if (!trackedSignals.Any(x => x.Signal.YAxis == signal.YAxis))
             uniqueTrackedYAxes.RemoveAll(x => x.Source == signal.YAxis);
+        signalsAddedOrRemoved = true;
     }
 
     public bool NeedsRerender()
-        => trackedSignals.Any(x => x.HasChanged()) || trackedXAxis.HasZoomed()
-        || uniqueTrackedYAxes.Any(x => x.HasZoomed()) || HasUnproportionalPan();
+    {
+        var signalsChanged = trackedSignals.Any(x => x.HasChanged()) || signalsAddedOrRemoved;
+        var xAxisWasZoomed = trackedXAxis.HasZoomed();
+        var yAxisWasZoomed = uniqueTrackedYAxes.Any(x => x.HasZoomed());
+        var singleSignalWasPanned = HasUnproportionalPan();
+        var result = signalsChanged || xAxisWasZoomed || yAxisWasZoomed || singleSignalWasPanned;
+        if (result)
+        {
+            Debug.WriteLine($"Signal/XZoom/YZoom/Pan {signalsChanged}/{xAxisWasZoomed}/{yAxisWasZoomed}/{singleSignalWasPanned}");
+            Console.WriteLine($"Signal/XZoom/YZoom/Pan {signalsChanged}/{xAxisWasZoomed}/{yAxisWasZoomed}/{singleSignalWasPanned}");
+        }
+        return result;
+    }
 
     private bool HasUnproportionalPan()
     {
@@ -59,6 +74,7 @@ internal class SignalsTracker
         trackedSignals.ForEach(x => x.Cache());
         trackedXAxis.Cache();
         uniqueTrackedYAxes.ForEach(x => x.Cache());
+        signalsAddedOrRemoved = false;
     }
 
 
