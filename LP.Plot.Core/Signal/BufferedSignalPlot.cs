@@ -8,6 +8,7 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
 {
     public IReadOnlyList<Axis> YAxes => signals.Select(x => x.YAxis).Distinct().ToList();
     public Axis XAxis { get; }
+    public IReadOnlyList<ISignal> Signals => signals;
 
     private List<ISignal> signals = new();
     private SignalsTracker signalsTracker;
@@ -25,15 +26,23 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
     public BufferedSignalPlot(IEnumerable<ISignal> signals)
     {
         this.signals.AddRange(signals);
-        XRange_Max = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
+        XRange_Max = signals.Any() ? new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max)) : new(0, 1);
         XAxis = new Axis(XRange_Max) { Position = AxisPosition.Bottom };
         signalsTracker = new SignalsTracker(signals, XAxis);
+    }
+
+    public void Add(ISignal signal)
+    {
+        signals.Add(signal);
+        signalsTracker.Add(signal);
+        XRange_Max = signals.Any() ? new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max)) : new(0, 1);
     }
 
     public void Remove(ISignal signal)
     {
         signals.Remove(signal);
         signalsTracker.Remove(signal);
+        XRange_Max = signals.Any() ? new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max)) : new(0, 1);
     }
 
     public void Render(IRenderContext ctx)
