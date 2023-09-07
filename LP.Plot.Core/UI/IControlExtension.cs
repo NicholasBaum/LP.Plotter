@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace LP.Plot.Core.Layout;
+namespace LP.Plot.Core.UI;
 
 public static class IControlExtension
 {
@@ -18,7 +18,7 @@ public static class IControlExtension
 
         public TransformedCanvasObj(SKCanvas canvas)
         {
-            this.Canvas = canvas;
+            Canvas = canvas;
         }
 
         public void Dispose()

@@ -1,7 +1,6 @@
 ﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Core.UI;
 
-namespace LP.Plot.Core.Layout;
+namespace LP.Plot.Core.UI;
 
 public class ControlBase<T> : IControl, IInteraction where T : IRenderable
 {
@@ -21,12 +20,12 @@ public class ControlBase<T> : IControl, IInteraction where T : IRenderable
     {
         if (Content is null || Rect.IsEmpty) return;
         ctx.ClientRect = Rect;
-        this.Content.Render(ctx);
+        Content.Render(ctx);
     }
 
     public void SetRect(LPRect rect)
     {
-        this.Rect = rect;
+        Rect = rect;
     }
 
     public (double X, double Y) Transform(double x, double y)

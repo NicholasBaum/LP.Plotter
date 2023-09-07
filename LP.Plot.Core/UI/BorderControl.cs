@@ -2,7 +2,7 @@
 using LP.Plot.Skia;
 using SkiaSharp;
 
-namespace LP.Plot.Core.Layout;
+namespace LP.Plot.Core.UI;
 
 internal class BorderControl : IControl
 {

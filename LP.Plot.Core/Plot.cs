@@ -1,7 +1,7 @@
-﻿using LP.Plot.Core.Layout;
-using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Core.Primitives;
 using LP.Plot.Core.Signal;
 using LP.Plot.Core.Skia;
+using LP.Plot.Core.UI;
 using SkiaSharp;
 
 namespace LP.Plot.Core;
@@ -12,7 +12,7 @@ public partial class Plot : IRenderable
     public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
 
     private ISignalPlot signalPlot = null!;
-    private Docker layout = null!;
+    private DockerControl layout = null!;
     private int leftAxisWidth = 75;
     private int topCellHeight = 20;
     private int rightAxisWidth = 75;
@@ -31,7 +31,7 @@ public partial class Plot : IRenderable
             Channels = signals.Select(x => new SignalVM(x)).ToList()
         });
 
-        layout = new Docker();
+        layout = new DockerControl();
         layout.Left = new AxisControl(signalPlot.YAxes.First()) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
         layout.Bottom = new AxisControl(signalPlot.XAxis) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };

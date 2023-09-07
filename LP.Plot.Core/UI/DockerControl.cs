@@ -1,8 +1,8 @@
 ﻿using LP.Plot.Core.Primitives;
 
-namespace LP.Plot.Core.Layout;
+namespace LP.Plot.Core.UI;
 
-public class Docker : IControl, IRenderable
+public class DockerControl : IControl, IRenderable
 {
     public IControl? Parent { get; set; }
     public IControl? Left { get; set; }
@@ -24,8 +24,8 @@ public class Docker : IControl, IRenderable
 
     public void SetRect(LPRect rect)
     {
-        if (rect == this.Rect) return;
-        this.Rect = rect;
+        if (rect == Rect) return;
+        Rect = rect;
         Arrange();
     }
 
