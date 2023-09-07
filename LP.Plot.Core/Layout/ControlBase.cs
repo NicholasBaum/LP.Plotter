@@ -10,7 +10,7 @@ public class ControlBase<T> : IControl, IInteraction where T : IRenderable
 
     public LPSize DesiredSize { get; set; }
     public LPRect Rect { get; private set; }
-    public bool HasMouseCapture { get; }
+    public bool HasMouseCapture { get; set; }
 
     public ControlBase(T content)
     {
@@ -36,6 +36,9 @@ public class ControlBase<T> : IControl, IInteraction where T : IRenderable
         return (xt.Transform(x), yt.Transform(y));
     }
 
+    public virtual void OnMouseDown(LPMouseButtonEventArgs e) { }
+    public virtual void OnMouseMove(LPMouseButtonEventArgs e) { }
+    public virtual void OnMouseUp(LPMouseButtonEventArgs e) { }
     public virtual void OnMouseWheel(LPMouseWheelEventArgs e) { }
 }
 
