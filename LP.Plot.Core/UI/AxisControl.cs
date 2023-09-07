@@ -1,41 +1,14 @@
 ﻿namespace LP.Plot.Core.UI;
 
-public class AxisControl : ControlBase<Axis>
+public class AxisControl : PanControlBase<Axis>
 {
-    private bool isPanning = false;
-    private (double X, double Y) lastMousePos;
-
     public AxisControl(Axis content) : base(content)
     {
     }
 
-    public override void OnMouseDown(LPMouseButtonEventArgs e)
+    public override void OnPan(double relativeX, double relativeY)
     {
-        HasMouseCapture = true;
-        lastMousePos = (e.X, e.Y);
-        if (e.PressedButton == LPButton.Left)
-        {
-            isPanning = true;
-        }
-    }
-
-    public override void OnMouseMove(LPMouseButtonEventArgs e)
-    {
-        if (isPanning)
-        {
-            double deltaX = e.X - lastMousePos.X;
-            double deltaY = e.Y - lastMousePos.Y;
-            var panx = -deltaX / Rect.Width;
-            var pany = deltaY / Rect.Height;
-            Content.PanRelative(Content.IsHorizontal ? panx : pany);
-            lastMousePos = (e.X, e.Y);
-        }
-    }
-
-    public override void OnMouseUp(LPMouseButtonEventArgs e)
-    {
-        HasMouseCapture = false;
-        isPanning = false;
+        Content.PanRelative(Content.IsHorizontal ? relativeX : relativeY);
     }
 
     public override void OnMouseWheel(LPMouseWheelEventArgs e)
