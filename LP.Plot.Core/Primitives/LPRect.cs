@@ -6,42 +6,18 @@ public record struct LPRect : IEquatable<LPRect>
 {
     public static readonly LPRect Empty;
 
-    public int Left
-    {
-        get => left;
-        set => left = value;
-    }
+    public int Left { get; set; }
+    public int Top { get; set; }
+    public int Right { get; set; }
+    public int Bottom { get; set; }
 
-    public int Top
-    {
-        get => top;
-        set => top = value;
-    }
+    public readonly int MidX => Left + Width / 2;
 
-    public int Right
-    {
-        get => right;
-        set => right = value;
-    }
+    public readonly int MidY => Top + Height / 2;
 
-    public int Bottom
-    {
-        get => bottom;
-        set => bottom = value;
-    }
+    public readonly int Width => Right - Left;
 
-    private int left;
-    private int top;
-    private int right;
-    private int bottom;
-
-    public readonly int MidX => left + Width / 2;
-
-    public readonly int MidY => top + Height / 2;
-
-    public readonly int Width => right - left;
-
-    public readonly int Height => bottom - top;
+    public readonly int Height => Bottom - Top;
 
     public readonly bool IsEmpty => Width == 0 || Height == 0;
 
@@ -51,15 +27,15 @@ public record struct LPRect : IEquatable<LPRect>
 
     public LPRect(int left, int top, int right, int bottom)
     {
-        this.left = left;
-        this.right = right;
-        this.top = top;
-        this.bottom = bottom;
+        this.Left = left;
+        this.Right = right;
+        this.Top = top;
+        this.Bottom = bottom;
     }
 
     public static LPRect Inflate(LPRect rect, int x, int y)
     {
-        LPRect result = new LPRect(rect.left, rect.top, rect.right, rect.bottom);
+        LPRect result = new LPRect(rect.Left, rect.Top, rect.Right, rect.Bottom);
         result.Inflate(x, y);
         return result;
     }
@@ -71,10 +47,10 @@ public record struct LPRect : IEquatable<LPRect>
 
     public void Inflate(int width, int height)
     {
-        left -= width;
-        top -= height;
-        right += width;
-        bottom += height;
+        Left -= width;
+        Top -= height;
+        Right += width;
+        Bottom += height;
     }
 
     public static LPRect Intersect(LPRect a, LPRect b)
@@ -84,7 +60,7 @@ public record struct LPRect : IEquatable<LPRect>
             return Empty;
         }
 
-        return new LPRect(Math.Max(a.left, b.left), Math.Max(a.top, b.top), Math.Min(a.right, b.right), Math.Min(a.bottom, b.bottom));
+        return new LPRect(Math.Max(a.Left, b.Left), Math.Max(a.Top, b.Top), Math.Min(a.Right, b.Right), Math.Min(a.Bottom, b.Bottom));
     }
 
     public void Intersect(LPRect rect)
@@ -104,9 +80,9 @@ public record struct LPRect : IEquatable<LPRect>
 
     public readonly bool Contains(int x, int y)
     {
-        if (x >= left && x < right && y >= top)
+        if (x >= Left && x < Right && y >= Top)
         {
-            return y < bottom;
+            return y < Bottom;
         }
 
         return false;
@@ -114,9 +90,9 @@ public record struct LPRect : IEquatable<LPRect>
 
     public readonly bool Contains(LPRect rect)
     {
-        if (left <= rect.left && right >= rect.right && top <= rect.top)
+        if (Left <= rect.Left && Right >= rect.Right && Top <= rect.Top)
         {
-            return bottom >= rect.bottom;
+            return Bottom >= rect.Bottom;
         }
 
         return false;
@@ -124,9 +100,9 @@ public record struct LPRect : IEquatable<LPRect>
 
     public readonly bool IntersectsWith(LPRect rect)
     {
-        if (left < rect.right && right > rect.left && top < rect.bottom)
+        if (Left < rect.Right && Right > rect.Left && Top < rect.Bottom)
         {
-            return bottom > rect.top;
+            return Bottom > rect.Top;
         }
 
         return false;
@@ -134,9 +110,9 @@ public record struct LPRect : IEquatable<LPRect>
 
     public readonly bool IntersectsWithInclusive(LPRect rect)
     {
-        if (left <= rect.right && right >= rect.left && top <= rect.bottom)
+        if (Left <= rect.Right && Right >= rect.Left && Top <= rect.Bottom)
         {
-            return bottom >= rect.top;
+            return Bottom >= rect.Top;
         }
 
         return false;
@@ -144,10 +120,10 @@ public record struct LPRect : IEquatable<LPRect>
 
     public void Offset(int x, int y)
     {
-        left += x;
-        top += y;
-        right += x;
-        bottom += y;
+        Left += x;
+        Top += y;
+        Right += x;
+        Bottom += y;
     }
 
     public override readonly string ToString()
@@ -182,6 +158,6 @@ public record struct LPRect : IEquatable<LPRect>
 
     internal SkiaSharp.SKRect ToSkia()
     {
-        return new SkiaSharp.SKRect(left, top, right, bottom);
+        return new SkiaSharp.SKRect(Left, Top, Right, Bottom);
     }
 }
