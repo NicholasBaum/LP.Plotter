@@ -1,4 +1,6 @@
-﻿using LP.Plot.Core.UI;
+﻿using LP.Plot.Core.Primitives;
+using LP.Plot.Core.UI;
+using SkiaSharp;
 
 namespace LP.Plot.Core;
 
@@ -13,7 +15,7 @@ public partial class Plot
             if (e.PressedButton == LPButton.Right && (c == layout.Bottom || c == layout.Center))
             {
                 isZooming = true;
-                ZoomRect(e.X, e.Y);
+                UpdateZoomRect(e.X, e.Y);
             }
             else
             {
@@ -29,7 +31,7 @@ public partial class Plot
         {
             if (isZooming)
             {
-                ZoomRect(e.X, e.Y);
+                UpdateZoomRect(e.X, e.Y);
             }
             else
             {
@@ -46,7 +48,7 @@ public partial class Plot
         {
             if (isZooming)
             {
-                EndZoomRect();
+                ApplyZoomRect();
             }
             else
             {
@@ -88,5 +90,47 @@ public partial class Plot
                 return c;
         }
         return null;
+    }
+
+    private Span? currentZoom = null;
+    private Span pixelZoom = new();
+    private void UpdateZoomRect(double x, double y)
+    {
+        var tx = new LPTransform(signalPlot.XAxis.Range, leftAxisWidth, canvasSize.Width);
+        var xx = tx.Inverse(x);
+
+        if (currentZoom == null)
+        {
+            currentZoom = new(xx, xx);
+            pixelZoom = new(x, x);
+        }
+        else
+        {
+            currentZoom = new(currentZoom.Value.Min, xx);
+            pixelZoom = new(pixelZoom.Min, x);
+        }
+    }
+
+    private void ApplyZoomRect()
+    {
+        if (currentZoom != null && Math.Abs(pixelZoom.Length) > 0.1)
+        {
+            var z = currentZoom.Value.Length > 0 ? currentZoom.Value : new Span(currentZoom.Value.Max, currentZoom.Value.Min);
+            signalPlot.ZoomX(z);
+        }
+        currentZoom = null;
+    }
+
+    private void DrawZoomRect(IRenderContext ctx)
+    {
+        if (currentZoom == null || layout.Center == null)
+            return;
+        using (var paint = new SKPaint())
+        {
+            paint.Color = new SKColor(81, 170, 165, 128);
+            paint.IsAntialias = true;
+            SKRect rect = new SKRect(50, 50, 250, 250);
+            ctx.Canvas.DrawRect((float)pixelZoom.Min, 0, (float)pixelZoom.Length, canvasSize.Height, paint);
+        }
     }
 }
