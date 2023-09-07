@@ -9,7 +9,8 @@ public interface IControl : IRenderable
     public LPRect Rect { get; }
     public void SetRect(LPRect rect);
     bool HasMouseCapture { get; }
-    (double X, double Y) Transform(double x, double y);
+    DPoint Transform(double x, double y);
+    DPoint Transform(DPoint p);
     void OnMouseDown(LPMouseButtonEventArgs e);
     void OnMouseMove(LPMouseButtonEventArgs e);
     void OnMouseUp(LPMouseButtonEventArgs e);

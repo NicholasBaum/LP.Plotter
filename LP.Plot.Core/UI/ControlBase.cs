@@ -17,11 +17,14 @@ public abstract class ControlBase : IControl
         Rect = rect;
     }
 
-    public (double X, double Y) Transform(double x, double y)
+    public DPoint Transform(double x, double y)
+        => Transform(new(x, y));
+
+    public DPoint Transform(DPoint p)
     {
         var xt = new LPTransform(Rect.Left, Rect.Right, 0, Rect.Width);
         var yt = new LPTransform(Rect.Top, Rect.Bottom, 0, Rect.Height);
-        return (xt.Transform(x), yt.Transform(y));
+        return new(xt.Transform(p.X), yt.Transform(p.Y));
     }
 
     public virtual void OnMouseDown(LPMouseButtonEventArgs e) { }

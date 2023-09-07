@@ -1,15 +1,18 @@
-﻿namespace LP.Plot.Core.UI;
+﻿using LP.Plot.Core.Primitives;
+
+namespace LP.Plot.Core.UI;
 
 public class LPMouseWheelEventArgs
 {
-    public LPMouseWheelEventArgs(double x, double y, double delta)
+    public LPMouseWheelEventArgs(double x, double y, double delta) : this(new(x, y), delta) { }
+    public LPMouseWheelEventArgs(DPoint point, double delta)
     {
         Delta = delta;
-        X = x;
-        Y = y;
+        Point = point;
     }
 
     public double Delta { get; }
-    public double X { get; }
-    public double Y { get; }
+    public DPoint Point { get; }
+    public double X => Point.X;
+    public double Y => Point.Y;
 }

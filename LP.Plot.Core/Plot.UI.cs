@@ -19,8 +19,7 @@ public partial class Plot
             }
             else
             {
-                var (x, y) = c.Transform(e.X, e.Y);
-                c.OnMouseDown(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+                c.OnMouseDown(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
             }
         }
     }
@@ -35,8 +34,7 @@ public partial class Plot
             }
             else
             {
-                var (x, y) = c.Transform(e.X, e.Y);
-                c.OnMouseMove(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+                c.OnMouseMove(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
             }
             Invalidate();
         }
@@ -52,8 +50,7 @@ public partial class Plot
             }
             else
             {
-                var (x, y) = c.Transform(e.X, e.Y);
-                c.OnMouseUp(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+                c.OnMouseUp(new LPMouseButtonEventArgs(c.Transform(e.X, e.Y), e.PressedButton));
             }
             isZooming = false;
             Invalidate();
@@ -64,8 +61,7 @@ public partial class Plot
     {
         if (GetHitControl((int)e.X, (int)e.Y) is IControl c)
         {
-            var (x, y) = c.Transform(e.X, e.Y);
-            c.OnMouseWheel(new LPMouseWheelEventArgs(x, y, e.Delta));
+            c.OnMouseWheel(new LPMouseWheelEventArgs(c.Transform(e.X, e.Y), e.Delta));
             Invalidate();
         }
     }
