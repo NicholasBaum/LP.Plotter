@@ -1,37 +1,6 @@
-﻿namespace LP.Plot.Core;
+﻿using LP.Plot.Core.UI;
 
-public enum LPButton
-{
-    None, Left, Right
-}
-
-public class LPMouseButtonEventArgs
-{
-    public LPMouseButtonEventArgs(double x, double y, LPButton pressedButton)
-    {
-        PressedButton = pressedButton;
-        X = x;
-        Y = y;
-    }
-
-    public LPButton PressedButton { get; }
-    public double X { get; }
-    public double Y { get; }
-}
-
-public class LPMouseWheelEventArgs
-{
-    public LPMouseWheelEventArgs(double x, double y, double delta)
-    {
-        Delta = delta;
-        X = x;
-        Y = y;
-    }
-
-    public double Delta { get; }
-    public double X { get; }
-    public double Y { get; }
-}
+namespace LP.Plot.Core;
 
 public partial class Plot
 {

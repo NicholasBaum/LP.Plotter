@@ -1,6 +1,7 @@
 ﻿using LP.Plot.Core;
 using LP.Plot.Core.Signal;
 using LP.Plot.Core.Skia;
+using LP.Plot.Core.UI;
 using SkiaSharp.Views.Desktop;
 using SkiaSharp.Views.WPF;
 using System.Windows.Controls;
