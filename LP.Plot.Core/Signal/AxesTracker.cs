@@ -5,10 +5,10 @@ namespace LP.Plot.Core.Signal;
 internal class SignalsTracker
 {
     public Axis XAxis { get; }
-    public IEnumerable<Axis> YAxes => trackedYAxes.Select(x => x.Source).Where(x => x != XAxis);
+    public IEnumerable<Axis> YAxes => uniqueTrackedYAxes.Select(x => x.Source).Where(x => x != XAxis);
 
     private readonly AxisTracker trackedXAxis;
-    private readonly List<AxisTracker> trackedYAxes;
+    private readonly List<AxisTracker> uniqueTrackedYAxes;
     private readonly List<SignalTracker> trackedSignals;
 
     public SignalsTracker(IEnumerable<ISignal> signals, Axis xAxis)
@@ -16,32 +16,49 @@ internal class SignalsTracker
         this.trackedSignals = signals.Select(x => new SignalTracker(x)).ToList();
         this.XAxis = xAxis;
         this.trackedXAxis = new(xAxis);
-        trackedYAxes = signals
+        uniqueTrackedYAxes = signals
             .Select(x => x.YAxis)
             .Distinct()
             .Select(x => new AxisTracker(x))
             .ToList();
     }
 
+    public void Add(ISignal signal)
+    {
+        this.trackedSignals.Add(new SignalTracker(signal));
+        AddUniqueAxis(signal);
+    }
+
+    private void AddUniqueAxis(ISignal signal)
+    {
+        var axis = signal.YAxis;
+        if (!uniqueTrackedYAxes.Select(x => x.Source).Contains(axis))
+            uniqueTrackedYAxes.Add(new AxisTracker(axis));
+    }
+
     public void Remove(ISignal signal)
-        => trackedSignals.RemoveAll(x => x.signal == signal);
+    {
+        trackedSignals.RemoveAll(x => x.Signal == signal);
+        if (!YAxes.Contains(signal.YAxis))
+            uniqueTrackedYAxes.RemoveAll(x => x.Source == signal.YAxis);
+    }
 
     public bool NeedsRerender()
         => trackedSignals.Any(x => x.HasChanged()) || trackedXAxis.HasZoomed()
-        || trackedYAxes.Any(x => x.HasZoomed()) || HasUnproportionalPan();
+        || uniqueTrackedYAxes.Any(x => x.HasZoomed()) || HasUnproportionalPan();
 
     private bool HasUnproportionalPan()
     {
-        if (trackedYAxes.Count == 0) return false;
-        var tmp = trackedYAxes.First().RelativePanAmountIfNotZoomed();
-        return trackedYAxes.Skip(1).Any(x => !FloatEquals(x.RelativePanAmountIfNotZoomed(), tmp, 10e-10));
+        if (uniqueTrackedYAxes.Count == 0) return false;
+        var tmp = uniqueTrackedYAxes.First().RelativePanAmountIfNotZoomed();
+        return uniqueTrackedYAxes.Skip(1).Any(x => !FloatEquals(x.RelativePanAmountIfNotZoomed(), tmp, 10e-10));
     }
 
     public void Cache()
     {
         trackedSignals.ForEach(x => x.Cache());
         trackedXAxis.Cache();
-        trackedYAxes.ForEach(x => x.Cache());
+        uniqueTrackedYAxes.ForEach(x => x.Cache());
     }
 
 
@@ -50,24 +67,24 @@ internal class SignalsTracker
     /// </summary>
     private class SignalTracker
     {
-        public readonly ISignal signal;
+        public readonly ISignal Signal;
         private SKPaint lastPaint;
         private bool lastVisibility;
 
         public SignalTracker(ISignal signal)
         {
-            this.signal = signal;
+            this.Signal = signal;
             this.lastPaint = signal.Paint;
             this.lastVisibility = signal.IsVisible;
         }
 
         public bool HasChanged()
-            => lastPaint != signal.Paint || lastVisibility != signal.IsVisible;
+            => lastPaint != Signal.Paint || lastVisibility != Signal.IsVisible;
 
         public void Cache()
         {
-            this.lastPaint = signal.Paint;
-            this.lastVisibility = signal.IsVisible;
+            this.lastPaint = Signal.Paint;
+            this.lastVisibility = Signal.IsVisible;
         }
     }
 
