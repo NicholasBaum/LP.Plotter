@@ -5,14 +5,27 @@ namespace LP.Plotter.Data;
 
 public class PlotVM
 {
-    public readonly Plot.Core.Plot Plot;
+    public event EventHandler<EventArgs>? DataChanged;
+    public Plot.Core.Plot Plot;
+    private readonly string xAxisTitle;
+
     public IReadOnlyList<SignalSet> Sets => sets;
     private List<SignalSet> sets = new List<SignalSet>();
 
-    public PlotVM(IEnumerable<ISignal> signals, string xAxisTitle)
+    public PlotVM(string xAxisTitle)
     {
-        this.Plot = new(signals, xAxisTitle);
-        this.sets.Add(new SignalSet(signals, "Default Set"));
+        this.Plot = new(new ISignal[0], xAxisTitle);
+        this.xAxisTitle = xAxisTitle;
+    }
+
+    public void Add(IEnumerable<ISignal> signals, string setName)
+    {
+        this.Plot.Add(signals);
+        this.sets.Add(new SignalSet(signals, setName));
+        if (this.sets.Count == 1)
+            Plot.ResetAxes();
+        DataChanged?.Invoke(this, EventArgs.Empty);
+        Plot.Invalidate();
     }
 
     public void Remove(SignalSet set)
