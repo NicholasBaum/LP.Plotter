@@ -14,7 +14,7 @@ public class Helper
 
         // speed channel
         Axis speedAxis = new() { Title = "Speed" };
-        StaticSignal speed = new(data.SpeedChannel.YValues, timeRange, speedAxis, SKPaints.NextPaint(), data.Name);
+        StaticSignal speed = new(data.SpeedChannel.YValues, timeRange, speedAxis, SKPaints.NextPaint(), data.SpeedChannel.Name);
         signals.Add(speed);
         speedAxis.Range = speed.YRange;
 
@@ -24,7 +24,7 @@ public class Helper
             .Where(x => x.Name.Contains("TT"))
             .Select(x =>
             {
-                var s = new StaticSignal(x.YValues, timeRange, tempAxis, SKPaints.NextPaint(), data.Name);
+                var s = new StaticSignal(x.YValues, timeRange, tempAxis, SKPaints.NextPaint(), x.Name);
                 tempAxis.Range = tempAxis.Range.GetBounding(s.YRange);
                 return s;
             });
