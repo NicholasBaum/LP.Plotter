@@ -10,7 +10,7 @@ public partial class Plot
 
     public void OnMouseDown(LPMouseButtonEventArgs e)
     {
-        if (GetHitControl((int)e.X, (int)e.Y) is IControl c)
+        if (GetHitControl(e.Point) is IControl c)
         {
             if (e.PressedButton == LPButton.Right && (c == layout.Bottom || c == layout.Center))
             {
@@ -26,7 +26,7 @@ public partial class Plot
 
     public void OnMouseMove(LPMouseButtonEventArgs e)
     {
-        if (GetHitControl((int)e.X, (int)e.Y) is IControl c)
+        if (GetHitControl(e.Point) is IControl c)
         {
             if (isZooming)
             {
@@ -42,7 +42,7 @@ public partial class Plot
 
     public void OnMouseUp(LPMouseButtonEventArgs e)
     {
-        if (GetHitControl((int)e.X, (int)e.Y) is IControl c)
+        if (GetHitControl(e.Point) is IControl c)
         {
             if (isZooming)
             {
@@ -59,14 +59,14 @@ public partial class Plot
 
     public void OnMouseWheel(LPMouseWheelEventArgs e)
     {
-        if (GetHitControl((int)e.X, (int)e.Y) is IControl c)
+        if (GetHitControl(e.Point) is IControl c)
         {
             c.OnMouseWheel(new LPMouseWheelEventArgs(c.Transform(e.X, e.Y), e.Delta));
             Invalidate();
         }
     }
 
-    private IControl? GetHitControl(int x, int y)
+    private IControl? GetHitControl(DPoint p)
     {
         IEnumerable<IControl> controls = new[]
         {
@@ -82,7 +82,7 @@ public partial class Plot
 
         foreach (var c in controls)
         {
-            if (c.Rect.Contains(x, y))
+            if (c.Rect.Contains((int)p.X, (int)p.Y))
                 return c;
         }
         return null;
