@@ -6,8 +6,40 @@ namespace LP.Plot.Core;
 
 public class AxisControl : ControlBase<Axis>
 {
+    private bool isPanning = false;
+    private (double X, double Y) lastMousePos;
+
     public AxisControl(Axis content) : base(content)
     {
+    }
+
+    public override void OnMouseDown(LPMouseButtonEventArgs e)
+    {
+        this.HasMouseCapture = true;
+        lastMousePos = (e.X, e.Y);
+        if (e.PressedButton == LPButton.Left)
+        {
+            isPanning = true;
+        }
+    }
+
+    public override void OnMouseMove(LPMouseButtonEventArgs e)
+    {
+        if (isPanning)
+        {
+            double deltaX = e.X - lastMousePos.X;
+            double deltaY = e.Y - lastMousePos.Y;
+            var panx = -deltaX / Rect.Width;
+            var pany = deltaY / Rect.Height;
+            Content.PanRelative(Content.IsHorizontal ? panx : pany);
+            lastMousePos = (e.X, e.Y);
+        }
+    }
+
+    public override void OnMouseUp(LPMouseButtonEventArgs e)
+    {
+        this.HasMouseCapture = false;
+        isPanning = false;
     }
 
     public override void OnMouseWheel(LPMouseWheelEventArgs e)
@@ -20,26 +52,20 @@ public class AxisControl : ControlBase<Axis>
 
 public class SignalPlotControl : ControlBase<ISignalPlot>
 {
+    private bool isPanning = false;
+    private (double X, double Y) lastMousePos;
+
     public SignalPlotControl(ISignalPlot content) : base(content)
     {
     }
-
-    private bool isPanning = false;
-    private bool isZooming = false;
-    private (double X, double Y) lastMousePos;
 
     public override void OnMouseDown(LPMouseButtonEventArgs e)
     {
         this.HasMouseCapture = true;
         lastMousePos = (e.X, e.Y);
-        if (!isZooming && e.PressedButton == LPButton.Left)
+        if (e.PressedButton == LPButton.Left)
         {
             isPanning = true;
-        }
-        if (!isPanning && e.PressedButton == LPButton.Right)
-        {
-            isZooming = true;
-            //ZoomRect(e.X, e.Y);
         }
     }
 
@@ -55,21 +81,12 @@ public class SignalPlotControl : ControlBase<ISignalPlot>
             Content.PanRelative(pany);
             lastMousePos = (e.X, e.Y);
         }
-        else if (isZooming)
-        {
-            //ZoomRect(e.X, e.Y);
-        }
     }
 
     public override void OnMouseUp(LPMouseButtonEventArgs e)
     {
         this.HasMouseCapture = false;
         isPanning = false;
-        if (isZooming)
-        {
-            //EndZoomRect();
-        }
-        isZooming = false;
     }
 
     public override void OnMouseWheel(LPMouseWheelEventArgs e)
@@ -85,7 +102,6 @@ public class SignalPlotControl : ControlBase<ISignalPlot>
 
 public partial class Plot
 {
-    private bool isPanning = false;
     private bool isZooming = false;
     private (double X, double Y) lastMousePos;
 
@@ -93,21 +109,17 @@ public partial class Plot
     {
         if (GetHitControl((int)e.X, (int)e.Y) is IInteraction c)
         {
-            var (x, y) = c.Transform(e.X, e.Y);
-            c.OnMouseDown(new LPMouseButtonEventArgs(x, y, e.PressedButton));
-        }
-
-        return;
-
-        lastMousePos = (e.X, e.Y);
-        if (!isZooming && e.PressedButton == LPButton.Left)
-        {
-            isPanning = true;
-        }
-        if (!isPanning && e.PressedButton == LPButton.Right)
-        {
-            isZooming = true;
-            ZoomRect(e.X, e.Y);
+            if (e.PressedButton == LPButton.Right && (c == layout.Bottom || c == layout.Center))
+            {
+                lastMousePos = (e.X, e.Y);
+                isZooming = true;
+                ZoomRect(e.X, e.Y);
+            }
+            else
+            {
+                var (x, y) = c.Transform(e.X, e.Y);
+                c.OnMouseDown(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+            }
         }
     }
 
@@ -115,24 +127,17 @@ public partial class Plot
     {
         if (GetHitControl((int)e.X, (int)e.Y) is IInteraction c)
         {
-            var (x, y) = c.Transform(e.X, e.Y);
-            c.OnMouseMove(new LPMouseButtonEventArgs(x, y, e.PressedButton));
-            Invalidate();
-        }
-        return;
-        if (isPanning)
-        {
-            double deltaX = e.X - lastMousePos.X;
-            double deltaY = e.Y - lastMousePos.Y;
-            var panx = -deltaX / canvasSize.Width;
-            var pany = deltaY / canvasSize.Height;
-            PanRelative(panx, pany);
-            lastMousePos = (e.X, e.Y);
-            Invalidate();
-        }
-        else if (isZooming)
-        {
-            ZoomRect(e.X, e.Y);
+            if (isZooming)
+            {
+                lastMousePos = (e.X, e.Y);
+                ZoomRect(e.X, e.Y);
+
+            }
+            else
+            {
+                var (x, y) = c.Transform(e.X, e.Y);
+                c.OnMouseMove(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+            }
             Invalidate();
         }
     }
@@ -141,18 +146,20 @@ public partial class Plot
     {
         if (GetHitControl((int)e.X, (int)e.Y) is IInteraction c)
         {
-            var (x, y) = c.Transform(e.X, e.Y);
-            c.OnMouseUp(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+            if (isZooming)
+            {
+                lastMousePos = (e.X, e.Y);
+                EndZoomRect();
+
+            }
+            else
+            {
+                var (x, y) = c.Transform(e.X, e.Y);
+                c.OnMouseUp(new LPMouseButtonEventArgs(x, y, e.PressedButton));
+            }
+            isZooming = false;
             Invalidate();
         }
-        return;
-        isPanning = false;
-        if (isZooming)
-        {
-            EndZoomRect();
-            Invalidate();
-        }
-        isZooming = false;
     }
 
     public void OnMouseWheel(LPMouseWheelEventArgs e)
