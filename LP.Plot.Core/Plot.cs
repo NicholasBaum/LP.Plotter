@@ -32,26 +32,26 @@ public partial class Plot : IRenderable
         });
 
         layout = new Docker();
-        layout.Left = new Cell() { Parent = layout, Content = signalPlot.YAxes.First(), DesiredSize = new LPSize(leftAxisWidth, 0) };
+        layout.Left = new AxisControl(signalPlot.YAxes.First()) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
-        layout.Bottom = new Cell() { Parent = layout, Content = signalPlot.XAxis, DesiredSize = new LPSize(0, bottomAxisHeight) };
-        layout.Center = new Cell() { Parent = layout, Content = signalPlot };
+        layout.Bottom = new AxisControl(signalPlot.XAxis) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
+        layout.Center = new SignalPlotControl(signalPlot) { Parent = layout };
     }
 
     public void SetLeftAxis(Axis axis)
     {
-        if ((this.layout.Right as Cell)?.Content == axis)
+        if ((this.layout.Right as AxisControl)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the right side.");
         axis.Position = AxisPosition.Left;
-        this.layout.Left = new Cell() { Parent = layout, Content = axis, DesiredSize = new LPSize(leftAxisWidth, 0) };
+        this.layout.Left = new AxisControl(axis) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
     }
 
     public void SetRightAxis(Axis axis)
     {
-        if ((this.layout.Left as Cell)?.Content == axis)
+        if ((this.layout.Left as AxisControl)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the left side.");
         axis.Position = AxisPosition.Right;
-        this.layout.Right = new Cell() { Parent = layout, Content = axis, DesiredSize = new LPSize(rightAxisWidth, 0) };
+        this.layout.Right = new AxisControl(axis) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
     }
 
     public void Render(IRenderContext ctx)

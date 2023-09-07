@@ -1,6 +1,39 @@
-﻿using LP.Plot.Core.UI;
+﻿using LP.Plot.Core.Layout;
+using LP.Plot.Core.Signal;
+using LP.Plot.Core.UI;
 
 namespace LP.Plot.Core;
+
+public class AxisControl : ControlBase<Axis>
+{
+    public AxisControl(Axis content) : base(content)
+    {
+    }
+
+    public override void OnMouseWheel(LPMouseWheelEventArgs e)
+    {
+        var factor = e.Delta > 0 ? 0.9 : 1.1;
+        var pos = Content.IsHorizontal ? e.X / Rect.Width : 1 - e.Y / Rect.Height;
+        this.Content.ZoomAtRelative(factor, pos);
+    }
+}
+
+public class SignalPlotControl : ControlBase<ISignalPlot>
+{
+    public SignalPlotControl(ISignalPlot content) : base(content)
+    {
+    }
+
+    public override void OnMouseWheel(LPMouseWheelEventArgs e)
+    {
+        if (Rect.IsEmpty) return;
+        var factor = e.Delta > 0 ? 0.9 : 1.1;
+        var xPos = e.X / Rect.Width;
+        var yPos = 1 - e.Y / Rect.Height;
+        Content.ZoomAtRelativeX(factor, xPos);
+        Content.ZoomAtRelative(factor, yPos);
+    }
+}
 
 public partial class Plot
 {
@@ -54,10 +87,23 @@ public partial class Plot
 
     public void OnMouseWheel(LPMouseWheelEventArgs e)
     {
-        var factor = e.Delta > 0 ? 0.9 : 1.1;
-        var xPos = e.X / canvasSize.Width;
-        var yPos = 1 - e.Y / canvasSize.Height;
-        ZoomAtRelative(factor, xPos, yPos);
-        Invalidate();
+        foreach (var c in new[] { layout.Left as AxisControl, layout.Right as AxisControl, layout.Bottom as AxisControl }
+        .Where(x => x is not null))
+        {
+            if (c!.Rect.Contains((int)e.X, (int)e.Y))
+            {
+                var (x, y) = c.Transform(e.X, e.Y);
+                c.OnMouseWheel(new LPMouseWheelEventArgs(x, y, e.Delta));
+                Invalidate();
+                return;
+            }
+        }
+        var center = layout.Center as SignalPlotControl;
+        if (center.Rect.Contains((int)e.X, (int)e.Y))
+        {
+            var (x, y) = center.Transform(e.X, e.Y);
+            center.OnMouseWheel(new LPMouseWheelEventArgs(x, y, e.Delta));
+            Invalidate();
+        }
     }
 }

@@ -21,3 +21,5 @@ public class Cell : IControl
         this.Rect = rect;
     }
 }
+
+
