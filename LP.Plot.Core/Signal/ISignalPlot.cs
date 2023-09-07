@@ -6,6 +6,9 @@ public interface ISignalPlot : IRenderable
 {
     public Axis XAxis { get; }
     public IReadOnlyList<Axis> YAxes { get; }
+    public IReadOnlyList<ISignal> Signals { get; }
+
+    public void Add(ISignal signal);
     public void Remove(ISignal signal);
 
     public void PanRelativeX(double offset)
