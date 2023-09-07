@@ -2,18 +2,16 @@
 
 namespace LP.Plot.Core.UI;
 
-public class DockerControl : IControl, IRenderable
+public class DockerControl : ControlBase, IRenderable
 {
-    public IControl? Parent { get; set; }
     public IControl? Left { get; set; }
     public IControl? Top { get; set; }
     public IControl? Right { get; set; }
     public IControl? Bottom { get; set; }
     public IControl? Center { get; set; }
-    public LPSize DesiredSize { get; set; }
-    public LPRect Rect { get; private set; }
 
-    public void Render(IRenderContext ctx)
+
+    public override void Render(IRenderContext ctx)
     {
         Left?.Render(ctx);
         Top?.Render(ctx);
@@ -22,7 +20,7 @@ public class DockerControl : IControl, IRenderable
         Center?.Render(ctx);
     }
 
-    public void SetRect(LPRect rect)
+    public override void SetRect(LPRect rect)
     {
         if (rect == Rect) return;
         Rect = rect;
