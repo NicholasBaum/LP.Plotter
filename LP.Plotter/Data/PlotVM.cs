@@ -1,5 +1,4 @@
-﻿using LP.Plot.Core;
-using LP.Plot.Core.Signal;
+﻿using LP.Plot.Core.Signal;
 
 namespace LP.Plotter.Data;
 
@@ -38,4 +37,8 @@ public class PlotVM
     }
 
     public void Invalidate() => Plot.Invalidate();
+
+    public void ZoomOut() { }
+    public void ZoomOutMap() { }
+
 }

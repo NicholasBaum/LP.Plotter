@@ -1,6 +1,6 @@
-﻿using static LP.Plotter.Core.Utilities.LPColors;
+﻿using LP.Plot.Utilities;
 
-namespace LP.Plotter.Core.Models;
+namespace LP.Plot.Models;
 
 public class VChannelSetVM
 {
@@ -25,6 +25,6 @@ public class VChannelSetVM
         }
 
         foreach (var x in source.Channels)
-            x.Color = GetNextColor();
+            x.Color = LPOxyColors.GetNextColor();
     }
 }

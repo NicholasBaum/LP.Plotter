@@ -5,8 +5,6 @@ VisualStudioVersion = 17.7.33808.371
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plotter", "LP.Plotter\LP.Plotter.csproj", "{A942CEB1-3A45-4DE8-BA16-D5EDF2A2AD51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plotter.Core", "LP.Plotter.Core\LP.Plotter.Core.csproj", "{2EF2F3AE-9833-4537-B96F-4A52A75C6738}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plot.Test", "LP.Plot.Test\LP.Plot.Test.csproj", "{1D5D6D61-68B4-46F1-A37A-13A1A9A97B5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScottTestv4", "ScottTestv4\ScottTestv4.csproj", "{B65E835F-92F0-445E-97E1-25AFF29D9B22}"
@@ -14,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plot.Core", "LP.Plot.Core\LP.Plot.Core.csproj", "{C04E3DBB-A1B4-4F45-811F-8EE1C001EB9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LP.Plot.Benchmark", "LP.Plot.Benchmark\LP.Plot.Benchmark.csproj", "{4AA9AB02-4052-499E-B18B-0EF2FCA1C1CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LP.Plot.Oxy", "LP.Plot.Oxy\LP.Plot.Oxy.csproj", "{54AC5148-230F-49E7-9B4F-2D817A8DC72A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{A942CEB1-3A45-4DE8-BA16-D5EDF2A2AD51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A942CEB1-3A45-4DE8-BA16-D5EDF2A2AD51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A942CEB1-3A45-4DE8-BA16-D5EDF2A2AD51}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EF2F3AE-9833-4537-B96F-4A52A75C6738}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D5D6D61-68B4-46F1-A37A-13A1A9A97B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D5D6D61-68B4-46F1-A37A-13A1A9A97B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D5D6D61-68B4-46F1-A37A-13A1A9A97B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{4AA9AB02-4052-499E-B18B-0EF2FCA1C1CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AA9AB02-4052-499E-B18B-0EF2FCA1C1CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AA9AB02-4052-499E-B18B-0EF2FCA1C1CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54AC5148-230F-49E7-9B4F-2D817A8DC72A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54AC5148-230F-49E7-9B4F-2D817A8DC72A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54AC5148-230F-49E7-9B4F-2D817A8DC72A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54AC5148-230F-49E7-9B4F-2D817A8DC72A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

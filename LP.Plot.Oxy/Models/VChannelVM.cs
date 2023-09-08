@@ -1,7 +1,7 @@
 ﻿using OxyPlot;
 using OxyPlot.Series;
 
-namespace LP.Plotter.Core.Models;
+namespace LP.Plot.Models;
 
 public class VChannelVM : LineSeries
 {

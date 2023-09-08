@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LP.Plotter.Core\LP.Plotter.Core.csproj" />
+    <ProjectReference Include="..\LP.Plot.Core\LP.Plot.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 ﻿using OxyPlot;
 
-namespace LP.Plotter.Core.Utilities;
+namespace LP.Plot.Utilities;
 
-public static class LPColors
+public static class LPOxyColors
 {
     private static int currentColorIndex;
 

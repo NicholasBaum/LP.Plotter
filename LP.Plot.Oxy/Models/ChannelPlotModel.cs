@@ -1,7 +1,7 @@
 ﻿using OxyPlot;
 using OxyPlot.Axes;
 
-namespace LP.Plotter.Core.Models;
+namespace LP.Plot.Models;
 
 public class ChannelPlotModel
 {

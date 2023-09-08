@@ -3,7 +3,7 @@ using OxyPlot;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace LP.Plotter.Core.Models;
+namespace LP.Plot.Models;
 
 public class VChannelSet
 {

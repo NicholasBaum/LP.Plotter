@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LP.Plot.Core\LP.Plot.Core.csproj" />
-    <ProjectReference Include="..\LP.Plotter.Core\LP.Plotter.Core.csproj" />
+    <ProjectReference Include="..\LP.Plot.Oxy\LP.Plot.Oxy.csproj" />
   </ItemGroup>
 
   <!--This one requires an Include/Exclude combo where Include can't be empty, but as wwwroot is already included by default, this gets messy-->
