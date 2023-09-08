@@ -18,14 +18,16 @@ public class AppService
             .Distinct();
         var signals = Helper.CreateSignals(data, inUseAxes.ToList());
         this.CurrentModel.Add(signals, data.Name);
-        AddToOxyModel(signals, data.Name, data.Info);
+        OxyModel.Add(signals, data.Name, data.Info);
     }
+}
 
-    private void AddToOxyModel(List<StaticSignal> signals, string name, CsvInfo info)
+public static class ChannelPlotmModelExtension
+{
+    public static void Add(this ChannelPlotModel model, List<StaticSignal> signals, string name, CsvInfo info)
     {
-        var oxyInfo = new CsvInfo() { FileName = info.FileName, Path = info.Path, Url = info.Url };
         var channels = signals.Select(x => new VChannelVM(x.Name, x.YValues.Select((y, i) => new DataPoint(i * x.Period, y))));
-        var oxy = new VChannelSet() { Name = name, Info = oxyInfo, Channels = channels.ToList() };
-        OxyModel.Add(oxy);
+        var oxy = new VChannelSet() { Name = name, Path = info.Path, Channels = channels.ToList() };
+        model.Add(oxy);
     }
 }
