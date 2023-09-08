@@ -42,8 +42,8 @@
     [Parameter]
     public string? Style { get; set; }
     [Parameter, EditorRequired]
-    public PlotVM? Model { get; set; }
-    private PlotVM? lastModel;
+    public PlotModelVM? Model { get; set; }
+    private PlotModelVM? lastModel;
 
     private async Task SelectChannelsClick(SignalSetVM set)
     {

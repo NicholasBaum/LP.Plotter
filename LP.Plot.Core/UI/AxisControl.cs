@@ -2,9 +2,9 @@
 
 public class AxisControl : PanControlBase<Axis>
 {
-    private readonly Plot plot;
+    private readonly PlotModel plot;
 
-    public AxisControl(Axis content, Plot plot) : base(content)
+    public AxisControl(Axis content, PlotModel plot) : base(content)
     {
         this.plot = plot;
     }

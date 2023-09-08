@@ -2,15 +2,15 @@
 
 namespace LP.Plot.Data;
 
-public class PlotVM
+public class PlotModelVM
 {
     public event EventHandler<EventArgs>? DataChanged;
-    public Plot Plot;
+    public PlotModel Plot;
 
     public IReadOnlyList<SignalSetVM> Sets => sets;
     private List<SignalSetVM> sets = new List<SignalSetVM>();
 
-    public PlotVM(string xAxisTitle)
+    public PlotModelVM(string xAxisTitle)
     {
         this.Plot = new(xAxisTitle);
     }

@@ -12,7 +12,7 @@ public class WpfPlotView
 {
     private Control control;
     private SKElement skiaEl;
-    public readonly Plot Plot;
+    public readonly PlotModel Plot;
 
     public WpfPlotView(ISignal data, Control control, SKElement skiaEl)
         : this(new List<ISignal> { data }, control, skiaEl) { }

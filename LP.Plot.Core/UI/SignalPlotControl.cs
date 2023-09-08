@@ -4,9 +4,9 @@ namespace LP.Plot.UI;
 
 public class SignalPlotControl : PanControlBase<ISignalPlot>
 {
-    private readonly Plot plot;
+    private readonly PlotModel plot;
 
-    public SignalPlotControl(ISignalPlot content, Plot plot) : base(content)
+    public SignalPlotControl(ISignalPlot content, PlotModel plot) : base(content)
     {
         this.plot = plot;
     }

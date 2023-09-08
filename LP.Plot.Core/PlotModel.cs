@@ -6,7 +6,7 @@ using SkiaSharp;
 
 namespace LP.Plot;
 
-public partial class Plot : IRenderable
+public partial class PlotModel : IRenderable
 {
     private ISignalPlot signalPlot;
     private DockerControl layout = new();
@@ -17,10 +17,10 @@ public partial class Plot : IRenderable
     private LPSize canvasSize;
     private RenderInfo renderInfo = new();
 
-    public Plot() : this(new ISignal[0], "") { }
-    public Plot(string xAxisTitle) : this(new ISignal[0], xAxisTitle) { }
-    public Plot(ISignal signal, string xAxisTitle) : this(new[] { signal }, xAxisTitle) { }
-    public Plot(IEnumerable<ISignal> signals, string xAxisTitle)
+    public PlotModel() : this(new ISignal[0], "") { }
+    public PlotModel(string xAxisTitle) : this(new ISignal[0], xAxisTitle) { }
+    public PlotModel(ISignal signal, string xAxisTitle) : this(new[] { signal }, xAxisTitle) { }
+    public PlotModel(IEnumerable<ISignal> signals, string xAxisTitle)
     {
         signalPlot = new BufferedSignalPlot(signals);
         signalPlot.XAxis.Title = xAxisTitle ?? "";

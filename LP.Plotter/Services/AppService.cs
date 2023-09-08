@@ -8,7 +8,7 @@ namespace LP.Plot.Services;
 public class AppService
 {
     public ChannelPlotModel OxyModel { get; } = new();
-    public PlotVM CurrentModel { get; } = new("Time");
+    public PlotModelVM CurrentModel { get; } = new("Time");
 
     public void Add(ChannelDataSet data)
     {

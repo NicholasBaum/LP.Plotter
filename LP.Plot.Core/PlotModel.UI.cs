@@ -4,7 +4,7 @@ using SkiaSharp;
 
 namespace LP.Plot;
 
-public partial class Plot
+public partial class PlotModel
 {
     public event EventHandler<EventArgs>? Changed;
     public void Invalidate() => Changed?.Invoke(this, EventArgs.Empty);
