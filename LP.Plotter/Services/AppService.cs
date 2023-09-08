@@ -1,10 +1,10 @@
 ﻿using LP.Plot.Core.Data;
 using LP.Plot.Core.Signal;
+using LP.Plot.Data;
 using LP.Plot.Models;
-using LP.Plotter.Data;
 using OxyPlot;
 
-namespace LP.Plotter.Services;
+namespace LP.Plot.Services;
 
 public class AppService
 {

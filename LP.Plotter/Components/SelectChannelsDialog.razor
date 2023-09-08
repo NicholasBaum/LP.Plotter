@@ -1,0 +1,21 @@
+﻿<MudPaper Width="400px">
+    <MudContainer Style="padding:20px">
+        @if (DataContext != null)
+        {
+            @foreach (var c in DataContext.Channels)
+            {
+                <MudCheckBox Dense=true @bind-Checked="@c.Selected" Label="@c.Name"></MudCheckBox>
+            }
+
+        }
+        else
+        {
+            <MudText>Error</MudText>
+        }
+    </MudContainer>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public SignalSetVM? DataContext { get; set; }
+}

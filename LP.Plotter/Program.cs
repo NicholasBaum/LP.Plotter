@@ -1,6 +1,6 @@
 using LP.Plot.Core.Data;
 using LP.Plotter;
-using LP.Plotter.Services;
+using LP.Plot.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;

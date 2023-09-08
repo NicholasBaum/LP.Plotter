@@ -1,6 +1,5 @@
 ﻿@using System.Globalization;
 @using LP.Plot.Core;
-@using LP.Plotter.Data;
 @using MudBlazor.Utilities;
 
 @inject IDialogService dialogService;
@@ -22,8 +21,8 @@
 
     private async Task EditChannelClick(SignalVM channel)
     {
-        var parameters = new DialogParameters<LPEditChannelDialog> { { x => x.Channel, Channel } }; // dictionary intiliazer, that calls a fitting Add method overload
-        var dialog = await dialogService.ShowAsync<LPEditChannelDialog>($"Edit {Channel.Name}", parameters);
+        var parameters = new DialogParameters<EditChannelDialog> { { x => x.Channel, Channel } }; // dictionary intiliazer, that calls a fitting Add method overload
+        var dialog = await dialogService.ShowAsync<EditChannelDialog>($"Edit {Channel.Name}", parameters);
         var result = await dialog.Result;
 
         if (!result.Canceled)

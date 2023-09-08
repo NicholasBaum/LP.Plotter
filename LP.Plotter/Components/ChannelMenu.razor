@@ -1,7 +1,6 @@
 ﻿@using System.Collections.Specialized;
 @using System.Globalization;
 @using LP.Plot.Core;
-@using LP.Plotter.Data;
 
 @inject IDialogService dialogService;
 
@@ -30,7 +29,7 @@
                         @foreach (var c in s.Channels.Where(x => x.Selected))
                         {
                             <li>
-                                <LPChannelMenuItem Channel="c"></LPChannelMenuItem>
+                                <ChannelMenuItem Channel="c"></ChannelMenuItem>
                             </li>
                         }
                     </ul>
@@ -49,8 +48,8 @@
 
     private async Task SelectChannelsClick(SignalSetVM set)
     {
-        var parameters = new DialogParameters<LPSelectChannelsDialog> { { x => x.DataContext, set } };
-        var dialog = await dialogService.ShowAsync<LPSelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
+        var parameters = new DialogParameters<SelectChannelsDialog> { { x => x.DataContext, set } };
+        var dialog = await dialogService.ShowAsync<SelectChannelsDialog>($"Select Channels for {set.Name}", parameters);
         var result = await dialog.Result;
         Model?.Invalidate();
     }

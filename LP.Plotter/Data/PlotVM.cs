@@ -1,6 +1,6 @@
 ﻿using LP.Plot.Core.Signal;
 
-namespace LP.Plotter.Data;
+namespace LP.Plot.Data;
 
 public class PlotVM
 {

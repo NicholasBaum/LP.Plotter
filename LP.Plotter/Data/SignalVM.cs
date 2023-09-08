@@ -2,7 +2,7 @@
 using LP.Plot.Core.Signal;
 using SkiaSharp;
 
-namespace LP.Plotter.Data;
+namespace LP.Plot.Data;
 
 public class SignalVM
 {
