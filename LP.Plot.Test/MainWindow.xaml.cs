@@ -16,7 +16,6 @@ namespace LP.Plot.Test
 
             var data = new LocalDataService().LoadSignal_L();
             this.plotView = new WpfPlotView(data, this, skiaEl);
-            this.plotView.Plot.SetRightAxis(data[1].YAxis);
         }
     }
 }

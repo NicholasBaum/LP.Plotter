@@ -27,17 +27,23 @@ public partial class Plot : IRenderable
         SetDefaultYAxes();
         layout.Bottom = new AxisControl(signalPlot.XAxis, this) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
         layout.Center = new SignalPlotControl(signalPlot, this) { Parent = layout };
+        layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
     }
 
     public void SetDefaultYAxes()
     {
         var leftAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Left).FirstOrDefault();
         var rightAxis = signalPlot.YAxes.Where(x => x.Position == AxisPosition.Right).FirstOrDefault();
+
         if (leftAxis is not null)
             layout.Left = new AxisControl(leftAxis, this) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
-        layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
+        else
+            layout.Left = new BorderControl() { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0), ShowLeft = false, ShowTop = false, ShowBottom = false };
+
         if (rightAxis is not null)
             layout.Right = new AxisControl(rightAxis, this) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
+        else
+            layout.Right = new BorderControl() { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0), ShowTop = false, ShowRight = false, ShowBottom = false };
     }
 
     public void Render(IRenderContext ctx)

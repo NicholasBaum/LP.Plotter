@@ -16,13 +16,14 @@ internal class BorderControl : ControlBase
         if (Rect.IsEmpty) return;
         var t = (int)Math.Round(Paint.StrokeWidth);
         var t2 = (int)Math.Round(Paint.StrokeWidth / 2);
+
         if (ShowTop)
-            ctx.Canvas.DrawLine(Rect.Left - t, t2, Rect.Right + t, t2, Paint);
+            ctx.Canvas.DrawLine(Rect.Left - t, Rect.Top + t2, Rect.Right + t, Rect.Top + t2, Paint);
         if (ShowBottom)
             ctx.Canvas.DrawLine(Rect.Left - t, Rect.Bottom - t2, Rect.Right + t, Rect.Bottom - t2, Paint);
         if (ShowLeft)
-            ctx.Canvas.DrawLine(Rect.Left - t2, t2, Rect.Left - t2, Rect.Bottom - t2, Paint);
+            ctx.Canvas.DrawLine(Rect.Left + t2, Rect.Top, Rect.Left + t2, Rect.Bottom, Paint);
         if (ShowRight)
-            ctx.Canvas.DrawLine(Rect.Right + t2, t2, Rect.Right + t2, Rect.Bottom - t2, Paint);
+            ctx.Canvas.DrawLine(Rect.Right - t2, Rect.Top, Rect.Right - t2, Rect.Bottom, Paint);
     }
 }

@@ -13,7 +13,7 @@ public class Helper
         var timeRange = new Span(time.YValues.First(), time.YValues.Last());
 
         // speed channel
-        Axis speedAxis = new() { Title = "Speed" };
+        Axis speedAxis = new() { Title = "Speed", Position = AxisPosition.Left };
         StaticSignal speed = new(data.SpeedChannel.YValues, timeRange, speedAxis, SKPaints.NextPaint(), data.SpeedChannel.Name);
         signals.Add(speed);
         speedAxis.Range = speed.YRange;
