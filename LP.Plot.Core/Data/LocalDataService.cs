@@ -1,7 +1,7 @@
-﻿using LP.Plot.Core.Signal;
-using static LP.Plot.Core.Data.Helper;
+﻿using LP.Plot.Signal;
+using static LP.Plot.Data.Helper;
 
-namespace LP.Plot.Core.Data;
+namespace LP.Plot.Data;
 
 public class LocalDataService
 {

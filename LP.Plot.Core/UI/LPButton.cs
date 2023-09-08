@@ -1,4 +1,4 @@
-﻿namespace LP.Plot.Core;
+﻿namespace LP.Plot.UI;
 
 public enum LPButton
 {

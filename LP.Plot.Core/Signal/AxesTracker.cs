@@ -1,7 +1,7 @@
 ﻿using SkiaSharp;
 using System.Diagnostics;
 
-namespace LP.Plot.Core.Signal;
+namespace LP.Plot.Signal;
 
 internal class SignalsTracker
 {

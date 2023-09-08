@@ -1,4 +1,4 @@
-﻿using LP.Plot.Core.Data;
+﻿using LP.Plot.Data;
 using ScottPlot.Plottable;
 using System.Windows;
 

@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace LP.Plot.Core.UI;
+namespace LP.Plot.UI;
 
 public static class IControlExtension
 {

@@ -1,8 +1,8 @@
-﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Core.Skia;
+﻿using LP.Plot.Primitives;
+using LP.Plot.Skia;
 using SkiaSharp;
 
-namespace LP.Plot.Core.Signal;
+namespace LP.Plot.Signal;
 
 public static class SignalRenderer
 {

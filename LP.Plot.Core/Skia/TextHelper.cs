@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace LP.Plot.Core.Skia;
+namespace LP.Plot.Skia;
 
 public enum HorizontalAnchor
 {

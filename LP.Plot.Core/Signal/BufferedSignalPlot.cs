@@ -1,8 +1,8 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 using SkiaSharp;
 using System.Diagnostics;
 
-namespace LP.Plot.Core.Signal;
+namespace LP.Plot.Signal;
 
 public class BufferedSignalPlot : ISignalPlot, IRenderable
 {

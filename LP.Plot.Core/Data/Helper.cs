@@ -1,8 +1,8 @@
-﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Core.Signal;
+﻿using LP.Plot.Primitives;
+using LP.Plot.Signal;
 using LP.Plot.Skia;
 
-namespace LP.Plot.Core.Data;
+namespace LP.Plot.Data;
 
 public class Helper
 {

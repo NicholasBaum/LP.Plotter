@@ -1,7 +1,6 @@
-﻿using LP.Plot.Core;
-using LP.Plot.Core.Signal;
-using LP.Plot.Core.Skia;
-using LP.Plot.Core.UI;
+﻿using LP.Plot.Signal;
+using LP.Plot.Skia;
+using LP.Plot.UI;
 using SkiaSharp.Views.Desktop;
 using SkiaSharp.Views.WPF;
 using System.Windows.Controls;
@@ -13,7 +12,7 @@ public class WpfPlotView
 {
     private Control control;
     private SKElement skiaEl;
-    public readonly Core.Plot Plot;
+    public readonly Plot Plot;
 
     public WpfPlotView(ISignal data, Control control, SKElement skiaEl)
         : this(new List<ISignal> { data }, control, skiaEl) { }

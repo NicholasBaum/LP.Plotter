@@ -1,6 +1,6 @@
-﻿using LP.Plot.Core.Data;
-using LP.Plot.Core.Primitives;
-using LP.Plot.Core.Signal;
+﻿using LP.Plot.Data;
+using LP.Plot.Primitives;
+using LP.Plot.Signal;
 using SkiaSharp;
 using System.Diagnostics;
 

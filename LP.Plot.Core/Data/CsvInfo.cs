@@ -1,4 +1,4 @@
-﻿namespace LP.Plot.Core.Data;
+﻿namespace LP.Plot.Data;
 
 public class CsvInfo
 {

@@ -1,4 +1,4 @@
-﻿using LP.Plot.Core.Signal;
+﻿using LP.Plot.Signal;
 
 namespace LP.Plot.Data;
 

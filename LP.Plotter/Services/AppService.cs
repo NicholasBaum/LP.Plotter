@@ -1,6 +1,5 @@
-﻿using LP.Plot.Core.Data;
-using LP.Plot.Core.Signal;
-using LP.Plot.Data;
+﻿using LP.Plot.Data;
+using LP.Plot.Signal;
 using LP.Plot.Models;
 using OxyPlot;
 

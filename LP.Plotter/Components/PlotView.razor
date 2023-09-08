@@ -1,9 +1,8 @@
-﻿@using LP.Plot.Core.Data;
-@using LP.Plot.Core.Skia;
-@using SkiaSharp
-@using SkiaSharp.Views.Blazor
-@using LP.Plot.Core;
-@using LP.Plot.Core.UI;
+﻿@using LP.Plot.Data;
+@using LP.Plot.Skia;
+@using SkiaSharp;
+@using SkiaSharp.Views.Blazor;
+@using LP.Plot.UI;
 
 <style>
     .canvas-container {
@@ -33,8 +32,8 @@
     public string Style { get; set; } = "";
     SKGLView skiaEl = null!;
     [Parameter, EditorRequired]
-    public Plot Plot { get; set; } = null!;
-    private Plot? lastDataModel;
+    public LP.Plot.Plot Plot { get; set; } = null!;
+    private LP.Plot.Plot? lastDataModel;
 
     protected override void OnParametersSet()
     {

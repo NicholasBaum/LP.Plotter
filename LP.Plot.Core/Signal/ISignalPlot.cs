@@ -1,6 +1,6 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 
-namespace LP.Plot.Core.Signal;
+namespace LP.Plot.Signal;
 
 public interface ISignalPlot : IRenderable
 {

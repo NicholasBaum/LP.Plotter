@@ -1,7 +1,7 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 using SkiaSharp;
 
-namespace LP.Plot.Core.Skia;
+namespace LP.Plot.Skia;
 
 public class SkiaRenderContext : IRenderContext
 {

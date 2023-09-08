@@ -1,8 +1,8 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 using LP.Plot.Skia;
 using SkiaSharp;
 
-namespace LP.Plot.Core.UI;
+namespace LP.Plot.UI;
 
 internal class BorderControl : ControlBase
 {

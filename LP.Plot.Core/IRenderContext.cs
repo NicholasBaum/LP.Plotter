@@ -1,4 +1,4 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 using SkiaSharp;
 
 public interface IRenderContext

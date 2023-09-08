@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace LP.Plot.Core.Primitives;
+namespace LP.Plot.Primitives;
 
 public record struct LPRect : IEquatable<LPRect>
 {

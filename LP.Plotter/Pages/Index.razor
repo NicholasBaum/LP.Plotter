@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@using LP.Plot.Core.Data;
+@using LP.Plot.Data;
 
 @inject AppService appService;
 @inject DataService dataService;
@@ -16,10 +16,11 @@
     }
     <div style="position: relative; display: flex; flex-direction: column;">
         <MudPaper Elevation="25" Style="margin-bottom:5px">
-@*             <PlotterMenu Model="@(appService.CurrentPlot)"></PlotterMenu>
- *@        </MudPaper>
+            @*             <PlotterMenu Model="@(appService.CurrentPlot)"></PlotterMenu>
+            *@
+        </MudPaper>
         <ChannelMenu Model="@(appService.CurrentModel)"
-                       Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
+                     Style="padding:10px; width:300px; position: sticky; top: 0; right: 0; overflow-y: auto; overflow-x:hidden; flex: 1;">
         </ChannelMenu>
     </div>
 </div>

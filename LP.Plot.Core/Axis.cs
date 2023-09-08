@@ -1,10 +1,9 @@
-﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Core.Skia;
-using LP.Plot.Core.Ticks;
+﻿using LP.Plot.Primitives;
 using LP.Plot.Skia;
+using LP.Plot.Ticks;
 using SkiaSharp;
 
-namespace LP.Plot.Core;
+namespace LP.Plot;
 
 public enum AxisPosition
 {

@@ -1,4 +1,4 @@
-﻿namespace LP.Plot.Core.UI;
+﻿namespace LP.Plot.UI;
 
 public class AxisControl : PanControlBase<Axis>
 {

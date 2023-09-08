@@ -1,4 +1,4 @@
-﻿namespace LP.Plot.Core.Primitives;
+﻿namespace LP.Plot.Primitives;
 
 public readonly struct Span
 {

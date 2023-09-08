@@ -1,8 +1,8 @@
-﻿using LP.Plot.Core.Primitives;
-using LP.Plot.Core.UI;
+﻿using LP.Plot.Primitives;
+using LP.Plot.UI;
 using SkiaSharp;
 
-namespace LP.Plot.Core;
+namespace LP.Plot;
 
 public partial class Plot
 {

@@ -1,6 +1,6 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 
-namespace LP.Plot.Core.UI;
+namespace LP.Plot.UI;
 
 public interface IControl : IRenderable
 {

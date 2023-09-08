@@ -1,7 +1,7 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 using SkiaSharp;
 
-namespace LP.Plot.Core.Signal;
+namespace LP.Plot.Signal;
 
 public class SignalPlot : ISignalPlot, IRenderable
 {

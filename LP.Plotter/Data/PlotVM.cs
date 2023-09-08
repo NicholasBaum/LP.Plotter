@@ -1,11 +1,11 @@
-﻿using LP.Plot.Core.Signal;
+﻿using LP.Plot.Signal;
 
 namespace LP.Plot.Data;
 
 public class PlotVM
 {
     public event EventHandler<EventArgs>? DataChanged;
-    public Plot.Core.Plot Plot;
+    public Plot Plot;
 
     public IReadOnlyList<SignalSetVM> Sets => sets;
     private List<SignalSetVM> sets = new List<SignalSetVM>();

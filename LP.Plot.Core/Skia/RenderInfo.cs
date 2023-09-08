@@ -1,8 +1,8 @@
-﻿using LP.Plot.Core.Primitives;
+﻿using LP.Plot.Primitives;
 using SkiaSharp;
 using System.Diagnostics;
 
-namespace LP.Plot.Core.Skia;
+namespace LP.Plot.Skia;
 
 public class RenderInfo : IRenderable, IDisposable
 {

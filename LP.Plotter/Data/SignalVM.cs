@@ -1,5 +1,4 @@
-﻿using LP.Plot.Core;
-using LP.Plot.Core.Signal;
+﻿using LP.Plot.Signal;
 using SkiaSharp;
 
 namespace LP.Plot.Data;

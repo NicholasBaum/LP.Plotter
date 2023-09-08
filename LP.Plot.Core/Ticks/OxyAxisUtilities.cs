@@ -1,4 +1,4 @@
-﻿namespace LP.Plot.Core.Ticks;
+﻿namespace LP.Plot.Ticks;
 
 using System;
 using System.Collections.Generic;

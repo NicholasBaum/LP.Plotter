@@ -1,4 +1,4 @@
-using LP.Plot.Core.Data;
+using LP.Plot.Data;
 using LP.Plotter;
 using LP.Plot.Services;
 using Microsoft.AspNetCore.Components.Web;

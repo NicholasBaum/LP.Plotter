@@ -1,4 +1,4 @@
-﻿using LP.Plot.Core.Data;
+﻿using LP.Plot.Data;
 using System.Windows;
 
 namespace LP.Plot.Test

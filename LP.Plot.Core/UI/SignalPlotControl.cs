@@ -1,6 +1,6 @@
-﻿using LP.Plot.Core.Signal;
+﻿using LP.Plot.Signal;
 
-namespace LP.Plot.Core.UI;
+namespace LP.Plot.UI;
 
 public class SignalPlotControl : PanControlBase<ISignalPlot>
 {
