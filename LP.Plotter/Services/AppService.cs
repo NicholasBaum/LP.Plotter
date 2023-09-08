@@ -13,7 +13,8 @@ public class AppService
 
     public void Add(ChannelDataSet data)
     {
-        var signals = Helper.CreateSignals(data);
+        var inUseAxes = CurrentModel.Sets.SelectMany(x => x.Channels.Select(x => x.YAxis)).Distinct();
+        var signals = Helper.CreateSignals(data, inUseAxes.ToList());
         this.CurrentModel.Add(signals, data.Name);
         AddToOxyModel(signals, data.Name, data.Info);
     }

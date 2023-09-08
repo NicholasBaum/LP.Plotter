@@ -31,8 +31,8 @@
         base.OnInitialized();
         var t = Task.Run(async () =>
         {
-            var data = await dataService.LoadSignal_M();
-            appService.CurrentModel.Add(data, "Test Data");
+            var data = await dataService.LoadTestLap();
+            appService.Add(data);
             StateHasChanged();
         });
     }

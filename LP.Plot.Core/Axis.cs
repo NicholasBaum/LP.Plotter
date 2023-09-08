@@ -16,6 +16,8 @@ public class Axis : IRenderable
     public Axis() { }
     public Axis(double min, double max) => (Min, Max) = (min, max);
     public Axis(Span range) => (Min, Max) = (range.Min, range.Max);
+
+    public string? Key = null;
     public Span Range
     {
         get => new Span(Min, Max);
