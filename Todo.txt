@@ -1,0 +1,11 @@
+- implement missing UI features
+- implement path caching
+- implement bucket renderer
+- implement DataViewer UI
+- SKPaints have to be replaced in most locations with SKColors because they are mutable objects
+- Make Plot.UI.cs IControl named PlotView wrapping or inhereting Plot
+
+
+- make ClientRect a DRect
+- fix drawing routines als taking line thickness into account
+- make the IControl/Arrange/Render a clean solution
