@@ -9,3 +9,5 @@
 - make ClientRect a DRect
 - fix drawing routines als taking line thickness into account
 - make the IControl/Arrange/Render a clean solution
+
+- make axes management clean e.g. attaching existing axes etc.
