@@ -1,4 +1,3 @@
-- cleanup oxy and lp frontend
 - implement missing UI features
 - implement path caching
 - implement bucket renderer
