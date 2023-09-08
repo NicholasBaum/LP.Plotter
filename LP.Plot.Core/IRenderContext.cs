@@ -1,6 +1,8 @@
 ﻿using LP.Plot.Primitives;
 using SkiaSharp;
 
+namespace LP.Plot;
+
 public interface IRenderContext
 {
     SKCanvas Canvas { get; }
