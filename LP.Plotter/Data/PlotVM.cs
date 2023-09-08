@@ -8,8 +8,8 @@ public class PlotVM
     public event EventHandler<EventArgs>? DataChanged;
     public Plot.Core.Plot Plot;
 
-    public IReadOnlyList<SignalSet> Sets => sets;
-    private List<SignalSet> sets = new List<SignalSet>();
+    public IReadOnlyList<SignalSetVM> Sets => sets;
+    private List<SignalSetVM> sets = new List<SignalSetVM>();
 
     public PlotVM(string xAxisTitle)
     {
@@ -19,7 +19,7 @@ public class PlotVM
     public void Add(IEnumerable<ISignal> signals, string setName)
     {
         this.Plot.Add(signals);
-        this.sets.Add(new SignalSet(signals, setName));
+        this.sets.Add(new SignalSetVM(signals, setName));
         if (this.sets.Count == 1)
         {
             Plot.ResetAxes();
@@ -29,7 +29,7 @@ public class PlotVM
         Plot.Invalidate();
     }
 
-    public void Remove(SignalSet set)
+    public void Remove(SignalSetVM set)
     {
         sets.Remove(set);
         foreach (var s in set.Channels)

@@ -1,15 +1,18 @@
-﻿using LP.Plot.Core.Signal;
+﻿using LP.Plot.Core;
+using LP.Plot.Core.Signal;
 using SkiaSharp;
 
-namespace LP.Plot.Core;
+namespace LP.Plotter.Data;
 
 public class SignalVM
 {
     public readonly ISignal Source;
+    private bool selected;
 
-    public SignalVM(ISignal source)
+    public SignalVM(ISignal source, bool selected)
     {
         this.Source = source;
+        this.Selected = selected;
     }
 
     public string Name
@@ -17,7 +20,15 @@ public class SignalVM
         get => Source.Name;
         set => Source.Name = value;
     }
-    public bool Selected { get; set; }
+    public bool Selected
+    {
+        get => selected;
+        set
+        {
+            selected = value;
+            Source.IsVisible = value;
+        }
+    }
     public Axis YAxis => Source.YAxis;
     public bool IsVisible
     {
