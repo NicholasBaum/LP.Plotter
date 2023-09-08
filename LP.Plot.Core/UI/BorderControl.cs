@@ -1,4 +1,5 @@
-﻿using LP.Plot.Skia;
+﻿using LP.Plot.Core.Primitives;
+using LP.Plot.Skia;
 using SkiaSharp;
 
 namespace LP.Plot.Core.UI;
@@ -10,6 +11,26 @@ internal class BorderControl : ControlBase
     public bool ShowTop { get; set; } = true;
     public bool ShowRight { get; set; } = true;
     public bool ShowBottom { get; set; } = true;
+
+    internal static BorderControl CreateLeft(DockerControl layout, int width)
+    {
+        return new BorderControl() { Parent = layout, DesiredSize = new LPSize(width, 0), ShowTop = false, ShowRight = false, ShowBottom = false };
+    }
+
+    internal static BorderControl CreateTop(DockerControl layout, int height)
+    {
+        return new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, height), ShowLeft = false, ShowRight = false, ShowBottom = false }; ;
+    }
+
+    internal static BorderControl CreateRight(DockerControl layout, int width)
+    {
+        return new BorderControl() { Parent = layout, DesiredSize = new LPSize(width, 0), ShowLeft = false, ShowTop = false, ShowBottom = false };
+    }
+
+    internal static BorderControl CreateBottom(DockerControl layout, int height)
+    {
+        return new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, height), ShowLeft = false, ShowTop = false, ShowRight = false };
+    }
 
     public override void Render(IRenderContext ctx)
     {

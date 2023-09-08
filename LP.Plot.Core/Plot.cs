@@ -27,7 +27,7 @@ public partial class Plot : IRenderable
         SetDefaultYAxes();
         layout.Bottom = new AxisControl(signalPlot.XAxis, this) { Parent = layout, DesiredSize = new LPSize(0, bottomAxisHeight) };
         layout.Center = new SignalPlotControl(signalPlot, this) { Parent = layout };
-        layout.Top = new BorderControl() { Parent = layout, DesiredSize = new LPSize(0, topCellHeight), ShowLeft = false, ShowTop = false, ShowRight = false };
+        layout.Top = BorderControl.CreateBottom(layout, topCellHeight);
     }
 
     public void SetDefaultYAxes()
@@ -38,12 +38,12 @@ public partial class Plot : IRenderable
         if (leftAxis is not null)
             layout.Left = new AxisControl(leftAxis, this) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
         else
-            layout.Left = new BorderControl() { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0), ShowLeft = false, ShowTop = false, ShowBottom = false };
+            layout.Left = BorderControl.CreateRight(layout, leftAxisWidth);
 
         if (rightAxis is not null)
             layout.Right = new AxisControl(rightAxis, this) { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0) };
         else
-            layout.Right = new BorderControl() { Parent = layout, DesiredSize = new LPSize(rightAxisWidth, 0), ShowTop = false, ShowRight = false, ShowBottom = false };
+            layout.Right = BorderControl.CreateLeft(layout, rightAxisWidth);
     }
 
     public void Render(IRenderContext ctx)
@@ -59,16 +59,26 @@ public partial class Plot : IRenderable
         renderInfo.Render(ctx);
     }
 
-    public void SetLeftAxis(Axis axis)
+    public void SetLeftAxis(Axis? axis)
     {
+        if (axis is null)
+        {
+            layout.Left = BorderControl.CreateRight(layout, leftAxisWidth);
+            return;
+        }
         if ((this.layout.Right as AxisControl)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the right side.");
         axis.Position = AxisPosition.Left;
         this.layout.Left = new AxisControl(axis, this) { Parent = layout, DesiredSize = new LPSize(leftAxisWidth, 0) };
     }
 
-    public void SetRightAxis(Axis axis)
+    public void SetRightAxis(Axis? axis)
     {
+        if (axis is null)
+        {
+            layout.Right = BorderControl.CreateLeft(layout, rightAxisWidth);
+            return;
+        }
         if ((this.layout.Left as AxisControl)?.Content == axis)
             throw new InvalidOperationException("Axis object is already used on the left side.");
         axis.Position = AxisPosition.Right;
@@ -89,6 +99,16 @@ public partial class Plot : IRenderable
     public void Remove(ISignal signal)
     {
         signalPlot.Remove(signal);
+        RemoveUnassigendAxisControls();
+    }
+
+    private void RemoveUnassigendAxisControls()
+    {
+        var axes = signalPlot.YAxes;
+        if (layout.Left is AxisControl lac && !axes.Contains(lac.Content))
+            SetLeftAxis(null);
+        if (layout.Right is AxisControl rac && !axes.Contains(rac.Content))
+            SetRightAxis(null);
     }
 
     public void ResetAxes()

@@ -4,11 +4,57 @@ namespace LP.Plot.Core.UI;
 
 public class DockerControl : ControlBase, IRenderable
 {
-    public IControl? Left { get; set; }
-    public IControl? Top { get; set; }
-    public IControl? Right { get; set; }
-    public IControl? Bottom { get; set; }
-    public IControl? Center { get; set; }
+    private IControl? left;
+    private IControl? top;
+    private IControl? right;
+    private IControl? bottom;
+    private IControl? center;
+
+    public IControl? Left
+    {
+        get => left;
+        set
+        {
+            left = value;
+            Arrange();
+        }
+    }
+    public IControl? Top
+    {
+        get => top;
+        set
+        {
+            top = value;
+            Arrange();
+        }
+    }
+    public IControl? Right
+    {
+        get => right;
+        set
+        {
+            right = value;
+            Arrange();
+        }
+    }
+    public IControl? Bottom
+    {
+        get => bottom;
+        set
+        {
+            bottom = value;
+            Arrange();
+        }
+    }
+    public IControl? Center
+    {
+        get => center;
+        set
+        {
+            center = value;
+            Arrange();
+        }
+    }
 
 
     public override void Render(IRenderContext ctx)
@@ -29,6 +75,8 @@ public class DockerControl : ControlBase, IRenderable
 
     private void Arrange()
     {
+        if (Rect.IsEmpty)
+            return;
         var w = Rect.Width;
         // desired widths
         var lwd = Left == null ? 0 : Math.Max(0, Left.DesiredSize.Width);
