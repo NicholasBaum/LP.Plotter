@@ -8,7 +8,7 @@ namespace LP.Plot.Services;
 
 public class AppService
 {
-    public ChannelPlotModel CurrentPlot { get; } = new();
+    public ChannelPlotModel OxyModel { get; } = new();
     public PlotVM CurrentModel { get; } = new("Time");
 
     public void Add(ChannelDataSet data)
@@ -26,6 +26,6 @@ public class AppService
         var oxyInfo = new CsvInfo() { FileName = info.FileName, Path = info.Path, Url = info.Url };
         var channels = signals.Select(x => new VChannelVM(x.Name, x.YValues.Select((y, i) => new DataPoint(i * x.Period, y))));
         var oxy = new VChannelSet() { Name = name, Info = oxyInfo, Channels = channels.ToList() };
-        CurrentPlot.Add(oxy);
+        OxyModel.Add(oxy);
     }
 }
