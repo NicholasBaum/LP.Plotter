@@ -7,7 +7,7 @@ namespace LP.Plot;
 
 public enum AxisPosition
 {
-    Left, Top, Right, Bottom
+    None, Left, Top, Right, Bottom
 }
 
 public class Axis : IRenderable

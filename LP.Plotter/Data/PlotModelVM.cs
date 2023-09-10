@@ -10,6 +10,8 @@ public class PlotModelVM
     public IReadOnlyList<SignalSetVM> Sets => sets;
     private List<SignalSetVM> sets = new List<SignalSetVM>();
 
+    public List<Axis> YAxes => Sets.SelectMany(x => x.Channels.Select(x => x.YAxis)).Distinct().ToList();
+
     public PlotModelVM(string xAxisTitle)
     {
         this.Plot = new(xAxisTitle);

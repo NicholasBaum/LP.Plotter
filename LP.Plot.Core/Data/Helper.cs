@@ -18,6 +18,7 @@ public class Helper
 
     public static List<StaticSignal> CreateSignals(ChannelDataSet data, List<Axis> keyTagedAxes, bool essentialsOnly = false)
     {
+        keyTagedAxes = keyTagedAxes.Where(x => !string.IsNullOrEmpty(x.Key)).ToList();
         var signals = new List<StaticSignal>();
         var time = data.Channels.First(x => x.Name.Contains("Time"));
         var timeRange = new Span(time.YValues.First(), time.YValues.Last());

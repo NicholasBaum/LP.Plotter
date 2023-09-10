@@ -6,7 +6,7 @@
 - Make Plot.UI.cs IControl named PlotView wrapping or inhereting Plot
 
 
-- make ClientRect a DRect
+- make ClientRect a DRect, needs consideration as layout changes might trigger too often then
 - fix drawing routines als taking line thickness into account
 - make the IControl/Arrange/Render a clean solution
 
