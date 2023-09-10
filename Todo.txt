@@ -1,5 +1,6 @@
 - implement path caching
 - implement bucket renderer
+- implement mouse tracker
 - implement DataViewer UI
 - SKPaints have to be replaced in most locations with SKColors because they are mutable objects
 - Make Plot.UI.cs IControl named PlotView wrapping or inhereting Plot
