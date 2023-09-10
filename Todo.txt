@@ -1,4 +1,3 @@
-- implement missing UI features
 - implement path caching
 - implement bucket renderer
 - implement DataViewer UI
@@ -7,7 +6,7 @@
 
 
 - make ClientRect a DRect, needs consideration as layout changes might trigger too often then
-- fix drawing routines als taking line thickness into account
+- fix drawing routines also taking line thickness into account
 - make the IControl/Arrange/Render a clean solution
 
 - make axes management clean e.g. attaching existing axes etc.
