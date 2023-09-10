@@ -7,7 +7,9 @@ public abstract class PanControlBase<T> : ControlBase<T> where T : IRenderable
     protected bool isPanning = false;
     protected DPoint lastMousePos;
 
-    protected PanControlBase(T content) : base(content)
+    public PanControlBase() { }
+
+    public PanControlBase(T content) : base(content)
     {
     }
 

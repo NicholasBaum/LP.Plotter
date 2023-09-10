@@ -35,7 +35,9 @@ public abstract class ControlBase : IControl
 
 public class ControlBase<T> : ControlBase where T : IRenderable
 {
-    public T Content { get; set; }
+    public T? Content { get; set; }
+
+    public ControlBase() { }
 
     public ControlBase(T content)
     {
