@@ -81,7 +81,7 @@ public static class SignalRenderer
         }
     }
 
-    private ref struct Point
+    private readonly ref struct Point
     {
         public readonly double X;
         public readonly double Y;
