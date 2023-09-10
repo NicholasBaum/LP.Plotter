@@ -87,14 +87,31 @@ public partial class PlotModel : IRenderable
         }
         else
             layout.Right = BorderControl.CreateLeft(layout, rightAxisWidth);
-    }  
+    }
 
-    public void ResetAxes()
+    public void ResetXAxis()
     {
         if (signalPlot.Signals.Any())
         {
             var signals = signalPlot.Signals;
             this.signalPlot.XAxis.Range = new(signals.Min(x => x.XRange.Min), signals.Max(x => x.XRange.Max));
         }
+    }     
+
+    public void ZoomOutX(double factor = 1.33)
+    {
+        this.signalPlot.XAxis.ZoomAtCenter(factor);
+    }
+
+    public void ResetYAxes()
+    {
+        foreach (var x in this.signalPlot.Signals.GroupBy(x => x.YAxis))
+        {
+            var min = x.Min(x => x.YRange.Min);
+            var max = x.Max(x => x.YRange.Max);
+            var maxRange = new Span(min, max).ScaleAtCenter(1.1);
+            x.First().YAxis.Range = maxRange;
+        }
+        Invalidate();
     }
 }

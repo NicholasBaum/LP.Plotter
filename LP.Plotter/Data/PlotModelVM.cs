@@ -22,10 +22,7 @@ public class PlotModelVM
         this.Plot.Add(signals);
         this.sets.Add(new SignalSetVM(signals, setName));
         if (this.sets.Count == 1)
-        {
-            Plot.ResetAxes();
-            Plot.SetDefaultYAxes();
-        }
+            Plot.ResetXAxis();
         DataChanged?.Invoke(this, EventArgs.Empty);
         Plot.Invalidate();
     }
@@ -40,7 +37,15 @@ public class PlotModelVM
 
     public void Invalidate() => Plot.Invalidate();
 
-    public void ZoomOut() { }
-    public void ZoomOutMap() { }
+    public void ZoomOutX()
+    {
+        Plot.ZoomOutX();
+        Invalidate();
+    }
 
+    public void ResetYAxes()
+    {
+        Plot.ResetYAxes();
+        Invalidate();
+    }
 }
