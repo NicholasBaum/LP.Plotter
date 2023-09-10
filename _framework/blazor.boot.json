@@ -8,9 +8,9 @@
   "resources": {
     "assembly": {
       "HarfBuzzSharp.dll": "sha256-dX\/++uW6R0xlGvP58Z0Gv3rLrHGBDCKcSB1ODiXCRyE=",
-      "LP.Plot.Core.dll": "sha256-AlxDCKbUB\/C4CcKNJugutCg7u7nOxylW8eJVAYK2ayA=",
+      "LP.Plot.Core.dll": "sha256-U45JPnwa1hmg7FvwCaFezVW03aB7seq0dajtYyHWIH8=",
       "LP.Plot.Oxy.dll": "sha256-ZgLPMwRaFlrKwehb2Z6BaG7THjB5yQ\/+gKpLyGQKcSM=",
-      "LP.Plotter.dll": "sha256-KykT+6NAg\/I2TjCgG8x6GgJCHn1kVdWEWf5zKr+i9qc=",
+      "LP.Plotter.dll": "sha256-g9It7+o4BfP0OgYJiZZt0EQAnCQzmlJssa9aWzTWg3o=",
       "Microsoft.AspNetCore.Components.dll": "sha256-4gwergnMFJaZYiS0mORurMJ6zfFDyD\/6uSWEtheoLkQ=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-Ltu7LdcJPrgiou\/hX\/EznMlGeO0EG6bUpPg\/znJzSkw=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-6eqgfCdOa3Jc1dEXEzvIEs8wo1Y\/Xo4RyeW9EQ4Az9o=",
