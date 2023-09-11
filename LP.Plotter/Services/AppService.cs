@@ -16,6 +16,11 @@ public class AppService
         this.CurrentModel.Add(signals, data.Name);
         OxyModel.Add(signals, data.Name, data.Info);
     }
+
+    public void Add(IEnumerable<ISignal> signals, string name = "")
+    {
+        this.CurrentModel.Add(signals, name);
+    }
 }
 
 public static class ChannelPlotmModelExtension
