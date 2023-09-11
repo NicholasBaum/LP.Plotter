@@ -4,6 +4,7 @@ namespace LP.Plot.Skia;
 
 public static class SKPaints
 {
+    private static bool useAA = true;
     private static float StrokeWidth = 2;
     static SKPaints()
     {
@@ -23,13 +24,13 @@ public static class SKPaints
     {
         Color = SKColors.Black,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
     };
     public static SKPaint Orange = new SKPaint()
     {
         Color = SKColors.Orange,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
         Style = SKPaintStyle.Stroke
     };
 
@@ -37,7 +38,7 @@ public static class SKPaints
     {
         Color = SKColors.Blue,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
         Style = SKPaintStyle.Stroke
     };
 
@@ -45,7 +46,7 @@ public static class SKPaints
     {
         Color = SKColors.Red,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
         Style = SKPaintStyle.Stroke
     };
 
@@ -53,7 +54,7 @@ public static class SKPaints
     {
         Color = SKColors.Green,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
         Style = SKPaintStyle.Stroke
     };
 
@@ -61,7 +62,7 @@ public static class SKPaints
     {
         Color = SKColors.Yellow,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
         Style = SKPaintStyle.Stroke
     };
 
@@ -69,7 +70,7 @@ public static class SKPaints
     {
         Color = SKColors.White,
         StrokeWidth = StrokeWidth,
-        IsAntialias = true,
+        IsAntialias = useAA,
         Style = SKPaintStyle.Stroke
     };
 }
