@@ -1,4 +1,5 @@
 ﻿using LP.Plot.Signal;
+using System.Threading.Channels;
 
 namespace LP.Plot.Data;
 
@@ -21,6 +22,19 @@ public class PlotModelVM
     {
         this.Plot.Add(signals);
         this.sets.Add(new SignalSetVM(signals, setName));
+        if (this.sets.Count == 1)
+            Plot.ResetXAxis();
+        DataChanged?.Invoke(this, EventArgs.Empty);
+        Plot.Invalidate();
+    }
+
+    public void AddSpecial(IEnumerable<ISignal> signals, string setName)
+    {
+        this.Plot.Add(signals);
+        var vm = new SignalSetVM(signals, setName);
+        foreach (var x in vm.Channels)
+            x.Selected = x.Name.Contains("Speed") || x.Name.Contains("TT");
+        this.sets.Add(vm);
         if (this.sets.Count == 1)
             Plot.ResetXAxis();
         DataChanged?.Invoke(this, EventArgs.Empty);

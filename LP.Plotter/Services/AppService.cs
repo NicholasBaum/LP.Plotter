@@ -13,7 +13,7 @@ public class AppService
     public void Add(ChannelDataSet data)
     {
         var signals = Helper.CreateSignals(data, CurrentModel.YAxes);
-        this.CurrentModel.Add(signals, data.Name);
+        this.CurrentModel.AddSpecial(signals, data.Name);
         OxyModel.Add(signals, data.Name, data.Info);
     }
 

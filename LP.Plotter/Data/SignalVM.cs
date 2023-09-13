@@ -6,12 +6,11 @@ namespace LP.Plot.Data;
 public class SignalVM
 {
     public readonly ISignal Source;
-    private bool selected;
+    private bool selected = true;
 
-    public SignalVM(ISignal source, bool selected)
+    public SignalVM(ISignal source)
     {
         this.Source = source;
-        this.Selected = selected;
     }
 
     public string Name
