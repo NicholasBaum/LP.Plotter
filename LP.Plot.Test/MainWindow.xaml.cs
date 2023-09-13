@@ -1,4 +1,5 @@
-﻿using LP.Plot.Data;
+﻿using LP.Plot.Core.Data;
+using LP.Plot.Data;
 using System.Windows;
 
 namespace LP.Plot.Test
@@ -14,7 +15,8 @@ namespace LP.Plot.Test
         {
             InitializeComponent();
 
-            var data = new LocalDataService().LoadSignal_L();
+            var data = new LocalDataService().LoadSignal_XL();
+            data = SciChartDemo.LoadPoints();
             this.plotView = new WpfPlotView(data, this, skiaEl);
         }
     }

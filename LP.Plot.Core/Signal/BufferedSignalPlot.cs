@@ -92,7 +92,7 @@ public class BufferedSignalPlot : ISignalPlot, IRenderable
         ctx.Canvas.DrawSurface(buffer.Surface, (float)-xOffset, (float)-yOffset);
     }
 
-    private void RenderToBuffer(IRenderContext ctx, int widthLimit = 3000, int heightLimit = 3000)
+    private void RenderToBuffer(IRenderContext ctx, int widthLimit = 1920, int heightLimit = 1080)
     {
         buffer?.Dispose();
         var visibles = signals.Where(x => x.IsVisible).ToList();

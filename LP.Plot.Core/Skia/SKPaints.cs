@@ -5,7 +5,7 @@ namespace LP.Plot.Skia;
 public static class SKPaints
 {
     private static bool useAA = true;
-    private static float StrokeWidth = 2;
+    private static float StrokeWidth = 1;
     static SKPaints()
     {
         paints.Add(Orange);
