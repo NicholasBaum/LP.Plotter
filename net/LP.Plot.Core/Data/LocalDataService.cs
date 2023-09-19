@@ -15,19 +15,19 @@ public class LocalDataService
 
     public ChannelDataSet LoadTestLap()
     {
-        var folder = @"D:\work\LP.Plotter\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\D1PMRun1";
+        var folder = @"D:\work\LP.Plotter\LP.Plotter.Net\net\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\D1PMRun1";
         return LoadFile(Directory.GetFiles(folder).First());
     }
 
     public ChannelDataSet LoadTestRun()
     {
-        var folder = @"D:\work\LP.Plotter\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\D1PMRun1";
+        var folder = @"D:\work\LP.Plotter\LP.Plotter.Net\net\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\D1PMRun1";
         return LoadFiles(Directory.GetFiles(folder));
     }
 
     public ChannelDataSet LoadTestSession()
     {
-        var folder = @"D:\work\LP.Plotter\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\";
+        var folder = @"D:\work\LP.Plotter\LP.Plotter.Net\net\LP.Plotter\wwwroot\csvdata\events\imola_2023\T2303_IMO_#29\";
         return LoadFiles(Directory.GetFiles(folder, "*.csv", searchOption: SearchOption.AllDirectories));
     }
 
