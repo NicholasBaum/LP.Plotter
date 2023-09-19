@@ -33,7 +33,7 @@ jobs:
         run: |
           dotnet workload install wasm-tools
           dotnet workload restore
-          dotnet publish net/LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
+          dotnet publish -p net/LP.Plotter/LP.Plotter.csproj -c Release -o publish -nologo
      
       - name: Change base-tag in index.html from / to ${{ github.event.repository.name }}
         run:  sed -i 's/<base href="\/" \/>/<base href="\/LP.Plotter\/" \/>/g' publish/wwwroot/index.html
