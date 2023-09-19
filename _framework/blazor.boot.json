@@ -7,10 +7,10 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "HarfBuzzSharp.dll": "sha256-dX\/++uW6R0xlGvP58Z0Gv3rLrHGBDCKcSB1ODiXCRyE=",
-      "LP.Plot.Core.dll": "sha256-bOvKog238kqBWNDqsbyLt5grEdt5lT9P6grk+cIqVX8=",
-      "LP.Plot.Oxy.dll": "sha256-ZTaFsx4qfon3CDPicLdKBcL+QitLD+gNDSY1kQdD82Y=",
-      "LP.Plotter.dll": "sha256-KjBjZNug5neneqIfuvAKkLKXxOEpE91oTDFeNuf7svA=",
+      "HarfBuzzSharp.dll": "sha256-iZ889DRl2fPbacKUzmQHE8+pnlTU+VvX71IAGYYk1lM=",
+      "LP.Plot.Core.dll": "sha256-sw\/HTXTsRTw3xTd\/PPNLJ7SypYOfSpL2CGemNLNbN\/k=",
+      "LP.Plot.Oxy.dll": "sha256-En6\/K+Jr14dnmJKRTCMYqbx8ZlowlQNLl5VReeJmDO4=",
+      "LP.Plotter.dll": "sha256-MnPhqsm9Bwnpw1Y7a+x+oQCp840HcAkHKtqp0r1HU8w=",
       "Microsoft.AspNetCore.Components.dll": "sha256-4gwergnMFJaZYiS0mORurMJ6zfFDyD\/6uSWEtheoLkQ=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-Ltu7LdcJPrgiou\/hX\/EznMlGeO0EG6bUpPg\/znJzSkw=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-6eqgfCdOa3Jc1dEXEzvIEs8wo1Y\/Xo4RyeW9EQ4Az9o=",
@@ -33,7 +33,7 @@
       "OxyPlot.dll": "sha256-Ok+3ZwFiQU1BntpPJBqPX6WEFgWUQsl6pUkcjfaPBmE=",
       "OxyPlot.SkiaSharp.Blazor.dll": "sha256-wsW38q1zDD3DUmQzQ8+GrVF3h9JEwhuRoFkxuR06TCM=",
       "OxyPlot.SkiaSharp.dll": "sha256-qHa+Ak8avhV24eGq1XXSETlMnQ9oucq3i84xDl5mIL4=",
-      "SkiaSharp.dll": "sha256-oMC3VWKIdiSAR\/kH8oXvk07IH0c0N8fjeYWCzJLue9c=",
+      "SkiaSharp.dll": "sha256-k64JIdibJp0tBDTCr+LchG\/yWD+K1TLGc3dIkstGwE8=",
       "SkiaSharp.HarfBuzz.dll": "sha256-xYzlyJFayUmVNFMWQSEkGZNCEi2+lZGCPQ8mo7BI8CQ=",
       "SkiaSharp.Views.Blazor.dll": "sha256-m0\/YvrmLnHMtqOKUSqAyvxiKSd63EIAMPk32D8qpLd8=",
       "System.Collections.Concurrent.dll": "sha256-ve3CvNDzYcW+Qzo93rRbFhkkV5hWuDo6KUgGDzesz7M=",
@@ -67,7 +67,7 @@
     "libraryInitializers": null,
     "pdb": null,
     "runtime": {
-      "dotnet.7.0.11.ggwoxktnpz.js": "sha256-IFjB0ebwkEPTrfDvgxKmfSmBPCshIUVeu+j14ZMBJiE=",
+      "dotnet.7.0.11.6fy0bvw0k6.js": "sha256-IFjB0ebwkEPTrfDvgxKmfSmBPCshIUVeu+j14ZMBJiE=",
       "dotnet.timezones.blat": "sha256-gIJRsMe\/q4cM8EeOn+wrpfipBqBOq0niTDjqSBdXsVI=",
       "dotnet.wasm": "sha256-N0kziwFD34Icbw1nRH9Lkc2NMO9ouNmxWYdBh9ch\/SA=",
       "icudt_CJK.dat": "sha256-SZLtQnRc0JkwqHab0VUVP7T3uBPSeYzxzDnpxPpUnHk=",
