@@ -29,8 +29,8 @@
         base.OnInitialized();
         var t = Task.Run(async () =>
         {
-            //var data = await dataService.LoadTestLap();
-            var data = SciChartDemo.LoadPoints();
+            var data = await dataService.LoadTestLap();
+            //var data = SciChartDemo.LoadPoints();
             appService.Add(data);
             StateHasChanged();
         });
