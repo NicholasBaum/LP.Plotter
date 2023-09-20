@@ -20,29 +20,6 @@ export const hair_shader = {
       `
 };
 
-
-export const normal_shader = {
-  label: "normal shader",
-  code: `
-        @group(0) @binding(0) var<uniform> color: vec4f;
-        @group(0) @binding(1) var<uniform> transform: mat4x4<f32>;
-        @group(0) @binding(2) var<uniform> screen: vec2f;
-
-        @vertex
-        fn vertexMain(@location(0) position: vec2f, @location(1) normal: vec2f)
-          -> @builtin(position) vec4f {          
-          // dummy so auto layout sees the variable 
-          let dummy = screen;
-          return transform*vec4f(position+normal*0.1, 0, 1);          
-        }         
-
-        @fragment
-        fn fragmentMain() -> @location(0) vec4f {
-          return color;
-        }
-      `
-};
-
 export const miter_shader = {
   label: "miter shader",
   code: `
