@@ -85,7 +85,7 @@ export abstract class BaseRenderer {
         let shaderModule = this.device.createShaderModule(this.getShader())
         let vertexBufferLayout = this.getVertexBufferLayout();
         this.pipeline = await this.device.createRenderPipelineAsync({
-            label: "plot pipeline",
+            label: "core pipeline",
             layout: "auto",
             vertex: {
                 module: shaderModule,
@@ -155,7 +155,7 @@ export abstract class BaseRenderer {
         }
     }
 
-    private updateUniforms() {
+    protected updateUniforms() {
         let sx = 2 / (this.xRange.max - this.xRange.min);
         let m00 = sx;
         let m30 = -sx * this.xRange.min - 1;
