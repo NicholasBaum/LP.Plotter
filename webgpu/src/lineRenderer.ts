@@ -42,33 +42,33 @@ export class LineRenderer extends BaseRenderer {
     protected override createVertices() {
         let data = [];
         for (let i = 0; i < this.signals.length; i++) {
-            let source = this.signals[i].samples;
-            this.signals[i].gpuSampleCount = 2 * source.length;
-            data.push(source[0]);
-            data.push(source[0]);
-            data.push(source[1]);
+            let samples = this.signals[i].samples;
+            this.signals[i].gpuSampleCount = 2 * samples.length;
+            data.push(samples[0]);
+            data.push(samples[0]);
+            data.push(samples[1]);
             data.push(new Vec2(1, 1));
-            data.push(source[0]);
-            data.push(source[0]);
-            data.push(source[1]);
+            data.push(samples[0]);
+            data.push(samples[0]);
+            data.push(samples[1]);
             data.push(new Vec2(-1, -1));
-            for (let j = 1; j < source.length - 1; j++) {
-                data.push(source[j - 1]);
-                data.push(source[j]);
-                data.push(source[j + 1]);
+            for (let j = 1; j < samples.length - 1; j++) {
+                data.push(samples[j - 1]);
+                data.push(samples[j]);
+                data.push(samples[j + 1]);
                 data.push(new Vec2(1, 1));
-                data.push(source[j - 1]);
-                data.push(source[j]);
-                data.push(source[j + 1]);
+                data.push(samples[j - 1]);
+                data.push(samples[j]);
+                data.push(samples[j + 1]);
                 data.push(new Vec2(-1, -1));
             }
-            data.push(source[source.length - 2]);
-            data.push(source[source.length - 1]);
-            data.push(source[source.length - 1]);
+            data.push(samples[samples.length - 2]);
+            data.push(samples[samples.length - 1]);
+            data.push(samples[samples.length - 1]);
             data.push(new Vec2(1, 1));
-            data.push(source[source.length - 2]);
-            data.push(source[source.length - 1]);
-            data.push(source[source.length - 1]);
+            data.push(samples[samples.length - 2]);
+            data.push(samples[samples.length - 1]);
+            data.push(samples[samples.length - 1]);
             data.push(new Vec2(-1, -1));
         }
         this.vertices = new Float32Array(data.flatMap(x => [x.x, x.y]));
