@@ -4,6 +4,27 @@ import { Signal } from "./signal";
 
 export abstract class BaseRenderer {
 
+    xRange: Span = new Span(-1, 1);
+    yRange: Span = new Span(-1, 1);;
+
+    protected viewTransform!: Float32Array;
+    protected device!: GPUDevice;
+    protected context!: GPUCanvasContext;
+    protected canvasFormat!: GPUTextureFormat;
+
+    protected transformBuffer!: GPUBuffer;
+    protected screenBuffer!: GPUBuffer;
+    protected vertexBuffer!: GPUBuffer;
+    protected pipeline!: GPURenderPipeline;
+    protected bindingGroup!: GPUBindGroup;
+
+    constructor(protected canvas: HTMLCanvasElement, protected signals: Signal[]) { }
+
+    protected abstract getShader(): GPUShaderModuleDescriptor;
+    protected abstract getVertexBufferLayout(): GPUVertexBufferLayout;
+    protected abstract getTopology(): GPUPrimitiveTopology;
+    protected abstract createVertices(): void;
+
     zoom(factor: number, pos: Vec2) {
         let x = pos.x / this.canvas.width;
         this.xRange.zoomRelative(factor, x);
@@ -17,28 +38,6 @@ export abstract class BaseRenderer {
         let pany = pan.y / this.canvas.height;
         this.yRange.panRelative(pany);
     }
-
-    xRange: Span = new Span(-1, 1);
-    yRange: Span = new Span(-1, 1);;
-
-    protected viewTransform!: Float32Array;
-    protected device!: GPUDevice;
-    protected context!: GPUCanvasContext;
-    protected canvasFormat!: GPUTextureFormat;
-
-    protected transformBuffer!: GPUBuffer;
-    protected screenBuffer!: GPUBuffer;
-    protected vertexBuffer!: GPUBuffer;
-    protected vertices!: Float32Array;
-    protected pipeline!: GPURenderPipeline;
-    protected bindingGroup!: GPUBindGroup;
-
-    constructor(protected canvas: HTMLCanvasElement, protected signals: Signal[]) { }
-
-    protected abstract getShader(): GPUShaderModuleDescriptor;
-    protected abstract getVertexBufferLayout(): GPUVertexBufferLayout;
-    protected abstract getTopology(): GPUPrimitiveTopology;
-    protected abstract createVertices(): void;
 
     protected createBindingGroup(): GPUBindGroupDescriptor {
         return {

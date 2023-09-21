@@ -40,13 +40,13 @@ export class HairRenderer extends BaseRenderer {
                 data.push(new Vec2(color[2], color[3]));
             }
         }
-        this.vertices = new Float32Array(data.flatMap(x => [x.x, x.y]));
+        let vertices = new Float32Array(data.flatMap(x => [x.x, x.y]));
         this.vertexBuffer = this.device.createBuffer({
             label: "vertex buffer",
-            size: this.vertices.byteLength,
+            size: vertices.byteLength,
             usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
         });
 
-        this.device.queue.writeBuffer(this.vertexBuffer, 0, this.vertices);
+        this.device.queue.writeBuffer(this.vertexBuffer, 0, vertices);
     }
 }

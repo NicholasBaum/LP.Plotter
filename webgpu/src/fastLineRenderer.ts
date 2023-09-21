@@ -72,20 +72,20 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(samples[samples.length - 1]);
             addColorDir(color, -1);
         }
-        this.vertices = new Float32Array(data.length * 2);
-    
+        let vertices = new Float32Array(data.length * 2);
+
         for (let i = 0; i < data.length; i++) {
-            this.vertices[2 * i] = data[i].x;
-            this.vertices[2 * i + 1] = data[i].y;
+            vertices[2 * i] = data[i].x;
+            vertices[2 * i + 1] = data[i].y;
         }
 
         this.vertexBuffer = this.device.createBuffer({
             label: "vertex buffer",
-            size: this.vertices.byteLength,
+            size: vertices.byteLength,
             usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
         });
 
-        this.device.queue.writeBuffer(this.vertexBuffer, 0, this.vertices);
+        this.device.queue.writeBuffer(this.vertexBuffer, 0, vertices);
 
         // add color and direction encoding
         function addColorDir(color: Float32Array, sign: number) {
