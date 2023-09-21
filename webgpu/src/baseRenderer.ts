@@ -26,7 +26,6 @@ export abstract class BaseRenderer {
     protected context!: GPUCanvasContext;
     protected canvasFormat!: GPUTextureFormat;
 
-    protected colorBuffer!: GPUBuffer;
     protected transformBuffer!: GPUBuffer;
     protected screenBuffer!: GPUBuffer;
     protected vertexBuffer!: GPUBuffer;
@@ -41,34 +40,23 @@ export abstract class BaseRenderer {
     protected abstract getTopology(): GPUPrimitiveTopology;
     protected abstract createVertices(): void;
 
-    protected createBindingGroup() {
+    protected createBindingGroup(): GPUBindGroupDescriptor {
         return {
             label: "binding group",
             layout: this.pipeline.getBindGroupLayout(0),
             entries: [{
                 binding: 0,
-                resource: { buffer: this.colorBuffer }
-            },
-            {
-                binding: 1,
                 resource: { buffer: this.transformBuffer }
             },
             {
-                binding: 2,
+                binding: 1,
                 resource: { buffer: this.screenBuffer }
-            }
+            },
             ]
         }
     }
 
     protected createBuffers() {
-        // create default buffers
-        this.colorBuffer = this.device.createBuffer({
-            label: "color buffer",
-            size: 16,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-        });
-
         this.transformBuffer = this.device.createBuffer({
             label: "transform buffer",
             size: 64,
@@ -137,29 +125,26 @@ export abstract class BaseRenderer {
         this.updateUniforms();
         this.device.queue.writeBuffer(this.transformBuffer, 0, this.viewTransform);
         this.device.queue.writeBuffer(this.screenBuffer, 0, new Float32Array([this.canvas.width, this.canvas.height]));
+        const commandEncoder = this.device.createCommandEncoder();
+        const renderPassDescriptor = {
+            colorAttachments: [
+                {
+                    view: this.context.getCurrentTexture().createView(),
+                    loadOp: "load" as const,
+                    clearValue: { r: 0, g: 0, b: 0.4, a: 1.0 },
+                    storeOp: "store" as const,
+                },
+            ],
+        };
+        const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
+        renderPass.setPipeline(this.pipeline);
+        renderPass.setBindGroup(0, this.bindingGroup);
+        renderPass.setVertexBuffer(0, this.vertexBuffer);
         for (let i = 0; i < this.signals.length; i++) {
-            this.device.queue.writeBuffer(this.colorBuffer, 0, this.signals[i].color);
-
-            const commandEncoder = this.device.createCommandEncoder();
-            const renderPassDescriptor = {
-                colorAttachments: [
-                    {
-                        view: this.context.getCurrentTexture().createView(),
-                        loadOp: "load" as const,
-                        clearValue: { r: 0, g: 0, b: 0.4, a: 1.0 },
-                        storeOp: "store" as const,
-                    },
-                ],
-            };
-
-            const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
-            renderPass.setPipeline(this.pipeline);
-            renderPass.setBindGroup(0, this.bindingGroup);
-            renderPass.setVertexBuffer(0, this.vertexBuffer);
             renderPass.draw(this.signals[i].gpuSampleCount, 1, i * this.signals[i].gpuSampleCount, 0);
-            renderPass.end();
-            this.device.queue.submit([commandEncoder.finish()]);
         }
+        renderPass.end();
+        this.device.queue.submit([commandEncoder.finish()]);
     }
 
     protected updateUniforms() {

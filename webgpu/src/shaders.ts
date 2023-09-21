@@ -1,21 +1,24 @@
 export const hair_shader = {
   label: "hair shader",
   code: `
-        @group(0) @binding(0) var<uniform> color: vec4f;
-        @group(0) @binding(1) var<uniform> transform: mat4x4<f32>;
-        @group(0) @binding(2) var<uniform> screen: vec2f;
+        struct VertexOut{
+          @builtin(position) position : vec4f,
+          @location(0) color : vec4f,
+        }
+
+        @group(0) @binding(0) var<uniform> transform: mat4x4<f32>;
+        @group(0) @binding(1) var<uniform> screen: vec2f;        
 
         @vertex
-        fn vertexMain(@location(0) position: vec2f)
-          -> @builtin(position) vec4f {
+        fn vertexMain(@location(0) position: vec2f, @location(1) color: vec4f) -> VertexOut {
           // dummy so auto layout sees the variable 
           let dummy = screen;
-          return transform*vec4f(position, 0, 1);                  
+          return VertexOut(transform*vec4f(position, 0, 1), color);                  
         }         
 
         @fragment
-        fn fragmentMain() -> @location(0) vec4f {
-          return color;
+        fn fragmentMain(vertexOut: VertexOut) -> @location(0) vec4f {
+          return vertexOut.color;
         }
       `
 };
@@ -23,9 +26,9 @@ export const hair_shader = {
 export const miter_shader = {
   label: "miter shader",
   code: `
-        @group(0) @binding(0) var<uniform> color: vec4f;
-        @group(0) @binding(1) var<uniform> transform: mat4x4<f32>;
-        @group(0) @binding(2) var<uniform> screen: vec2f;
+        @group(0) @binding(0) var<uniform> transform: mat4x4<f32>;
+        @group(0) @binding(1) var<uniform> screen: vec2f;
+        @group(0) @binding(2) var<uniform> color: vec4f;
 
         @vertex
         fn vertexMain(@location(0) A: vec2f, @location(1) B: vec2f, @location(2) C: vec2f,@location(3) dir: vec2f)
@@ -63,9 +66,8 @@ export const miter_shader = {
 export const fastline_shader = {
   label: "line shader",
   code: `
-        @group(0) @binding(0) var<uniform> color: vec4f;
-        @group(0) @binding(1) var<uniform> transform: mat4x4<f32>;
-        @group(0) @binding(2) var<uniform> screen: vec2f;
+        @group(0) @binding(0) var<uniform> transform: mat4x4<f32>;
+        @group(0) @binding(1) var<uniform> screen: vec2f;
 
         struct VertexOut{
           @builtin(position) position : vec4f,
@@ -100,7 +102,6 @@ export const fastline_shader = {
 
         @fragment
         fn fragmentMain(vertexOut: VertexOut) -> @location(0) vec4f {
-          let dummy = color;
           return vec4f(vertexOut.color.xyz,1);
         }
       `

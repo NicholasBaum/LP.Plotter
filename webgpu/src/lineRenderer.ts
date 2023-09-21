@@ -4,12 +4,32 @@ import { miter_shader } from "./shaders";
 
 export class LineRenderer extends BaseRenderer {
 
+    protected colorBuffer!: GPUBuffer;
+
     protected getShader(): GPUShaderModuleDescriptor {
         return miter_shader;
     }
 
     protected getTopology(): GPUPrimitiveTopology {
         return "triangle-strip" as const;
+    }
+
+    protected override createBindingGroup(): GPUBindGroupDescriptor {
+        let g = super.createBindingGroup();
+        (g.entries as any).push({
+            binding: 2,
+            resource: { buffer: this.colorBuffer }
+        });
+        return g;
+    }
+
+    protected override createBuffers(): void {
+        super.createBuffers();
+        this.colorBuffer = this.device.createBuffer({
+            label: "color buffer",
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
     }
 
     protected getVertexBufferLayout(): GPUVertexBufferLayout {
@@ -80,5 +100,34 @@ export class LineRenderer extends BaseRenderer {
         });
 
         this.device.queue.writeBuffer(this.vertexBuffer, 0, this.vertices);
+    }
+
+    override render() {
+        this.updateUniforms();
+        this.device.queue.writeBuffer(this.transformBuffer, 0, this.viewTransform);
+        this.device.queue.writeBuffer(this.screenBuffer, 0, new Float32Array([this.canvas.width, this.canvas.height]));
+        for (let i = 0; i < this.signals.length; i++) {
+            this.device.queue.writeBuffer(this.colorBuffer, 0, this.signals[i].color);
+
+            const commandEncoder = this.device.createCommandEncoder();
+            const renderPassDescriptor = {
+                colorAttachments: [
+                    {
+                        view: this.context.getCurrentTexture().createView(),
+                        loadOp: "load" as const,
+                        clearValue: { r: 0, g: 0, b: 0.4, a: 1.0 },
+                        storeOp: "store" as const,
+                    },
+                ],
+            };
+
+            const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
+            renderPass.setPipeline(this.pipeline);
+            renderPass.setBindGroup(0, this.bindingGroup);
+            renderPass.setVertexBuffer(0, this.vertexBuffer);
+            renderPass.draw(this.signals[i].gpuSampleCount, 1, i * this.signals[i].gpuSampleCount, 0);
+            renderPass.end();
+            this.device.queue.submit([commandEncoder.finish()]);
+        }
     }
 }

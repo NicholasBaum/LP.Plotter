@@ -89,32 +89,5 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(new Vec2(color[0], color[1]));
             data.push(new Vec2(color[2], sign * color[3]));
         }
-    }
-
-    override render() {
-        this.updateUniforms();
-        this.device.queue.writeBuffer(this.transformBuffer, 0, this.viewTransform);
-        this.device.queue.writeBuffer(this.screenBuffer, 0, new Float32Array([this.canvas.width, this.canvas.height]));
-        this.device.queue.writeBuffer(this.colorBuffer, 0, this.signals[0].color);
-        const commandEncoder = this.device.createCommandEncoder();
-        const renderPassDescriptor = {
-            colorAttachments: [
-                {
-                    view: this.context.getCurrentTexture().createView(),
-                    loadOp: "load" as const,
-                    clearValue: { r: 0, g: 0, b: 0.4, a: 1.0 },
-                    storeOp: "store" as const,
-                },
-            ],
-        };
-        const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
-        renderPass.setPipeline(this.pipeline);
-        renderPass.setBindGroup(0, this.bindingGroup);
-        renderPass.setVertexBuffer(0, this.vertexBuffer);
-        for (let i = 0; i < this.signals.length; i++) {
-            renderPass.draw(this.signals[i].gpuSampleCount, 1, i * this.signals[i].gpuSampleCount, 0);
-        }
-        renderPass.end();
-        this.device.queue.submit([commandEncoder.finish()]);
-    }
+    }    
 }

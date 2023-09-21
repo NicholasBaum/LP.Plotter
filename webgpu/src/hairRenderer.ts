@@ -14,11 +14,16 @@ export class HairRenderer extends BaseRenderer {
 
     protected getVertexBufferLayout(): GPUVertexBufferLayout {
         return {
-            arrayStride: 8,
+            arrayStride: 24,
             attributes: [{
                 format: "float32x2",
                 offset: 0,
                 shaderLocation: 0,
+            },
+            {
+                format: "float32x4",
+                offset: 8,
+                shaderLocation: 1,
             },],
         };
     }
@@ -26,9 +31,14 @@ export class HairRenderer extends BaseRenderer {
     protected override createVertices() {
         let data: Vec2[] = [];
         for (let i = 0; i < this.signals.length; i++) {
-            let source = this.signals[i].samples;
-            this.signals[i].gpuSampleCount = source.length;
-            data.push(...source);
+            let samples = this.signals[i].samples;
+            this.signals[i].gpuSampleCount = samples.length;
+            let color = this.signals[i].color;
+            for (let j = 0; j < samples.length; j++) {
+                data.push(samples[j]);
+                data.push(new Vec2(color[0], color[1]));
+                data.push(new Vec2(color[2], color[3]));
+            }
         }
         this.vertices = new Float32Array(data.flatMap(x => [x.x, x.y]));
         this.vertexBuffer = this.device.createBuffer({
