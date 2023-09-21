@@ -41,6 +41,47 @@ export abstract class BaseRenderer {
     protected abstract getTopology(): GPUPrimitiveTopology;
     protected abstract createVertices(): void;
 
+    protected createBindingGroup() {
+        return {
+            label: "binding group",
+            layout: this.pipeline.getBindGroupLayout(0),
+            entries: [{
+                binding: 0,
+                resource: { buffer: this.colorBuffer }
+            },
+            {
+                binding: 1,
+                resource: { buffer: this.transformBuffer }
+            },
+            {
+                binding: 2,
+                resource: { buffer: this.screenBuffer }
+            }
+            ]
+        }
+    }
+
+    protected createBuffers() {
+        // create default buffers
+        this.colorBuffer = this.device.createBuffer({
+            label: "color buffer",
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
+
+        this.transformBuffer = this.device.createBuffer({
+            label: "transform buffer",
+            size: 64,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
+
+        this.screenBuffer = this.device.createBuffer({
+            label: "screen size buffer",
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
+    }
+
     async initialize() {
         // WebGPU device initialization
         if (!navigator.gpu) {
@@ -62,24 +103,7 @@ export abstract class BaseRenderer {
             format: this.canvasFormat,
         });
 
-        // create default buffers
-        this.colorBuffer = this.device.createBuffer({
-            label: "color buffer",
-            size: 16,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-        });
-
-        this.transformBuffer = this.device.createBuffer({
-            label: "transform buffer",
-            size: 64,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-        });
-
-        this.screenBuffer = this.device.createBuffer({
-            label: "screen size buffer",
-            size: 16,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-        });
+        this.createBuffers();
 
         // create pipeline
         let shaderModule = this.device.createShaderModule(this.getShader())
@@ -104,24 +128,7 @@ export abstract class BaseRenderer {
             },
         });
 
-        this.bindingGroup = this.device.createBindGroup({
-            label: "binding group",
-            layout: this.pipeline.getBindGroupLayout(0),
-            entries: [{
-                binding: 0,
-                resource: { buffer: this.colorBuffer }
-            },
-            {
-                binding: 1,
-                resource: { buffer: this.transformBuffer }
-            },
-            {
-                binding: 2,
-                resource: { buffer: this.screenBuffer }
-            }
-            ]
-        });
-
+        this.bindingGroup = this.device.createBindGroup(this.createBindingGroup());
         // write vertex data to buffer
         this.createVertices();
     }
