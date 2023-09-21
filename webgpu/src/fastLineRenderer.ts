@@ -72,7 +72,12 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(samples[samples.length - 1]);
             addColorDir(color, -1);
         }
-        this.vertices = new Float32Array(data.flatMap(x => [x.x, x.y]));
+        this.vertices = new Float32Array(data.length * 2);
+    
+        for (let i = 0; i < data.length; i++) {
+            this.vertices[2 * i] = data[i].x;
+            this.vertices[2 * i + 1] = data[i].y;
+        }
 
         this.vertexBuffer = this.device.createBuffer({
             label: "vertex buffer",
@@ -89,5 +94,5 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(new Vec2(color[0], color[1]));
             data.push(new Vec2(color[2], sign * color[3]));
         }
-    }    
+    }
 }
