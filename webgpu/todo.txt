@@ -1,3 +1,4 @@
+- implement custom attributes per line thickness, transform probably by using instance draw e.g. draw(0,i,0,i)
 - implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
 - vertices could be further recuced by using point/normal instead of prev/current/next
     - the trasform will have to be adjusted to keep the normal orthogonal after transformation
@@ -6,3 +7,5 @@
 - alternatively use a uniform array that holds all colors in use and look them up in the fragment shaderLocation
 - the colorindex could be derived by using vertex_index in the vertex shader or by using a single byte
 - develop and implement transforms per signal
+
+- could use this command to update uniforms on the gpu without cpu chattiness: commandEncoder.copyBufferToBuffer( diskColorBuffer, 12*i, uniformBuffer, 0, 12 );
