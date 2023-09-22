@@ -17,6 +17,7 @@ export class DataGenerator {
             new Vec2(-0.8, -0.6),
             new Vec2(-0.8, 0.6),
             new Vec2(-0.4, 0.6),
+            new Vec2(-0.2, 0.6),
             new Vec2(0.0, 0.6),
             new Vec2(0.4, -0.3),
             new Vec2(0.8, 0.1),
