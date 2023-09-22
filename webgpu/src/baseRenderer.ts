@@ -145,7 +145,7 @@ export abstract class BaseRenderer {
         renderPass.setBindGroup(0, this.bindingGroup);
         renderPass.setVertexBuffer(0, this.vertexBuffer);
         for (let i = 0; i < this.signals.length; i++) {
-            renderPass.draw(this.signals[i].gpuSampleCount, 1, i * this.signals[i].gpuSampleCount, 0);            
+            renderPass.draw(this.signals[i].vertexCount, 1, i * this.signals[i].vertexCount, 0);            
         }
         renderPass.end();
         this.device.queue.submit([commandEncoder.finish()]);

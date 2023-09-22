@@ -32,7 +32,7 @@ export class HairRenderer extends BaseRenderer {
         let data: Vec2[] = [];
         for (let i = 0; i < this.signals.length; i++) {
             let samples = this.signals[i].samples;
-            this.signals[i].gpuSampleCount = samples.length;
+            this.signals[i].vertexCount = samples.length;
             let color = this.signals[i].color;
             for (let j = 0; j < samples.length; j++) {
                 data.push(samples[j]);
