@@ -1,4 +1,4 @@
-- implement custom attributes per line thickness, transform probably by using instance draw e.g. draw(0,i,0,i)
+- implement custom attributes per line thickness, transform, color probably by using instance draw e.g. draw(0,i,0,i)
 - implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
 - vertices could be further recuced by using point/normal instead of prev/current/next
     - the trasform will have to be adjusted to keep the normal orthogonal after transformation
