@@ -107,7 +107,11 @@ export abstract class BaseRenderer {
                 module: shaderModule,
                 entryPoint: "fragmentMain",
                 targets: [{
-                    format: this.canvasFormat
+                    format: this.canvasFormat,
+                    blend: {
+                        color: { srcFactor: "src-alpha", dstFactor: "one-minus-src-alpha", operation: "add" },
+                        alpha: {}
+                    }
                 }]
             },
             primitive: {
@@ -129,8 +133,8 @@ export abstract class BaseRenderer {
             colorAttachments: [
                 {
                     view: this.context.getCurrentTexture().createView(),
-                    loadOp: "load" as const,
-                    clearValue: { r: 0, g: 0, b: 0.4, a: 1.0 },
+                    loadOp: "clear" as const,
+                    clearValue: { r: 0, g: 0.0, b: 0.0, a: 1.0 },
                     storeOp: "store" as const,
                 },
             ],
