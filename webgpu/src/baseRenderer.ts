@@ -18,6 +18,8 @@ export abstract class BaseRenderer {
     protected pipeline!: GPURenderPipeline;
     protected bindingGroup!: GPUBindGroup;
 
+    private lastCanvasSize: Vec2 = new Vec2(0, 0);
+
     constructor(protected canvas: HTMLCanvasElement, protected signals: Signal[]) { }
 
     protected abstract getShader(): GPUShaderModuleDescriptor;
@@ -126,8 +128,7 @@ export abstract class BaseRenderer {
 
     render() {
         this.updateUniforms();
-        this.device.queue.writeBuffer(this.transformBuffer, 0, this.viewTransform);
-        this.device.queue.writeBuffer(this.screenBuffer, 0, new Float32Array([this.canvas.width, this.canvas.height]));
+        this.UpdateScreenSizeIfChanged();
         const commandEncoder = this.device.createCommandEncoder();
         const renderPassDescriptor = {
             colorAttachments: [
@@ -144,7 +145,7 @@ export abstract class BaseRenderer {
         renderPass.setBindGroup(0, this.bindingGroup);
         renderPass.setVertexBuffer(0, this.vertexBuffer);
         for (let i = 0; i < this.signals.length; i++) {
-            renderPass.draw(this.signals[i].gpuSampleCount, 1, i * this.signals[i].gpuSampleCount, 0);
+            renderPass.draw(this.signals[i].gpuSampleCount, 1, i * this.signals[i].gpuSampleCount, 0);            
         }
         renderPass.end();
         this.device.queue.submit([commandEncoder.finish()]);
@@ -162,5 +163,14 @@ export abstract class BaseRenderer {
                 0, m11, 0, 0,
                 0, 0, 1, 0,
                 m30, m31, 0, 1,]);
+        this.device.queue.writeBuffer(this.transformBuffer, 0, this.viewTransform);
+    }
+
+    private UpdateScreenSizeIfChanged() {
+        let current = new Vec2(this.canvas.width, this.canvas.height);
+        if (!this.lastCanvasSize.equals(current)) {
+            this.lastCanvasSize = current;
+            this.device.queue.writeBuffer(this.screenBuffer, 0, new Float32Array([this.canvas.width, this.canvas.height]));
+        }
     }
 }

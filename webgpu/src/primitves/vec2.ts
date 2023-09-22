@@ -40,4 +40,8 @@ export class Vec2 {
     dot(otherVec2: Vec2) {
         return this.x * otherVec2.x + this.y * otherVec2.y;
     }
+
+    equals(other: Vec2): boolean {
+        return this.x == other.x && this.y == other.y;
+    }
 }
