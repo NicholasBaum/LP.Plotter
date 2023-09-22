@@ -127,8 +127,8 @@ export abstract class BaseRenderer {
     }
 
     render() {
-        this.updateUniforms();
-        this.UpdateScreenSizeIfChanged();
+        this.updateTransforms();
+        this.updateScreenSizeIfChanged();
         const commandEncoder = this.device.createCommandEncoder();
         const renderPassDescriptor = {
             colorAttachments: [
@@ -151,7 +151,7 @@ export abstract class BaseRenderer {
         this.device.queue.submit([commandEncoder.finish()]);
     }
 
-    protected updateUniforms() {
+    protected updateTransforms() {
         let sx = 2 / (this.xRange.max - this.xRange.min);
         let m00 = sx;
         let m30 = -sx * this.xRange.min - 1;
@@ -166,7 +166,7 @@ export abstract class BaseRenderer {
         this.device.queue.writeBuffer(this.transformBuffer, 0, this.viewTransform);
     }
 
-    private UpdateScreenSizeIfChanged() {
+    private updateScreenSizeIfChanged() {
         let current = new Vec2(this.canvas.width, this.canvas.height);
         if (!this.lastCanvasSize.equals(current)) {
             this.lastCanvasSize = current;
