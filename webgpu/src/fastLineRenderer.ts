@@ -1,11 +1,16 @@
 import { BaseRenderer } from "./baseRenderer";
 import { Vec2 } from "./primitves/vec2";
-import { fastline_shader } from "./shaders";
+import { aa_fastline_shader, fastline_shader } from "./shaders";
+import { Signal } from "./signal";
 
 export class FastLineRenderer extends BaseRenderer {
 
+    constructor(canvas: HTMLCanvasElement, signals: Signal[], private useAA: boolean = false) {
+        super(canvas, signals);
+
+    }
     protected getShader(): GPUShaderModuleDescriptor {
-        return fastline_shader;
+        return this.useAA ? aa_fastline_shader : fastline_shader;
     }
 
     protected getTopology(): GPUPrimitiveTopology {
