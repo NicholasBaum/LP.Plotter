@@ -44,4 +44,12 @@ export class Vec2 {
     equals(other: Vec2): boolean {
         return this.x == other.x && this.y == other.y;
     }
+
+    get byteLength(): number {
+        return 8;
+    }
+
+    toFloats32(): number[] {
+        return [this.x, this.y];
+    }
 }
