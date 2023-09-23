@@ -43,7 +43,7 @@ export class DataGenerator {
                 if (prev < yMin)
                     yMin = prev;
             }
-            signals[i] = new Signal(points, colors[i % 10]);
+            signals[i] = new Signal(points, colors[i % 10], i % 3 + 1);
         }
         let yRange = new Span(-yMin, yMin);
         return [signals, xRange, yRange];
