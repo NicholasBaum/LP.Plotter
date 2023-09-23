@@ -52,7 +52,6 @@ export class FastLineRenderer extends BaseRenderer {
         let data = [];
         for (let i = 0; i < this.signals.length; i++) {
             let samples = this.signals[i].samples;
-            let color = this.signals[i].color;
             this.signals[i].vertexCount = 2 * samples.length;
             data.push(samples[0]);
             data.push(samples[0]);
