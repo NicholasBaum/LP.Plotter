@@ -12,7 +12,7 @@ export class Signal {
 export class SignalAttributes {
 
     static get byteLength(): number {
-        return 4 * 4 + 4;
+        return 8 * 4;
     }
 
     toFloats32(): number[] {

@@ -72,16 +72,24 @@ export const aa_fastline_shader = {
   code: `
         @group(0) @binding(0) var<uniform> transform: mat4x4<f32>;
         @group(0) @binding(1) var<uniform> screen: vec2f;
+        @group(0) @binding(2) var<storage> signals: array<SignalAttributes>;
+
+        struct SignalAttributes{
+          color : vec4f,
+          // structs must have a size equal to a multiple of 16
+          // the @size(16) is actually only relevant if there is another variable
+          @size(16)  thickness : f32,
+        }
 
         struct VertexOut{
           @builtin(position) position : vec4f,
-          @location(0) color : vec4f,
+          @location(0)@interpolate(flat) index : i32,
           // distance of the vertex from the line in screen space 
           @location(1)@interpolate(linear) screenDist : vec2f,
         }
 
         @vertex
-        fn vertexMain(@location(0) A: vec2f, @location(1) B: vec2f, @location(2) C: vec2f,@location(3) colorAndDir: vec4f)
+        fn vertexMain(@location(0) A: vec2f, @location(1) B: vec2f, @location(2) C: vec2f, @location(3) signedIndex: vec2f)
           -> VertexOut {                             
 
           // thickness in pixel but wider as the purpose is only to capture enough pixel so the fragment shader us invoked on them
@@ -102,19 +110,19 @@ export const aa_fastline_shader = {
           let tangent = normalize(ab+bc);
           let miter = vec2f(-tangent.y,tangent.x);
           let normalA = vec2f(-ab.y,ab.x);
-          let miterLength = 1 / dot(miter, normalA);
-
-          let screenDist = select(vec2f(-radius,0),vec2f(radius,0),colorAndDir.w<0);
-          return VertexOut(vec4f(b+sign(colorAndDir.w)*uwidth*miter*miterLength/uscreen , 0, 1), colorAndDir, screenDist);          
+          let miterLength = 1 / dot(miter, normalA);          
+          let screenDist = select(vec2f(-radius,0),vec2f(radius,0),signedIndex.y<0);
+          let dir = select(1.0,-1.0,signedIndex.y<0);
+          return VertexOut(vec4f(b+dir*uwidth*miter*miterLength/uscreen , 0, 1), i32(signedIndex.x), screenDist);          
         }         
 
         @fragment
         fn fragmentMain(in: VertexOut) -> @location(0) vec4f {
-          let radius = 0.5;
+          let radius = signals[in.index].thickness/2.0;
           let s = 0.5;
           var x = abs(in.screenDist.x);
-          var a = 1-smoothstep(radius-s, radius+s, x);                 
-          return vec4f(in.color.xyz, a);
+          var a = 1-smoothstep(radius-s, radius+s, x);                                     
+          return vec4f(signals[in.index].color.xyz, a);
         }
       `
 };

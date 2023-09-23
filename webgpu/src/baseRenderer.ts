@@ -1,6 +1,6 @@
 import { Span } from "./primitves/span";
 import { Vec2 } from "./primitves/vec2";
-import { Signal } from "./signal";
+import { Signal, SignalAttributes } from "./signal";
 
 export abstract class BaseRenderer {
 
@@ -14,6 +14,7 @@ export abstract class BaseRenderer {
 
     protected transformBuffer!: GPUBuffer;
     protected screenBuffer!: GPUBuffer;
+    protected signalsAttrBuffer!: GPUBuffer;
     protected vertexBuffer!: GPUBuffer;
     protected pipeline!: GPURenderPipeline;
     protected bindingGroup!: GPUBindGroup;
@@ -53,6 +54,10 @@ export abstract class BaseRenderer {
                 binding: 1,
                 resource: { buffer: this.screenBuffer }
             },
+            {
+                binding: 2,
+                resource: { buffer: this.signalsAttrBuffer }
+            },
             ]
         }
     }
@@ -68,6 +73,12 @@ export abstract class BaseRenderer {
             label: "screen size buffer",
             size: 16,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
+
+        this.signalsAttrBuffer = this.device.createBuffer({
+            label: "signal attributes buffer",
+            size: this.signals.length * SignalAttributes.byteLength,
+            usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
         });
     }
 
@@ -124,6 +135,7 @@ export abstract class BaseRenderer {
         this.bindingGroup = this.device.createBindGroup(this.createBindingGroup());
         // write vertex data to buffer
         this.createVertices();
+        this.writeSignalAttributes();
     }
 
     render() {
@@ -145,10 +157,15 @@ export abstract class BaseRenderer {
         renderPass.setBindGroup(0, this.bindingGroup);
         renderPass.setVertexBuffer(0, this.vertexBuffer);
         for (let i = 0; i < this.signals.length; i++) {
-            renderPass.draw(this.signals[i].vertexCount, 1, i * this.signals[i].vertexCount, 0);            
+            renderPass.draw(this.signals[i].vertexCount, 1, i * this.signals[i].vertexCount, 0);
         }
         renderPass.end();
         this.device.queue.submit([commandEncoder.finish()]);
+    }
+
+
+    private writeSignalAttributes() {
+        this.device.queue.writeBuffer(this.signalsAttrBuffer, 0, new Float32Array(this.signals.flatMap(s => s.gpuData.toFloats32())));
     }
 
     protected updateTransforms() {

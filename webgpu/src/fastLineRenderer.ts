@@ -19,24 +19,28 @@ export class FastLineRenderer extends BaseRenderer {
 
     protected getVertexBufferLayout(): GPUVertexBufferLayout {
         return {
-            arrayStride: 40,
+            arrayStride: 32,
+            // prev vertex
             attributes: [{
                 format: "float32x2",
                 offset: 0,
                 shaderLocation: 0,
             },
+            // current vertex
             {
                 format: "float32x2",
                 offset: 8,
                 shaderLocation: 1,
             },
+            // next vertex
             {
                 format: "float32x2",
                 offset: 16,
                 shaderLocation: 2,
             },
+            // direction to offset and signal id
             {
-                format: "float32x4",
+                format: "float32x2",
                 offset: 24,
                 shaderLocation: 3,
             }],
@@ -53,29 +57,29 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(samples[0]);
             data.push(samples[0]);
             data.push(samples[1]);
-            addColorDir(color, 1);
+            addColorDir(i, 1);
             data.push(samples[0]);
             data.push(samples[0]);
             data.push(samples[1]);
-            addColorDir(color, -1);
+            addColorDir(i, -1);
             for (let j = 1; j < samples.length - 1; j++) {
                 data.push(samples[j - 1]);
                 data.push(samples[j]);
                 data.push(samples[j + 1]);
-                addColorDir(color, 1);
+                addColorDir(i, 1);
                 data.push(samples[j - 1]);
                 data.push(samples[j]);
                 data.push(samples[j + 1]);
-                addColorDir(color, -1);
+                addColorDir(i, -1);
             }
             data.push(samples[samples.length - 2]);
             data.push(samples[samples.length - 1]);
             data.push(samples[samples.length - 1]);
-            addColorDir(color, 1);
+            addColorDir(i, 1);
             data.push(samples[samples.length - 2]);
             data.push(samples[samples.length - 1]);
             data.push(samples[samples.length - 1]);
-            addColorDir(color, -1);
+            addColorDir(i, -1);
         }
         let vertices = new Float32Array(data.length * 2);
 
@@ -93,11 +97,9 @@ export class FastLineRenderer extends BaseRenderer {
         this.device.queue.writeBuffer(this.vertexBuffer, 0, vertices);
 
         // add color and direction encoding
-        function addColorDir(color: Float32Array, sign: number) {
-            if (color.length != 4)
-                throw new Error("Wrong Color Format");
-            data.push(new Vec2(color[0], color[1]));
-            data.push(new Vec2(color[2], sign * color[3]));
+        function addColorDir(index: number, sign: number) {
+     
+            data.push(new Vec2(index, sign));
         }
     }
 }
