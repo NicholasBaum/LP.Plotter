@@ -7,7 +7,7 @@ console.log("Initiating");
 const canvas = document.querySelector("canvas")!;
 let data = DataGenerator.createMultiLineData(500, 500);
 //let data = DataGenerator.create();
-let renderer = new FastLineRenderer(canvas, data[0], true);
+let renderer = new FastLineRenderer(canvas, data[0], false);
 //let renderer = new HairRenderer(canvas, data[0]);
 renderer.xRange = data[1];
 renderer.yRange = data[2];
