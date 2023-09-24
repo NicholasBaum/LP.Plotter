@@ -50,7 +50,6 @@ export const fastline_shader = {
           
           let index = i32(signedIndex.x);
           let signal = signals[index];
-          // line radius in pixel but wider, because the purpose is only to capture enough pixel so the fragment shader is invoked on them
           let thickness = signal.thickness;
           let radius = thickness/2;
           let uscreen = vec2f(1, screen.y/screen.x);       
