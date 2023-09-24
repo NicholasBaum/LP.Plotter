@@ -22,7 +22,7 @@ export class DataGenerator {
             new Vec2(0.4, -0.3),
             new Vec2(0.8, 0.1),
         ];
-        signals[0] = new Signal(points, colors[0]);
+        signals[0] = new Signal(points, colors[0], 1, yRange);
         return [signals, xRange, yRange];
     }
 
@@ -43,9 +43,38 @@ export class DataGenerator {
                 if (prev < yMin)
                     yMin = prev;
             }
-            signals[i] = new Signal(points, colors[i % 10], i % 3 + 1);
+            signals[i] = new Signal(points, colors[i % 10]);
         }
         let yRange = new Span(-yMin, yMin);
         return [signals, xRange, yRange];
+    }
+
+    // adds random thickness and yViewRanges
+    static createMultiLineData2(seriesCount = 500, sampleCount = 500): [signals: Signal[], xRange: Span, yRange: Span] {
+        let xRange = new Span(0, sampleCount);
+        let signals: Signal[] = [];
+        let yMax = 0;
+        let yMin = 0;
+        for (var i = 0; i < seriesCount; i++) {
+            let points = [];
+            let prev = 0;
+            for (var j = 0; j < sampleCount; j++) {
+                let curr = DataGenerator.rng() * 10 - 5;
+                points.push(new Vec2(j, prev + curr));
+                prev += curr;
+                if (prev > yMax)
+                    yMax = prev;
+                if (prev < yMin)
+                    yMin = prev;
+            }
+            signals[i] = new Signal(points, colors[i % 10], i % 3 + 1, new Span(-1, 1));
+        }
+        for (var i = 0; i < seriesCount; i++) {
+            let f = i % 3 + 1;
+            let ySpan = new Span(-yMin, yMin);
+            ySpan.zoomRelative(f, 0.5);
+            signals[i].yViewRange = ySpan;
+        };
+        return [signals, xRange, new Span(-1, 1)];
     }
 }

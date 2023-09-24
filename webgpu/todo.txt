@@ -1,5 +1,3 @@
-- develop and implement transforms per signal
-
 - implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
 
 Mermory Efficiency:

@@ -5,7 +5,9 @@ import { Signal, SignalAttributes } from "./signal";
 export abstract class BaseRenderer {
 
     xRange: Span = new Span(-1, 1);
-    yRange: Span = new Span(-1, 1);;
+    // should be the default value if you want to use different yranges per line
+    // because currently transforms just get multiplied in the shader
+    yRange: Span = new Span(-1, 1);
 
     protected viewTransform!: Float32Array;
     protected device!: GPUDevice;
