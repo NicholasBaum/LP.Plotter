@@ -1,6 +1,13 @@
-- implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
+Fatal Issues:
+- miter calculation is wrong obviously because they aren't limited (hairrenderer seems to be correct)
+    - see https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
+- aa might be wrong as well, but obviously does strange stuff if miter isn't calculated correctly
+- possible that per signal yViewRange doesn't seem to work correctly, not showing the correct range, but i think it's actually because of the above errors
+
+
 
 Mermory Efficiency:
+- implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
 - vertices could be further recuced by using point/normal instead of prev/current/next
     - the trasform will have to be adjusted to keep the normal orthogonal after transformation
     - not sure if this actually works with the meter but i assume you can alos adjust the transform to keep angles
