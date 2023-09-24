@@ -1,3 +1,4 @@
+import { getTestRun } from "./csvParser";
 import { colors } from "./primitves/colors";
 import { Span } from "./primitves/span";
 import { Vec2 } from "./primitves/vec2";
@@ -75,6 +76,27 @@ export class DataGenerator {
             ySpan.zoomRelative(f, 0.5);
             signals[i].yViewRange = ySpan;
         };
+        return [signals, xRange, new Span(-1, 1)];
+    }
+
+    static createChannelData(index: number): [signals: Signal[], xRange: Span, yRange: Span] {
+        return this.createRunData(index, index);
+    }
+
+    static createRunData(indexMin: number, indexMax: number): [signals: Signal[], xRange: Span, yRange: Span] {
+        const data = getTestRun();
+        const xRange = new Span(data[0].samples[0].x, data[0].samples[data[0].samples.length - 1].x);
+        let signals: Signal[] = [];
+        for (let i = indexMin; i <= Math.min(data.length, indexMax); i++) {
+            const samples = data[i].samples;
+            var min = samples.reduce((a, b) => a.y <= b.y ? a : b).y;
+            var max = samples.reduce((a, b) => a.y > b.y ? a : b).y;
+            let yRange = new Span(min, max);
+            console.log(data[i].name);
+            console.log(yRange);
+            let s = new Signal(data[i].samples, colors[i % 10], 1, yRange);
+            signals.push(s);
+        }
         return [signals, xRange, new Span(-1, 1)];
     }
 }
