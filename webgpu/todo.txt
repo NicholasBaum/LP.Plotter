@@ -1,6 +1,7 @@
 Issues:
 - overlapping lines don't look correct, i assume it has to do with opacity
-
+- the inner join point of a corner isn't calculated nicely
+  it just uses two vertices that lead to overlapping and because of that to wrong colors if think
 
 Mermory Efficiency:
 - implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
@@ -9,6 +10,9 @@ Mermory Efficiency:
     - not sure if this actually works with the meter but i assume you can alos adjust the transform to keep angles
 - encode colors as byte^3 instead of float^4
 
+
+Looks like a very good reference:
+https://www.codeproject.com/Articles/226569/Drawing-polylines-by-tessellation
 
 Good reference but i think there are two big mistakes
     - only outer meter is caped when too long, but the problem actually also appears if the inner meter it to long e.g. when the line segments are short

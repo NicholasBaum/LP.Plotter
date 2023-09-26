@@ -52,57 +52,30 @@ export class FastLineRenderer extends BaseRenderer {
         let data = [];
         for (let i = 0; i < this.signals.length; i++) {
             let samples = this.signals[i].samples;
-            this.signals[i].vertexCount = 4 * samples.length;
-            data.push(samples[0]);
-            data.push(samples[0]);
-            data.push(samples[1]);
-            addColorDir(i, 1);
-            data.push(samples[0]);
-            data.push(samples[0]);
-            data.push(samples[1]);
-            addColorDir(i, 2);
-            data.push(samples[0]);
-            data.push(samples[0]);
-            data.push(samples[1]);
-            addColorDir(i, 3);
-            data.push(samples[0]);
-            data.push(samples[0]);
-            data.push(samples[1]);
-            addColorDir(i, 4);
-            for (let j = 1; j < samples.length - 1; j++) {
-                data.push(samples[j - 1]);
-                data.push(samples[j]);
-                data.push(samples[j + 1]);
-                addColorDir(i, 1);
-                data.push(samples[j - 1]);
-                data.push(samples[j]);
-                data.push(samples[j + 1]);
-                addColorDir(i, 2);
-                data.push(samples[j - 1]);
-                data.push(samples[j]);
-                data.push(samples[j + 1]);
-                addColorDir(i, 3);
-                data.push(samples[j - 1]);
-                data.push(samples[j]);
-                data.push(samples[j + 1]);
-                addColorDir(i, 4);
+            this.signals[i].vertexCount = 4 * samples.length - 4;
+
+            for (let vert = 1; vert <= 2; vert++) {
+                data.push(samples[0]);
+                data.push(samples[0]);
+                data.push(samples[1]);
+                addColorDir(i, vert);
             }
-            data.push(samples[samples.length - 2]);
-            data.push(samples[samples.length - 1]);
-            data.push(samples[samples.length - 1]);
-            addColorDir(i, 1);
-            data.push(samples[samples.length - 2]);
-            data.push(samples[samples.length - 1]);
-            data.push(samples[samples.length - 1]);
-            addColorDir(i, 2);
-            data.push(samples[samples.length - 2]);
-            data.push(samples[samples.length - 1]);
-            data.push(samples[samples.length - 1]);
-            addColorDir(i, 3);
-            data.push(samples[samples.length - 2]);
-            data.push(samples[samples.length - 1]);
-            data.push(samples[samples.length - 1]);
-            addColorDir(i, 4);
+
+            for (let j = 1; j < samples.length - 1; j++) {
+                for (let vert = 1; vert <= 4; vert++) {
+                    data.push(samples[j - 1]);
+                    data.push(samples[j]);
+                    data.push(samples[j + 1]);
+                    addColorDir(i, vert);
+                }
+            }
+
+            for (let vert = 1; vert <= 2; vert++) {
+                data.push(samples[samples.length - 2]);
+                data.push(samples[samples.length - 1]);
+                data.push(samples[samples.length - 1]);
+                addColorDir(i, vert);
+            }
         }
         let vertices = new Float32Array(data.length * 2);
 

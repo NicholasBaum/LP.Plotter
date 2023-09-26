@@ -23,8 +23,7 @@ export function fastline_shader(useAntiAliasing: boolean) {
   
           // id holds two informations:
           // id.x corresponds to the index of the signal and has to be cast to an int32
-          // id.y has the value 1,2,3 or 4 which corresponds to the position of the vertex offset
-          // kinda counting clockwise where 1 is bottom left
+          // id.y has the value 1,2,3 or 4 corresponding to the vertex positions left bottom, left top, right bottom and right top          
           @vertex
           fn vertexMain(@location(0) A: vec2f, @location(1) B: vec2f, @location(2) C: vec2f, @location(3) id: vec2f)
             -> VertexOut {                             
@@ -37,7 +36,7 @@ export function fastline_shader(useAntiAliasing: boolean) {
             let uscreen = vec2f(1, screen.y/screen.x);       
             // u for uniform, meaning -1 to 1, this also explain
             let uradius = thickness/screen.x;
-            let dir = select(1.0,-1.0, id.y==1 || id.y==4);
+            let dir = select(1.0,-1.0, id.y==1 || id.y==3);
   
             let transform = xTransform * signal.transform;
             var a = (transform*vec4f(A, 0, 1)).xy;
@@ -59,7 +58,7 @@ export function fastline_shader(useAntiAliasing: boolean) {
             //let miterLength = 1 / dot(miter, normalA); 
             //let pos = b+dir*uradius*miter*miterLength/uscreen;
 
-            let normal = select(-normalA, normalC, id.y==3 || id.y==4);
+            let normal = select(normalA, normalC, id.y==3 || id.y==4);
             let pos = b+dir*uradius*normal/uscreen; 
             ${useAntiAliasing?'//':''} return VertexOut(vec4f(pos , 0, 1), index);
            
