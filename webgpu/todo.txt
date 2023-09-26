@@ -2,6 +2,7 @@ Issues:
 - overlapping lines don't look correct, i assume it has to do with opacity
 - the inner join point of a corner isn't calculated nicely
   it just uses two vertices that lead to overlapping and because of that to wrong colors if think
+  but fixing it needs to account for too long miters which is some extra work
 
 Mermory Efficiency:
 - implement multiple buffers / spread the vertexes across mutliple buffers as a single buffer has a size limit
