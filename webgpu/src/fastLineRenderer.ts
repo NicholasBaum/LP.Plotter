@@ -1,16 +1,16 @@
 import { BaseRenderer } from "./baseRenderer";
 import { Vec2 } from "./primitves/vec2";
-import { aa_fastline_shader, fastline_shader } from "./shaders";
+import { fastline_shader } from "./shaders/fastline_shader";
 import { Signal } from "./signal";
 
 export class FastLineRenderer extends BaseRenderer {
 
-    constructor(canvas: HTMLCanvasElement, signals: Signal[], private useAA: boolean = false) {
+    constructor(canvas: HTMLCanvasElement, signals: Signal[], public useAA: boolean = false) {
         super(canvas, signals);
 
     }
     protected getShader(): GPUShaderModuleDescriptor {
-        return this.useAA ? aa_fastline_shader : fastline_shader;
+        return fastline_shader(this.useAA);
     }
 
     protected getTopology(): GPUPrimitiveTopology {
@@ -52,7 +52,7 @@ export class FastLineRenderer extends BaseRenderer {
         let data = [];
         for (let i = 0; i < this.signals.length; i++) {
             let samples = this.signals[i].samples;
-            this.signals[i].vertexCount = 2 * samples.length;
+            this.signals[i].vertexCount = 4 * samples.length;
             data.push(samples[0]);
             data.push(samples[0]);
             data.push(samples[1]);
@@ -60,7 +60,15 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(samples[0]);
             data.push(samples[0]);
             data.push(samples[1]);
-            addColorDir(i, -1);
+            addColorDir(i, 2);
+            data.push(samples[0]);
+            data.push(samples[0]);
+            data.push(samples[1]);
+            addColorDir(i, 3);
+            data.push(samples[0]);
+            data.push(samples[0]);
+            data.push(samples[1]);
+            addColorDir(i, 4);
             for (let j = 1; j < samples.length - 1; j++) {
                 data.push(samples[j - 1]);
                 data.push(samples[j]);
@@ -69,7 +77,15 @@ export class FastLineRenderer extends BaseRenderer {
                 data.push(samples[j - 1]);
                 data.push(samples[j]);
                 data.push(samples[j + 1]);
-                addColorDir(i, -1);
+                addColorDir(i, 2);
+                data.push(samples[j - 1]);
+                data.push(samples[j]);
+                data.push(samples[j + 1]);
+                addColorDir(i, 3);
+                data.push(samples[j - 1]);
+                data.push(samples[j]);
+                data.push(samples[j + 1]);
+                addColorDir(i, 4);
             }
             data.push(samples[samples.length - 2]);
             data.push(samples[samples.length - 1]);
@@ -78,7 +94,15 @@ export class FastLineRenderer extends BaseRenderer {
             data.push(samples[samples.length - 2]);
             data.push(samples[samples.length - 1]);
             data.push(samples[samples.length - 1]);
-            addColorDir(i, -1);
+            addColorDir(i, 2);
+            data.push(samples[samples.length - 2]);
+            data.push(samples[samples.length - 1]);
+            data.push(samples[samples.length - 1]);
+            addColorDir(i, 3);
+            data.push(samples[samples.length - 2]);
+            data.push(samples[samples.length - 1]);
+            data.push(samples[samples.length - 1]);
+            addColorDir(i, 4);
         }
         let vertices = new Float32Array(data.length * 2);
 
@@ -97,7 +121,7 @@ export class FastLineRenderer extends BaseRenderer {
 
         // add color and direction encoding
         function addColorDir(index: number, sign: number) {
-     
+
             data.push(new Vec2(index, sign));
         }
     }

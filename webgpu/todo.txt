@@ -1,8 +1,4 @@
-Fatal Issues:
-- miter calculation is wrong obviously because they aren't limited (hairrenderer seems to be correct)
-    - see https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
-- aa might be wrong as well, but obviously does strange stuff if miter isn't calculated correctly
-- possible that per signal yViewRange doesn't seem to work correctly, not showing the correct range, but i think it's actually because of the above errors
+Issues:
 - overlapping lines don't look correct, i assume it has to do with opacity
 
 
@@ -12,3 +8,9 @@ Mermory Efficiency:
     - the trasform will have to be adjusted to keep the normal orthogonal after transformation
     - not sure if this actually works with the meter but i assume you can alos adjust the transform to keep angles
 - encode colors as byte^3 instead of float^4
+
+
+Good reference but i think there are two big mistakes
+    - only outer meter is caped when too long, but the problem actually also appears if the inner meter it to long e.g. when the line segments are short
+    - the meter caping code doesn't seem to be right
+https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html

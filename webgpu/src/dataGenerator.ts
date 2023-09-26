@@ -23,7 +23,49 @@ export class DataGenerator {
             new Vec2(0.4, -0.3),
             new Vec2(0.8, 0.1),
         ];
-        signals[0] = new Signal(points, colors[0], 1, yRange);
+        signals[0] = new Signal(points, colors[0], 40, yRange);
+        return [signals, xRange, yRange];
+    }
+
+    static issueTooLongInnerMiter(): [signals: Signal[], xRange: Span, yRange: Span] {
+        let xRange = new Span(-1, 1);
+        let yRange = new Span(-1, 1);
+        let signals: Signal[] = [];
+
+        let a = new Vec2(-0.1, -0.6);
+        let b = new Vec2(0.0, 0.6);
+        let c = new Vec2(0.1, -0.6);
+        let ab = b.sub(a).norm();
+        let cb = b.sub(c).norm();
+        let f = 1.15;
+        let points = [
+            a.add(ab.mult(f)),
+            b,
+            c.add(cb.mult(f)),
+        ];
+        signals[0] = new Signal(points, colors[0], 10);
+        signals[1] = new Signal(points, colors[2], 1);
+        return [signals, xRange, yRange];
+    }
+
+    static issueTooLongInnerMiter2(): [signals: Signal[], xRange: Span, yRange: Span] {
+        let xRange = new Span(-1, 1);
+        let yRange = new Span(-1, 1);
+        let signals: Signal[] = [];
+
+        let a = new Vec2(-0.1, -0.6);
+        let b = new Vec2(0.0, 0.6);
+        let c = new Vec2(0.1, -0.6);
+        let ab = b.sub(a).norm();
+        let cb = b.sub(c).norm();
+        let f = -4.15;
+        let points = [
+            a.add(ab.mult(f)),
+            b,
+            c.add(cb.mult(f)),
+        ];
+        signals[0] = new Signal(points, colors[0], 40);
+        signals[1] = new Signal(points, colors[2], 1);
         return [signals, xRange, yRange];
     }
 
@@ -85,9 +127,11 @@ export class DataGenerator {
 
     static createRunData(indexMin: number, indexMax: number): [signals: Signal[], xRange: Span, yRange: Span] {
         const data = getTestRun();
+        if (indexMin > data.length)
+            throw new Error("index out of bounds");
         const xRange = new Span(data[0].samples[0].x, data[0].samples[data[0].samples.length - 1].x);
         let signals: Signal[] = [];
-        for (let i = indexMin; i <= Math.min(data.length, indexMax); i++) {
+        for (let i = indexMin; i <= Math.min(data.length - 1, indexMax); i++) {
             const samples = data[i].samples;
             var min = samples.reduce((a, b) => a.y <= b.y ? a : b).y;
             var max = samples.reduce((a, b) => a.y > b.y ? a : b).y;

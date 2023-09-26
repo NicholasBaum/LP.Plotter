@@ -1,11 +1,11 @@
 import { BaseRenderer } from "./baseRenderer";
 import { Vec2 } from "./primitves/vec2";
-import { hair_shader } from "./shaders";
+import { hair_shader } from "./shaders/hairshader";
 
 export class HairRenderer extends BaseRenderer {
 
     protected getShader(): GPUShaderModuleDescriptor {
-        return hair_shader;
+        return hair_shader();
     }
 
     protected getTopology(): GPUPrimitiveTopology {
@@ -31,17 +31,16 @@ export class HairRenderer extends BaseRenderer {
     protected override createVertices() {
         let tmp: Vec2[] = [];
         for (let i = 0; i < this.signals.length; i++) {
-            let signal = this.signals[i];            
+            let signal = this.signals[i];
             signal.vertexCount = signal.samples.length;
             for (let j = 0; j < signal.samples.length; j++) {
                 tmp.push(signal.samples[j]);
                 tmp.push(new Vec2(i, 0));
             }
         }
-        let data : number[] =[];
-        for(let i =0; i<tmp.length;i++)
-        {
-             data.push(...tmp[i].toFloats32())            
+        let data: number[] = [];
+        for (let i = 0; i < tmp.length; i++) {
+            data.push(...tmp[i].toFloats32())
         }
         let vertices = new Float32Array(data);
         this.vertexBuffer = this.device.createBuffer({
