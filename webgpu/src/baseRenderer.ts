@@ -159,6 +159,10 @@ export abstract class BaseRenderer {
     }
 
     render() {
+        requestAnimationFrame(() => { this.internalRender(); });
+    }
+
+    internalRender() {
         this.updateTransforms();
         this.updateScreenSizeIfChanged();
         const commandEncoder = this.device.createCommandEncoder();
