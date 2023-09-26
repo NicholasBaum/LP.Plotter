@@ -9,6 +9,9 @@ export abstract class BaseRenderer {
     // because currently transforms just get multiplied in the shader
     yRange: Span = new Span(-1, 1);
 
+    public useMSAA = false;
+    private readonly aaSampleCount = 4; // other values aren't allowed i think
+
     protected viewTransform!: Float32Array;
     protected device!: GPUDevice;
     protected context!: GPUCanvasContext;
@@ -22,7 +25,7 @@ export abstract class BaseRenderer {
     protected bindingGroup!: GPUBindGroup;
 
     private lastCanvasSize: Vec2 = new Vec2(0, 0);
-
+    
     constructor(protected canvas: HTMLCanvasElement, protected signals: Signal[]) { }
 
     protected abstract getShader(): GPUShaderModuleDescriptor;
@@ -103,6 +106,7 @@ export abstract class BaseRenderer {
         this.context.configure({
             device: this.device,
             format: this.canvasFormat,
+            //alphaMode: 'premultiplied',
         });
 
         this.createBuffers();
@@ -132,6 +136,9 @@ export abstract class BaseRenderer {
             primitive: {
                 topology: this.getTopology(),
             },
+            multisample: this.useMSAA ?
+                { count: this.aaSampleCount, }
+                : undefined,
         });
 
         this.bindingGroup = this.device.createBindGroup(this.createBindingGroup());
@@ -144,10 +151,26 @@ export abstract class BaseRenderer {
         this.updateTransforms();
         this.updateScreenSizeIfChanged();
         const commandEncoder = this.device.createCommandEncoder();
+
+        let view: GPUTextureView;
+        if (this.useMSAA) {
+            const texture = this.device.createTexture({
+                size: [this.canvas.width, this.canvas.height],
+                sampleCount: this.aaSampleCount,
+                format: this.canvasFormat,
+                usage: GPUTextureUsage.RENDER_ATTACHMENT,
+            });
+            view = texture.createView();
+        }
+        else {
+            view = this.context.getCurrentTexture().createView();
+        }
+
         const renderPassDescriptor = {
             colorAttachments: [
                 {
-                    view: this.context.getCurrentTexture().createView(),
+                    view: view,
+                    resolveTarget: this.useMSAA ? this.context.getCurrentTexture().createView() : undefined,
                     loadOp: "clear" as const,
                     clearValue: { r: 0, g: 0.0, b: 0.0, a: 1.0 },
                     storeOp: "store" as const,
