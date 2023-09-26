@@ -1,4 +1,4 @@
-import { getTestRun } from "./csvParser";
+import { getRepeatedRun, getRun } from "./csvParser";
 import { colors } from "./primitves/colors";
 import { Span } from "./primitves/span";
 import { Vec2 } from "./primitves/vec2";
@@ -121,15 +121,26 @@ export class DataGenerator {
         return [signals, xRange, new Span(-1, 1)];
     }
 
-    static createChannelData(index: number): [signals: Signal[], xRange: Span, yRange: Span] {
+    static createChannelData(index: number)
+        : [signals: Signal[], xRange: Span, yRange: Span] {
         return this.createRunData(index, index);
     }
 
-    static createRunData(indexMin: number, indexMax: number): [signals: Signal[], xRange: Span, yRange: Span] {
-        const data = getTestRun();
+    static createRunData(indexMin: number, indexMax: number)
+        : [signals: Signal[], xRange: Span, yRange: Span] {
+        return DataGenerator.createSignals(indexMin, indexMax, getRun());
+    }
+
+    static createSessionData(indexMin: number, indexMax: number, repeats: number = 12)
+        : [signals: Signal[], xRange: Span, yRange: Span] {
+        return DataGenerator.createSignals(indexMin, indexMax, getRepeatedRun(repeats));
+    }
+
+    static createSignals(indexMin: number, indexMax: number, data: { name: string, samples: Vec2[] }[])
+        : [signals: Signal[], xRange: Span, yRange: Span] {
         if (indexMin > data.length)
             throw new Error("index out of bounds");
-        const xRange = new Span(data[0].samples[0].x, data[0].samples[data[0].samples.length - 1].x);
+
         let signals: Signal[] = [];
         for (let i = indexMin; i <= Math.min(data.length - 1, indexMax); i++) {
             const samples = data[i].samples;
@@ -141,6 +152,7 @@ export class DataGenerator {
             let s = new Signal(data[i].samples, colors[i % 10], 1, yRange);
             signals.push(s);
         }
+        const xRange = new Span(data[0].samples[0].x, data[0].samples[data[0].samples.length - 1].x);
         return [signals, xRange, new Span(-1, 1)];
     }
 }

@@ -1,7 +1,7 @@
 import { Vec2 } from "./primitves/vec2";
 
 export function parseCSV(csvData: string): { name: string, samples: Vec2[] }[] {
-    const lines = csvData.split('\n');    
+    const lines = csvData.split('\n');
     const headers = lines[0].split(',');
     const data: { name: string, samples: Vec2[] }[] = [];
 
@@ -14,15 +14,37 @@ export function parseCSV(csvData: string): { name: string, samples: Vec2[] }[] {
         const [seconds, centisecond] = values[0].split(":").map(Number); // e.g. 112:52
         const t = seconds + centisecond / 100;
         data[0].samples[i - 1] = new Vec2(t, t);
-        for (let j = 1; j < values.length - 1; j++) {         
+        for (let j = 1; j < values.length - 1; j++) {
             data[j].samples[i - 1] = new Vec2(t, parseFloat(values[j]));
         }
     }
     return data;
 }
 
-export function getTestRun() {
+export function getRun(): { name: string, samples: Vec2[] }[] {
     return parseCSV(testdata);
+}
+
+export function getRepeatedRun(count: number): { name: string, samples: Vec2[] }[] {
+    let run = parseCSV(testdata);
+    for (let c of run) {
+        console.log(c.samples.length);
+        repeatChannel(c.samples, count)
+        console.log(c.samples.length);
+    }
+    return run;
+}
+
+function repeatChannel(samples: Vec2[], count: number) {
+    const l = samples.length;
+    let t = samples[l - 1].x;
+    for (let j = 0; j < count; j++) {
+        for (let i = 0; i < l; i++) {
+            let s = samples[i];
+            samples.push(new Vec2(t + s.x, s.y))
+        }
+        t = samples[samples.length - 1].x;
+    }
 }
 
 
