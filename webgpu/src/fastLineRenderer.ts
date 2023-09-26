@@ -3,14 +3,31 @@ import { Vec2 } from "./primitves/vec2";
 import { fastline_shader } from "./shaders/fastline_shader";
 import { Signal } from "./signal";
 
+export enum AAModes {
+    None,
+    Local,
+    MSAA4
+}
 export class FastLineRenderer extends BaseRenderer {
 
-    constructor(canvas: HTMLCanvasElement, signals: Signal[], public useAA: boolean = false) {
+    constructor(canvas: HTMLCanvasElement, signals: Signal[], public aAMode: AAModes = AAModes.None) {
         super(canvas, signals);
 
     }
     protected getShader(): GPUShaderModuleDescriptor {
-        return fastline_shader(this.useAA);
+        switch (this.aAMode) {
+            case AAModes.None:
+                this.useMSAA = false;
+                break;
+            case AAModes.Local:
+                this.useMSAA = false;
+                break;
+            case AAModes.MSAA4:
+                this.useMSAA = true;
+                break;
+        }
+
+        return fastline_shader(this.aAMode == AAModes.Local);
     }
 
     protected getTopology(): GPUPrimitiveTopology {
