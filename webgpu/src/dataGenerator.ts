@@ -146,9 +146,7 @@ export class DataGenerator {
             const samples = data[i].samples;
             var min = samples.reduce((a, b) => a.y <= b.y ? a : b).y;
             var max = samples.reduce((a, b) => a.y > b.y ? a : b).y;
-            let yRange = new Span(min, max);
-            console.log(data[i].name);
-            console.log(yRange);
+            let yRange = new Span(min, max);      
             let s = new Signal(data[i].samples, colors[i % 10], 1, yRange);
             signals.push(s);
         }

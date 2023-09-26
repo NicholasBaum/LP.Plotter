@@ -28,9 +28,7 @@ export function getRun(): { name: string, samples: Vec2[] }[] {
 export function getRepeatedRun(count: number): { name: string, samples: Vec2[] }[] {
     let run = parseCSV(testdata);
     for (let c of run) {
-        console.log(c.samples.length);
         repeatChannel(c.samples, count)
-        console.log(c.samples.length);
     }
     return run;
 }
